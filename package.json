@@ -1,0 +1,9 @@
+{
+  "name": "chessboard2",
+  "description": "chessboard JavaScript component",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "shadow-cljs": "2.11.20"
+  }
+}

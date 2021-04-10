@@ -1,0 +1,9 @@
+{:source-paths ["src-cljs"]
+
+ :dependencies []
+
+ :builds
+ {:chessboard2
+  {:target :browser
+   :output-to "public/js"
+   :modules {:chessboard {:entries [com.oakmac.chessboard2.core]}}}}}
