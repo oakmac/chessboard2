@@ -27,6 +27,7 @@
     (str/replace "3" "111")
     (str/replace "2" "11")))
 
+;; TODO: candidate for optimization
 (defn fen->position
   "converts a FEN string to a Position Map"
   [fen]

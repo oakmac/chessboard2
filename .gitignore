@@ -1,4 +1,6 @@
 .shadow-cljs/
 node_modules/
 public/js/
+website/js/chessboard.js
 .DS_Store
+*.diff

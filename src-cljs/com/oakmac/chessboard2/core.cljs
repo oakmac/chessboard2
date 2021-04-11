@@ -36,7 +36,16 @@
 
 (def initial-state
   {:position {}
-   :foo :bar})
+   :arrows {}
+   :orientation "white"})
+
+(defn click-root-el [js-evt]
+  (.log js/console "clicked root element:" js-evt))
+
+(defn- add-events!
+  "Attach DOM events."
+  [root-el]
+  (.addEventListener root-el "click" click-root-el))
 
 (defn constructor
   "Called to create a new Chessboard2 object."
@@ -46,8 +55,10 @@
    (let [root-el (grab-element el)
          board-state (atom initial-state)]
      (js/console.log (pr-str (fen->position "r7/8/8/8/8/8/8/R7")))
+     ;; set the initial widget HTML
      (gobj/set root-el "innerHTML" (html/BoardContainer))
-  ; (swap! some-state assoc "foo" "bar")
+     (add-events! root-el)
+     ;; return object
      (js-obj
        "clear" "FIXME: add"
        "destroy" "FIXME"
