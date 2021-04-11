@@ -14,7 +14,7 @@ Use the <a href="docs.html#methods:clear"><code class="js plain">clear</code></a
 <button id="clearBoardInstantBtn">Clear Board Instant</button>
 
 ===== JS
-var board = Chessboard('myBoard', 'start')
+var board = Chessboard2('myBoard', 'start')
 
 $('#clearBoardBtn').on('click', board.clear)
 

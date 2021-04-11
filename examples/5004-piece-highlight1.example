@@ -67,6 +67,6 @@ var config = {
   position: 'start',
   onMoveEnd: onMoveEnd
 }
-board = Chessboard('myBoard', config)
+board = Chessboard2('myBoard', config)
 
 window.setTimeout(makeRandomMove, 500)

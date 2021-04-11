@@ -44,7 +44,7 @@
     <h4>HTML</h4>
     <pre class="prettyprint">&lt;div id="board1" style="width: 400px"&gt;&lt;/div&gt;</pre>
     <h4>JavaScript</h4>
-    <pre class="prettyprint">var board1 = Chessboard('board1', 'start')</pre>
+    <pre class="prettyprint">var board1 = Chessboard2('board1', 'start')</pre>
 </div>
 <div class="col-11bcf">
     <div id="board1" style="width: 400px"></div>
@@ -61,7 +61,7 @@
 &lt;button id="clearBtn"&gt;Clear Board&lt;/button&gt;
 </pre>
     <h4>JavaScript</h4>
-<pre class="prettyprint">var board2 = Chessboard('board2', {
+<pre class="prettyprint">var board2 = Chessboard2('board2', {
   draggable: true,
   dropOffBoard: 'trash',
   sparePieces: true
@@ -105,10 +105,10 @@ $('#clearBtn').on('click', board2.clear)</pre>
     prettyPrint()
 
     // example 1
-    var board1 = Chessboard('board1', 'start')
+    var board1 = Chessboard2('board1', 'start')
 
     // example 2
-    var board2 = Chessboard('board2', {
+    var board2 = Chessboard2('board2', {
   draggable: true,
   dropOffBoard: 'trash',
   sparePieces: true

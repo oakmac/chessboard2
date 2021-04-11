@@ -26,6 +26,6 @@ var config = {
   position: 'start',
   onDragStart: onDragStart
 }
-var board = Chessboard('myBoard', config)
+var board = Chessboard2('myBoard', config)
 
 $('#flipOrientationBtn').on('click', board.flip)

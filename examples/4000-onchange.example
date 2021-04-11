@@ -25,7 +25,7 @@ var config = {
   position: 'start',
   onChange: onChange
 }
-var board = Chessboard('myBoard', config)
+var board = Chessboard2('myBoard', config)
 
 $('#ruyLopezBtn').on('click', function () {
   var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'

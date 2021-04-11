@@ -17,7 +17,7 @@ Use the <a href="docs.html#methods:orientation"><code class="js plain">orientati
 
 ===== JS
 var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
-var board = Chessboard('myBoard', ruyLopez)
+var board = Chessboard2('myBoard', ruyLopez)
 
 $('#showOrientationBtn').on('click', function () {
   console.log('Board orientation is: ' + board.orientation())

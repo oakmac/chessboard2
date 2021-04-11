@@ -28,4 +28,4 @@ var config = {
   onDragMove: onDragMove,
   sparePieces: true
 }
-var board = Chessboard('myBoard', config)
+var board = Chessboard2('myBoard', config)

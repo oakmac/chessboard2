@@ -72,7 +72,7 @@ const examplesGroups = [
 const homepageExample1 = ''
 
 const homepageExample2 = `
-var board2 = Chessboard('board2', {
+var board2 = Chessboard2('board2', {
   draggable: true,
   dropOffBoard: 'trash',
   sparePieces: true

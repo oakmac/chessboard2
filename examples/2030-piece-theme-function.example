@@ -25,4 +25,4 @@ var config = {
   pieceTheme: pieceTheme,
   position: 'start'
 }
-var board = Chessboard('myBoard', config)
+var board = Chessboard2('myBoard', config)

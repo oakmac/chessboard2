@@ -30,6 +30,6 @@ function makeRandomMove () {
   window.setTimeout(makeRandomMove, 500)
 }
 
-board = Chessboard('myBoard', 'start')
+board = Chessboard2('myBoard', 'start')
 
 window.setTimeout(makeRandomMove, 500)
