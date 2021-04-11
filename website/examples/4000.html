@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>chessboardjs Example #4000 - onChange</title>
+  <base href="../" />
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
+</head>
+<body>
+<p><a href="examples#4000">&larr; Back to all examples.</a></p>
+
+<p>The <a href="docs.html#config:onChange"><code class="js plain">onChange</code></a> event fires when the board position changes.</p>
+
+<!--- Begin Example HTML ------------------------------------------------------>
+<div id="myBoard" style="width: 400px"></div>
+<button id="ruyLopezBtn">Ruy Lopez</button>
+<button id="startPositionBtn">Start Position</button>
+<!--- End Example HTML -------------------------------------------------------->
+
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/chessboard.js"></script>
+<script>
+// --- Begin Example JS --------------------------------------------------------
+function onChange (oldPos, newPos) {
+  console.log('Position changed:')
+  console.log('Old position: ' + Chessboard.objToFen(oldPos))
+  console.log('New position: ' + Chessboard.objToFen(newPos))
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+}
+
+var config = {
+  draggable: true,
+  position: 'start',
+  onChange: onChange
+}
+var board = Chessboard('myBoard', config)
+
+$('#ruyLopezBtn').on('click', function () {
+  var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
+  board.position(ruyLopez)
+})
+
+$('#startPositionBtn').on('click', board.start)
+// --- End Example JS ----------------------------------------------------------
+</script>
+</body>
+</html>

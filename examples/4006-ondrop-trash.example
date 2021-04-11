@@ -1,0 +1,26 @@
+===== id
+4006
+
+===== Name
+onDrop Trash
+
+===== Description
+If <code class="js string">'trash'</code> is returned from the <a href="docs.html#config:onDrop"><code class="js plain">onDrop</code></a> function, the dragged piece will be removed.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+===== JS
+// trash black pieces when they are dropped
+function onDrop (source, target, piece, newPos, oldPos, orientation) {
+  if (piece.search(/b/) !== -1) {
+    return 'trash'
+  }
+}
+
+var config = {
+  draggable: true,
+  position: 'start',
+  onDrop: onDrop
+}
+var board = Chessboard('myBoard', config)

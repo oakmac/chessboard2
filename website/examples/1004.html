@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>chessboardjs Example #1004 - Multiple Boards</title>
+  <base href="../" />
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
+  <style type="text/css">
+  .small-board {
+  display: inline-block;
+  margin-right: 5px;
+  width: 200px;
+}
+  </style>
+</head>
+<body>
+<p><a href="examples#1004">&larr; Back to all examples.</a></p>
+
+<p>You can have multiple boards on the same page.</p>
+
+<!--- Begin Example HTML ------------------------------------------------------>
+<div id="board1" class="small-board"></div>
+<div id="board2" class="small-board"></div>
+<div id="board3" class="small-board"></div>
+<!--- End Example HTML -------------------------------------------------------->
+
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/chessboard.js"></script>
+<script>
+// --- Begin Example JS --------------------------------------------------------
+var board1 = Chessboard('board1', {
+  position: 'start',
+  showNotation: false
+})
+
+var board2 = Chessboard('board2', {
+  position: 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R',
+  showNotation: false
+})
+
+var board3 = Chessboard('board3', {
+  position: 'r1k4r/p2nb1p1/2b4p/1p1n1p2/2PP4/3Q1NB1/1P3PPP/R5K1',
+  showNotation: false
+})
+// --- End Example JS ----------------------------------------------------------
+</script>
+</body>
+</html>

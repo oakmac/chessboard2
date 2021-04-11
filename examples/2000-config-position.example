@@ -1,0 +1,17 @@
+===== id
+2000
+
+===== Name
+Start Position
+
+===== Description
+Set the <a href="docs.html#config:position"><code class="js plain">position</code></a> property to <code class="js string">'start'</code> to initialize the board to the start position.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+===== JS
+var config = {
+  position: 'start'
+}
+var board = Chessboard('myBoard', config)

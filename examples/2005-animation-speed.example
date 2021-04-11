@@ -1,0 +1,27 @@
+===== id
+2005
+
+===== Name
+Animation Speed
+
+===== Description
+You can control animation speeds with the <a href="docs.html#config:moveSpeed"><code class="js plain">moveSpeed</code></a>, <a href="docs.html#config:snapbackSpeed"><code class="js plain">snapbackSpeed</code></a>, <a href="docs.html#config:snapSpeed"><code class="js plain">snapSpeed</code></a>, and <a href="docs.html#config:trashSpeed"><code class="js plain">trashSpeed</code></a> properties.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+<button id="ruyLopezBtn">Ruy Lopez</button>
+<button id="startBtn">Start Position</button>
+
+===== JS
+var board = Chessboard('myBoard', {
+  draggable: true,
+  moveSpeed: 'slow',
+  snapbackSpeed: 500,
+  snapSpeed: 100,
+  position: 'start'
+})
+
+$('#ruyLopezBtn').on('click', function () {
+  board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')
+})
+$('#startBtn').on('click', board.start)

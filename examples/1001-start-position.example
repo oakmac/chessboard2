@@ -1,0 +1,15 @@
+===== id
+1001
+
+===== Name
+Start Position
+
+===== Description
+Pass <code class="js string">'start'</code> as the second argument to initialize
+the board to the start position.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+===== JS
+var board = Chessboard('myBoard', 'start')

@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>chessboardjs Example #3007 - Resize</title>
+  <base href="../" />
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
+</head>
+<body>
+<p><a href="examples#3007">&larr; Back to all examples.</a></p>
+
+<p>Use the <a href="docs.html#methods:resize"><code class="js plain">resize</code></a> method to recalculate and redraw the board based on the size of it's parent element. See the full effect of this example in a <a href="examples/3007" target="_new">new window</a>.</p>
+
+<!--- Begin Example HTML ------------------------------------------------------>
+<div id="myBoard" style="width: 60%"></div>
+<!--- End Example HTML -------------------------------------------------------->
+
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/chessboard.js"></script>
+<script>
+// --- Begin Example JS --------------------------------------------------------
+// NOTE: click "View example in new window." to see the full effect of this example
+var board = Chessboard('myBoard', 'start')
+$(window).resize(board.resize)
+// --- End Example JS ----------------------------------------------------------
+</script>
+</body>
+</html>

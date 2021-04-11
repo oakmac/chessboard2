@@ -1,0 +1,23 @@
+===== id
+2006
+
+===== Name
+Spare Pieces
+
+===== Description
+Set <a href="docs.html#config:sparePieces"><code class="js plain">sparePieces</code></a> to <code class="js keyword">true</code> to show spare pieces that can be dropped onto the board.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+<button id="startBtn">Start Position</button>
+<button id="clearBtn">Clear Board</button>
+
+===== JS
+var board = Chessboard('myBoard', {
+  draggable: true,
+  dropOffBoard: 'trash',
+  sparePieces: true
+})
+
+$('#startBtn').on('click', board.start)
+$('#clearBtn').on('click', board.clear)

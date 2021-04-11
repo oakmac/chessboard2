@@ -1,0 +1,478 @@
+{
+
+"config":[
+"------------------------------------------------------------------------------",
+{
+  "name":"draggable",
+  "type":"Boolean",
+  "req":false,
+  "default":"<code class='js keyword'>false</code>",
+  "desc":[
+    "If <code class='js keyword'>true</code>, pieces on the board are draggable to other squares."
+  ],
+  "examples":[2003]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"dropOffBoard",
+  "type":[
+    "<code class='js string'>'snapback'</code>",
+    "<code class='js string'>'trash'</code>"
+  ],
+  "req":false,
+  "default":"<code class='js string'>'snapback'</code>",
+  "desc":[
+    "If <code class='js string'>'snapback'</code>, pieces dropped off the board will return to their original square.",
+    "If <code class='js string'>'trash'</code>, pieces dropped off the board will be removed from the board.",
+    "This property has no effect when <a href='docs.html#config:draggable'><code class='js plain'>draggable</code></a> is <code class='js keyword'>false</code>."
+  ],
+  "examples":[2003,2082]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"position",
+  "type":[
+    "<code class='js string'>'start'</code>",
+    "<a href='docs.html#fen_string'>FEN String</a>",
+    "<a href='docs.html#position_object'>Position Object</a>"
+  ],
+  "req":false,
+  "default":false,
+  "desc":[
+    "If provided, sets the initial position of the board."
+  ],
+  "examples":[2000,2044,2063]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"onChange",
+  "type":"Function",
+  "req":false,
+  "default":false,
+  "desc":[
+    "Fires when the board position changes.",
+    "The first argument to the function is the old position, the second argument is the new position.",
+    "<span style='color: red; text-transform: uppercase; font-weight: bold;'>Warning:</span> do <strong>not</strong> call any position-changing methods in your <code class='js plain'>onChange</code> function or you will cause an infinite loop.",
+    "Position-changing methods are: <a href='docs.html#methods:clear'><code class='js plain'>clear()</code></a>, <a href='docs.html#methods:move'><code class='js plain'>move()</code></a>, <a href='docs.html#methods:position'><code class='js plain'>position()</code></a>, and <a href='docs.html#methods:start'><code class='js plain'>start()</code></a>."
+  ],
+  "examples":[4000]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"onDragStart",
+  "type":"Function",
+  "req":false,
+  "default":false,
+  "desc":[
+    "Fires when a piece is picked up.",
+    "The first argument to the function is the source of the piece, the second argument is the piece, the third argument is the current position on the board, and the fourth argument is the current orientation.",
+    "The drag action is prevented if the function returns <code class='js keyword'>false</code>."
+  ],
+  "examples":[4001,4002]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"onDragMove",
+  "type":"Function",
+  "req":false,
+  "default":false,
+  "desc":[
+    "Fires when a dragged piece changes location.",
+    "The first argument to the function is the new location of the piece, the second argument is the old location of the piece, the third argument is the source of the dragged piece, the fourth argument is the piece, the fifth argument is the current position on the board, and the sixth argument is the current orientation."
+  ],
+  "examples":[4003]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"onDrop",
+  "type":"Function",
+  "req":false,
+  "default":false,
+  "desc":[
+    "Fires when a piece is dropped.",
+    "The first argument to the function is the source of the dragged piece, the second argument is the target of the dragged piece, the third argument is the piece, the fourth argument is the new position once the piece drops, the fifth argument is the old position before the piece was picked up, and the sixth argument is the current orientation.",
+    "If <code class='js string'>'snapback'</code> is returned from the function, the piece will return to it's source square.",
+    "If <code class='js string'>'trash'</code> is returned from the function, the piece will be removed."
+  ],
+  "examples":[4004,4005,4006]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"onMouseoutSquare",
+  "type":"Function",
+  "req":false,
+  "default":false,
+  "desc":[
+    "Fires when the mouse leaves a square.",
+    "The first argument to the function is the square that was left, the second argument is the piece on that square (or <code class='js keyword'>false</code> if there is no piece), the third argument is the current position of the board, and the fourth argument is the current orientation.",
+    "Note that <code class='js plain'>onMouseoutSquare</code> will <strong>not</strong> fire during piece drag and drop. Use <code class='js plain'><a href='docs.html#config:onDragMove'>onDragMove</a></code>."
+  ],
+  "examples":[5003]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"onMouseoverSquare",
+  "type":"Function",
+  "req":false,
+  "default":false,
+  "desc":[
+    "Fires when the mouse enters a square.",
+    "The first argument to the function is the square that was entered, the second argument is the piece on that square (or <code class='js keyword'>false</code> if there is no piece), the third argument is the current position of the board, and the fourth argument is the current orientation.",
+    "Note that <code class='js plain'>onMouseoverSquare</code> will <strong>not</strong> fire during piece drag and drop. Use <code class='js plain'><a href='docs.html#config:onDragMove'>onDragMove</a></code>."
+  ],
+  "examples":[5003]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"onMoveEnd",
+  "type":"Function",
+  "req":false,
+  "default":false,
+  "desc":[
+    "Fires at the end of animations when the board position changes.",
+    "The first argument to the function is the old position, the second argument is the new position."
+  ],
+  "examples":[4012]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"onSnapbackEnd",
+  "type":"Function",
+  "req":false,
+  "default":false,
+  "desc":[
+    "Fires when the \"snapback\" animation is complete when pieces are dropped off the board.",
+    "The first argument to the function is the dragged piece, the second argument is the square the piece returned to, the third argument is the current position, and the fourth argument is the current orientation."
+  ],
+  "examples":[4011]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"onSnapEnd",
+  "type":"Function",
+  "req":false,
+  "default":false,
+  "desc":[
+    "Fires when the piece \"snap\" animation is complete.",
+    "The first argument to the function is the source of the dragged piece, the second argument is the target of the dragged piece, and the third argument is the piece."
+  ],
+  "examples":[5000]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"orientation",
+  "type":[
+    "<code class='js string'>'white'</code>",
+    "<code class='js string'>'black'</code>"
+  ],
+  "req":false,
+  "default":"<code class='js string'>'white'</code>",
+  "desc":[
+    "If provided, sets the initial orientation of the board."
+  ],
+  "examples":[2001]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"showNotation",
+  "type":"Boolean",
+  "req":false,
+  "default":"<code class='js keyword'>true</code>",
+  "desc":[
+    "Turn board notation on or off."
+  ],
+  "examples":[2002]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"sparePieces",
+  "type":"Boolean",
+  "req":false,
+  "default":"<code class='js keyword'>false</code>",
+  "desc":[
+    "If <code class='js keyword'>true</code>, the board will have spare pieces that can be dropped onto the board.",
+    "If <code class='js plain'>sparePieces</code> is set to <code class='js keyword'>true</code>, <a href='docs.html#config:draggable'><code class='js plain'>draggable</code></a> gets set to <code class='js keyword'>true</code> as well."
+  ],
+  "examples":2006
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"showErrors",
+  "type":["<code class='js keyword'>false</code>","String","Function"],
+  "req":false,
+  "default":false,
+  "desc":[
+    "<code class='js plain'>showErrors</code> is an optional parameter to control how Chessboard reports errors.",
+    "Every error in Chessboard has a <a href='docs.html#errors'>unique code</a> to help diagnose problems and search for solutions.",
+    "If <code class='js plain'>showErrors</code> is <code class='js keyword'>false</code> then errors will be ignored.",
+    "If <code class='js plain'>showErrors</code> is <code class='js string'>'console'</code> then errors will be sent to <code class='js plain'>console.log()</code>.",
+    "If <code class='js plain'>showErrors</code> is <code class='js string'>'alert'</code> then errors will be sent to <code class='js plain'>window.alert()</code>.",
+    "If <code class='js plain'>showErrors</code> is a function then the first argument is the unique error code, the second argument is an error string, and an optional third argument is a data structure that is relevant to the error."
+  ],
+  "examples":[]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"pieceTheme",
+  "type":["String","Function"],
+  "req":false,
+  "default":"<code class='js string'>'img/chesspieces/<br />wikipedia/{piece}.png'</code>",
+  "desc":[
+    "A template string used to determine the source of piece images.",
+    "If <code class='js plain'>pieceTheme</code> is a function the first argument is the piece code.",
+    "The function should return an <code class='js string'>&lt;img&gt;</code> source."
+  ],
+  "examples":[2004,2030]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"appearSpeed",
+  "type":["Number","<code class='js string'>'slow'</code>","<code class='js string'>'fast'</code>"],
+  "req":false,
+  "default":"<code class='js number'>200</code>",
+  "desc":[
+    "Animation speed for when pieces appear on a square.",
+    "Note that the \"appear\" animation only occurs when <a href='docs.html#config:sparePieces'><code class='js plain'>sparePieces</code></a> is <code class='js keyword'>false</code>."
+  ],
+  "examples":[]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"moveSpeed",
+  "type":["Number","<code class='js string'>'slow'</code>","<code class='js string'>'fast'</code>"],
+  "req":false,
+  "default":"<code class='js number'>200</code>",
+  "desc":[
+    "Animation speed for when pieces move between squares or from spare pieces to the board."
+  ],
+  "examples":[2005]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"snapbackSpeed",
+  "type":["Number","<code class='js string'>'slow'</code>","<code class='js string'>'fast'</code>"],
+  "req":false,
+  "default":"<code class='js number'>50</code>",
+  "desc":[
+    "Animation speed for when pieces that were dropped outside the board return to their original square."
+  ],
+  "examples":[2005]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"snapSpeed",
+  "type":["Number","<code class='js string'>'slow'</code>","<code class='js string'>'fast'</code>"],
+  "req":false,
+  "default":"<code class='js number'>25</code>",
+  "desc":[
+    "Animation speed for when pieces \"snap\" to a square when dropped."
+  ],
+  "examples":[2005]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"trashSpeed",
+  "type":["Number","<code class='js string'>'slow'</code>","<code class='js string'>'fast'</code>"],
+  "req":false,
+  "default":"<code class='js number'>100</code>",
+  "desc":[
+    "Animation speed for when pieces are removed."
+  ],
+  "examples":[2005]
+},
+"------------------------------------------------------------------------------"
+],
+
+
+
+
+
+
+
+
+
+
+
+"methods":[
+"------------------------------------------------------------------------------",
+{
+  "name":"clear(useAnimation)",
+  "args":[
+    ["useAnimation", "<code class='js keyword'>false</code> <small>(optional)</small>"]
+  ],
+  "desc":[
+    "Removes all the pieces on the board.",
+    "If <code class='js plain'>useAnimation</code> is <code class='js keyword'>false</code>, removes pieces instantly.",
+    "Alias of <a href='docs.html#methods:position'><code class='js plain'>position({})</code></a> and <a href='docs.html#methods:position'><code class='js plain'>position({},</code> <code class='js keyword'>false</code><code class='js plain'>)</code></a>"
+  ],
+  "examples":[3003]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"destroy()",
+  "desc":"Remove the widget from the DOM.",
+  "examples":[3006]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"fen()",
+  "desc":[
+    "Returns the current position as a FEN string.",
+    "Alias of <a href='docs.html#methods:position'><code class='js plain'>position(</code><code class='js string'>'fen'</code><code class='js plain'>)</code></a>"
+  ],
+  "examples":[3000]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"flip()",
+  "desc":[
+    "Flips the board orientation.",
+    "Alias of <a href='docs.html#methods:orientation'><code class='js plain'>orientation(</code><code class='js string'>'flip'</code><code class='js plain'>)</code></a>"
+  ],
+  "examples":[3005]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"move(move1, move2, etc)",
+  "args":[
+    ["moveN", "<code class='js string'>'e2-e4'</code>, <code class='js string'>'g8-f6'</code>, etc"]
+  ],
+  "desc":[
+    "Executes one or more moves on the board.",
+    "Returns an updated Position Object of the board including the move(s)."
+  ],
+  "examples":[3004]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"position(fen)",
+  "args":[
+    ["fen", "<code class='js string'>'fen'</code> <small>(optional)</small>"]
+  ],
+  "desc":[
+    "Returns the current position as a Position Object.",
+    "If the first argument is <code class='js string'>'fen'</code>, returns the position as a FEN string."
+  ],
+  "examples":[3000]
+},
+"------------------------------------------------------------------------------",
+{
+  "noId":true,
+  "name":"position(newPosition, useAnimation)",
+  "args":[
+    ["newPosition", "Position Object, FEN string, or <code class='js string'>'start'</code>"],
+    ["useAnimation", "<code class='js keyword'>false</code> <small>(optional)</small>"]
+  ],
+  "desc":[
+    "Animates to a new position.",
+    "If <code class='js plain'>useAnimation</code> is <code class='js keyword'>false</code>, sets the position instantly."
+  ],
+  "examples":[3001]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"orientation()",
+  "desc":[
+    "Returns the current orientation of the board."
+  ],
+  "examples":[3005]
+},
+"------------------------------------------------------------------------------",
+{
+  "noId":true,
+  "name":"orientation(side)",
+  "args":[
+    ["side", "<code class='js string'>'white'</code>, <code class='js string'>'black'</code>, or <code class='js string'>'flip'</code>"]
+  ],
+  "desc":[
+    "If <code class='js string'>'white'</code> or <code class='js string'>'black'</code>, sets the orientation of the board accordingly.",
+    "If <code class='js string'>'flip'</code>, flips the orientation."
+  ],
+  "examples":[3005]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"resize()",
+  "desc":[
+    "Recalculates board and square sizes based on the parent element and redraws the board accordingly."
+  ],
+  "examples":[3007]
+},
+"------------------------------------------------------------------------------",
+{
+  "name":"start(useAnimation)",
+  "args": [
+    ["useAnimation", "<code class='js keyword'>false</code> <small>(optional)</small>"]
+  ],
+  "desc":[
+    "Sets the board to the start position.",
+    "If <code class='js plain'>useAnimation</code> is <code class='js keyword'>false</code>, sets the position instantly.",
+    "Alias of <a href='docs.html#methods:position'><code class='js plain'>position(</code><code class='js string'>'start'</code><code class='js plain'>)</code></a> and <a href='docs.html#methods:position'><code class='js plain'>position(</code><code class='js string'>'start'</code><code class='js plain'>, </code><code class='js keyword'>false</code><code class='js plain'>)</code></a>"
+  ],
+  "examples":[3001]
+},
+"------------------------------------------------------------------------------"
+],
+
+
+
+
+
+
+
+
+
+
+"errors":[
+{
+  "id":1001,
+  "desc":"The first argument to <code class='js plain'>Chessboard()</code> cannot be an empty string.",
+  "fix":"The first argument to the <code class='js plain'>Chessboard()</code> constructor should be the id of a DOM element or a reference to a single DOM element."
+},
+{
+  "id":1003,
+  "desc":"The first argument to <code class='js plain'>Chessboard()</code> must be an ID or a single DOM node.",
+  "fix":"The first argument to the <code class='js plain'>Chessboard()</code> constructor should be the id of a DOM element or a reference to a single DOM element."
+},
+{
+  "id":1005,
+  "desc":"Unable to find a valid version of jQuery. Please include jQuery 1.8.3 or higher on the page.",
+  "fix":"Chessboard requires <a href='http://jquery.com/'>jQuery</a> version 1.8.3 or higher."
+},
+{
+  "id":2826,
+  "desc":"Invalid move passed to the move method.",
+  "fix":"Moves must be a string in the form of <code class='js string'>'e2-e4'</code>, <code class='js string'>'b8-c6'</code>, etc."
+},
+{
+  "id":5482,
+  "desc":"Invalid value passed to the orientation method.",
+  "fix":"The first argument to the orientation method must be <code class='js string'>'white'</code>, <code class='js string'>'black'</code>, or <code class='js string'>'flip'</code>."
+},
+{
+  "id":6482,
+  "desc":"Invalid value passed to the position method.",
+  "fix":"Position must be either <code class='js string'>'start'</code>, a valid FEN String, or a valid Position Object."
+},
+{
+  "id":7263,
+  "desc":"Invalid value passed to config.position",
+  "fix":"Position must either be <code class='js string'>'start'</code>, a valid FEN String, or a Position Object."
+},
+{
+  "id":8272,
+  "desc":"Unable to build image source for cfg.pieceTheme.",
+  "fix":[
+    "This is an internal Chessboard error that you should never see.",
+    "If you see this error please open a <a href='https://github.com/oakmac/chessboardjs/issues'>GitHub issue</a>."
+  ]
+}
+]
+
+
+
+
+
+
+
+}

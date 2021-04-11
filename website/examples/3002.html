@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>chessboardjs Example #3002 - Set Position Instantly</title>
+  <base href="../" />
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
+</head>
+<body>
+<p><a href="examples#3002">&larr; Back to all examples.</a></p>
+
+<p>Pass <code class="js keyword">false</code> as the second argument to the <a href="docs.html#methods:start"><code class="js plain">start</code></a> and <a href="docs.html#methods:position"><code class="js plain">position</code></a> methods to set the board position instantly.</p>
+
+<!--- Begin Example HTML ------------------------------------------------------>
+<div id="myBoard" style="width: 400px"></div>
+<button id="setRuyLopezBtn">Ruy Lopez</button>
+<button id="setStartBtn">Start Position</button>
+<button id="setRookCheckmateBtn">Rook Checkmate</button>
+<!--- End Example HTML -------------------------------------------------------->
+
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/chessboard.js"></script>
+<script>
+// --- Begin Example JS --------------------------------------------------------
+var board = Chessboard('myBoard')
+
+$('#setRuyLopezBtn').on('click', function () {
+  var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
+  board.position(ruyLopez, false)
+})
+
+$('#setStartBtn').on('click', function () {
+  board.start(false)
+})
+
+$('#setRookCheckmateBtn').on('click', function () {
+  var rookCheckmate = {
+    a4: 'bK',
+    c4: 'wK',
+    a7: 'wR'
+  }
+  board.position(rookCheckmate, false)
+})
+// --- End Example JS ----------------------------------------------------------
+</script>
+</body>
+</html>

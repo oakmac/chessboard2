@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>chessboardjs Example #2063 - Position Object</title>
+  <base href="../" />
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
+</head>
+<body>
+<p><a href="examples#2063">&larr; Back to all examples.</a></p>
+
+<p>You can set the <a href="docs.html#config:position"><code class="js plain">position</code></a> property with a <a href="docs.html#position_object">Position Object</a>.</p>
+
+<!--- Begin Example HTML ------------------------------------------------------>
+<div id="myBoard" style="width: 400px"></div>
+<!--- End Example HTML -------------------------------------------------------->
+
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/chessboard.js"></script>
+<script>
+// --- Begin Example JS --------------------------------------------------------
+var config = {
+  position: {
+    d4: 'wP',
+    d6: 'bK',
+    e4: 'wK'
+  }
+};
+var board = Chessboard('myBoard', config)
+// --- End Example JS ----------------------------------------------------------
+</script>
+</body>
+</html>

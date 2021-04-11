@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>chessboardjs Example #3004 - Move Pieces</title>
+  <base href="../" />
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
+</head>
+<body>
+<p><a href="examples#3004">&larr; Back to all examples.</a></p>
+
+<p>Use the <a href="docs.html#methods:move"><code class="js plain">move</code></a> method to make one or more moves on the board.</p>
+
+<!--- Begin Example HTML ------------------------------------------------------>
+<div id="myBoard" style="width: 400px"></div>
+<button id="move1Btn">e2-e4</button>
+<button id="move2Btn">d2-d4, g8-f6</button>
+<button id="startPositionBtn">Start Position</button>
+<!--- End Example HTML -------------------------------------------------------->
+
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/chessboard.js"></script>
+<script>
+// --- Begin Example JS --------------------------------------------------------
+var board = Chessboard('myBoard', 'start')
+
+$('#move1Btn').on('click', function () {
+  board.move('e2-e4')
+})
+
+$('#move2Btn').on('click', function () {
+  board.move('d2-d4', 'g8-f6')
+})
+
+$('#startPositionBtn').on('click', board.start)
+// --- End Example JS ----------------------------------------------------------
+</script>
+</body>
+</html>

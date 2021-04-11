@@ -1,0 +1,17 @@
+===== id
+3006
+
+===== Name
+Destroy Board
+
+===== Description
+Use the <a href="docs.html#methods:destroy"><code class="js plain">destroy</code></a> method to kill the board and remove it from the DOM.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+<button id="destroyBtn">Destroy Board</button>
+
+===== JS
+var board = Chessboard('myBoard', 'start')
+
+$('#destroyBtn').on('click', board.destroy)

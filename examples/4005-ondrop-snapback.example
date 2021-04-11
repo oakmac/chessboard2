@@ -1,0 +1,26 @@
+===== id
+4005
+
+===== Name
+onDrop Snapback
+
+===== Description
+If <code class="js string">'snapback'</code> is returned from the <a href="docs.html#config:onDrop"><code class="js plain">onDrop</code></a> function, the dragged piece will return to it's source square.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+===== JS
+// snapback black pieces when they are dropped
+function onDrop (source, target, piece, newPos, oldPos, orientation) {
+  if (piece.search(/b/) !== -1) {
+    return 'snapback'
+  }
+}
+
+var config = {
+  draggable: true,
+  position: 'start',
+  onDrop: onDrop
+}
+var board = Chessboard('myBoard', config)

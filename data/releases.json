@@ -1,0 +1,53 @@
+[
+"-----------------------------------------------------------------",
+{
+  "released":false,
+  "version":"0.3.1",
+  "date":"10 Aug 2013",
+  "changes":[
+    "Orientation methods now return current orientation (GitHub Issue #64)"
+  ],
+  "files":[
+    { "name":"chessboardjs-0.3.1.zip", "size":"44.6 KB" }
+  ]
+},
+"-----------------------------------------------------------------",
+{
+  "version":"0.3.0",
+  "date":"10 Aug 2013",
+  "changes":[
+    "Added appearSpeed animation config",
+    "Added onSnapbackEnd event",
+    "Added onMoveEnd event"
+  ],
+  "files":[
+    { "name":"chessboardjs-0.3.0.zip", "size":"44.6 KB" }
+  ]
+},
+"-----------------------------------------------------------------",
+{
+  "version":"0.2.0",
+  "date":"05 Aug 2013",
+  "changes":[
+    "Added onMouseoverSquare and onMouseoutSquare events",
+    "Added onSnapEnd event",
+    "Added square code as CSS class on the squares",
+    "chess.js integration examples"
+  ],
+  "files":[
+    { "name":"chessboardjs-0.2.0.zip", "size":"44.6 KB" }
+  ]
+},
+"-----------------------------------------------------------------",
+{
+  "version":"0.1.0",
+  "date":"21 Jul 2013",
+  "changes":[
+    "Initial release"
+  ],
+  "files":[
+    { "name":"chessboard-0.1.0.zip", "size":"44.0 KB" }
+  ]
+},
+"-----------------------------------------------------------------"
+]
