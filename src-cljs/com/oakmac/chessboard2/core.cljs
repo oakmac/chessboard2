@@ -23,6 +23,11 @@
 
 (def ellipsis "…")
 
+; (defn create-square-ids
+;   "returns a map of coord --> square ids
+;   used for the DOM elements on the page"
+;   [num-rows num-cols])
+
 ;; TODO: move to dom-util namespace?
 (defn grab-element
   "does it's best to grab a native DOM element from it's argument
@@ -117,7 +122,7 @@
        "orientation" #(orientation board-state %1)
        "position" #()
        "resize" #()
-       "start" #()))))
+       "start" #(position board-state start-position %1)))))
 
 (when js/window
   (gobj/set js/window "Chessboard2" constructor))
