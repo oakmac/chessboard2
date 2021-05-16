@@ -1,21 +1,17 @@
 (ns com.oakmac.chessboard2.core
   (:require
     [clojure.string :as str]
-    [goog.dom :as gdom]
-    [goog.object :as gobj]
     [com.oakmac.chessboard2.html :as html]
+    [com.oakmac.chessboard2.util.base58 :refer [random-base58]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen]]
-    [com.oakmac.chessboard2.util.base58 :refer [random-base58]]))
-
-(defn random-square-id []
-  (str "square-" (random-base58)))
+    [com.oakmac.chessboard2.util.squares :as squares-util]
+    [goog.dom :as gdom]
+    [goog.object :as gobj]))
 
 (defn random-row-id []
   (str "row-" (random-base58)))
 
-
 (def ruy-lopez-fen "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R")
-
 
 (def default-num-cols 8)
 (def default-num-rows 8)
@@ -29,7 +25,7 @@
 ;   [num-rows num-cols])
 
 ;; TODO: move to dom-util namespace?
-(defn grab-element
+(defn get-dom-element
   "does it's best to grab a native DOM element from it's argument
   arg can be either:
   1) already a DOM element
@@ -107,8 +103,12 @@
   ([el-id]
    (constructor el-id default-options))
   ([el js-opts]
-   (let [root-el (grab-element el)
-         initial-state2 (assoc initial-state :root-el root-el)
+   (let [root-el (get-dom-element el)
+         square-el-ids (squares-util/create-square-el-ids (:num-rows initial-state)
+                                                          (:num-cols initial-state))
+         initial-state2 (assoc initial-state :root-el root-el
+                                             :square-el-ids square-el-ids)
+         ;; create an atom per instance to track the state of the board
          board-state (atom initial-state2)]
      (init-dom! @board-state)
      (add-events! root-el)
@@ -121,8 +121,8 @@
        "move" #()
        "orientation" #(orientation board-state %1)
        "position" #()
-       "resize" #()
-       "start" #(position board-state start-position %1)))))
+       "resize" #()))))
+       ; "start" #(position board-state start-position %1)))))
 
 (when js/window
   (gobj/set js/window "Chessboard2" constructor))

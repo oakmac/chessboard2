@@ -1,25 +1,36 @@
 (ns com.oakmac.chessboard2.html
   (:require
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [com.oakmac.chessboard2.util.squares :refer [idx->alpha]]))
 
 (defn Square
-  [b-or-w code id]
-  (str
-    "<div class=square-55d63 id=\"" id "\">"
-
-    "</div>"))
+  [{:keys [color code id]}]
+  (let [classes (str "square-55d63 "
+                  (if (= color "white") "white-1e1d7" "black-3c85d"))]
+    (str
+      "<div class='" classes "' id='" id "'>"
+      code
+      "</div>")))
 
 (defn BoardContainer
-  [{:keys [num-rows num-cols]}]
+  [{:keys [num-rows num-cols square-el-ids]}]
   (str
     "<div class=chessboard-63f37>"
     "<div class=board-b72b1>"
-    (let [html (atom "")]
-      (doseq [row-idx (range 0 num-rows)]
+    (let [html (atom "")
+          white? (atom true)]
+      (doseq [row-idx (reverse (range 0 num-rows))]
         (swap! html str (str "<div class='row-5277c'>"))
         (doseq [col-idx (range 0 num-cols)]
-          (swap! html str (str "<div>" row-idx "-" col-idx "</div>")))
+          (let [code (str (idx->alpha col-idx) "-" (inc row-idx))]
+            (swap! html str (Square {:code code
+                                     :color (if @white? "white" "black")
+                                     :id (get square-el-ids code)}))
+            (swap! white? not)))
         (swap! html str (str "</div>")))
       @html)
     "</div>"
     "</div>"))
+
+;; step 1) build the HTML skeleton (ie: rows and squares)
+;; step 2) operate against that skeleton
