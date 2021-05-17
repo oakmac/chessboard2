@@ -8,7 +8,7 @@ Empty Board
 Chessboard.js initializes to an empty board with no second argument.
 
 ===== HTML
-<div id="myBoard" style="width: 400px"></div>
+<div id="myBoard" style="width: 400px;"></div>
 
 ===== JS
 var board = Chessboard2('myBoard')

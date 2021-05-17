@@ -21,4 +21,4 @@
     {}
     (for [row-idx (range 0 num-rows)
           col-idx (range 0 num-cols)]
-      (str (idx->alpha row-idx) "-" (inc col-idx)))))
+      (str (idx->alpha row-idx) (inc col-idx)))))

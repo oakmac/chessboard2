@@ -3,6 +3,7 @@
     [clojure.string :as str]
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.util.base58 :refer [random-base58]]
+    [com.oakmac.chessboard2.util.dom :as dom-util]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen]]
     [com.oakmac.chessboard2.util.squares :as squares-util]
     [goog.dom :as gdom]
@@ -23,22 +24,6 @@
 ;   "returns a map of coord --> square ids
 ;   used for the DOM elements on the page"
 ;   [num-rows num-cols])
-
-;; TODO: move to dom-util namespace?
-(defn get-dom-element
-  "does it's best to grab a native DOM element from it's argument
-  arg can be either:
-  1) already a DOM element
-  2) id of an element (getElementById)
-  3) querySelector
-
-  return nil if not able to grab the element"
-  [arg]
-  (let [el1 (gdom/getElement arg)]
-    (if el1
-      el1
-      (let [el2 (.querySelector js/document arg)]
-        (if el2 el2 nil)))))
 
 (def default-options
   (js-obj "position" "start"))
@@ -103,11 +88,14 @@
   ([el-id]
    (constructor el-id default-options))
   ([el js-opts]
-   (let [root-el (get-dom-element el)
+   (let [root-el (dom-util/get-element el)
+         root-width (dom-util/get-width root-el)
          square-el-ids (squares-util/create-square-el-ids (:num-rows initial-state)
                                                           (:num-cols initial-state))
          initial-state2 (assoc initial-state :root-el root-el
-                                             :square-el-ids square-el-ids)
+                                             :square-el-ids square-el-ids
+                                             :board-height root-width
+                                             :board-width root-width)
          ;; create an atom per instance to track the state of the board
          board-state (atom initial-state2)]
      (init-dom! @board-state)

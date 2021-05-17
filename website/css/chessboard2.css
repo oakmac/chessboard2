@@ -1,0 +1,30 @@
+.chessboard-21da3 {
+
+}
+
+.board-2dea6 {
+  border: 2px solid black;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.rank-98fa8 {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
+.square-4b72b {
+  flex: 1;
+}
+
+.white-3b784 {
+  background-color: #f0d9b5;
+  color: #b58863;
+}
+
+.black-b7cb6 {
+  background-color: #b58863;
+  color: #f0d9b5;
+}
