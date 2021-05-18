@@ -1,6 +1,5 @@
 (ns com.oakmac.chessboard2.util.dom
   (:require
-    [clojure.string :as str]
     [goog.dom :as gdom]
     [goog.object :as gobj]))
 

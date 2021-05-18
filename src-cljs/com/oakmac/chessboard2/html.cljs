@@ -1,6 +1,5 @@
 (ns com.oakmac.chessboard2.html
   (:require
-    [clojure.string :as str]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha]]))
 
 (defn Square

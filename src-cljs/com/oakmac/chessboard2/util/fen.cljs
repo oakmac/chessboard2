@@ -2,6 +2,12 @@
   (:require
     [clojure.string :as str]))
 
+(defn valid-fen?
+  [f]
+  (and (string? f)
+       ;; FIXME: write this for real
+       true))
+
 (defn fen->piece-code
   "convert FEN piece code to bP, wK, etc"
   [piece]

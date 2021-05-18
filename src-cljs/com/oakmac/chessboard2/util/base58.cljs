@@ -1,6 +1,4 @@
-(ns com.oakmac.chessboard2.util.base58
-  (:require
-    [clojure.string :as str]))
+(ns com.oakmac.chessboard2.util.base58)
 
 (def base58-chars
   "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")

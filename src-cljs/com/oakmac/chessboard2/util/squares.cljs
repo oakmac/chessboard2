@@ -1,6 +1,5 @@
 (ns com.oakmac.chessboard2.util.squares
   (:require
-    [clojure.string :as str]
     [com.oakmac.chessboard2.util.base58 :refer [random-base58]]))
 
 (defn- random-square-id []

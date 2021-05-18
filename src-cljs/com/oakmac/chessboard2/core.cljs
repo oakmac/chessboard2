@@ -2,31 +2,20 @@
   (:require
     [clojure.string :as str]
     [com.oakmac.chessboard2.html :as html]
-    [com.oakmac.chessboard2.util.base58 :refer [random-base58]]
     [com.oakmac.chessboard2.util.dom :as dom-util]
-    [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen]]
+    [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.squares :as squares-util]
-    [goog.dom :as gdom]
     [goog.object :as gobj]))
-
-(defn random-row-id []
-  (str "row-" (random-base58)))
 
 (def ruy-lopez-fen "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R")
 
 (def default-num-cols 8)
 (def default-num-rows 8)
 (def start-position-fen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
-
-(def ellipsis "…")
-
-; (defn create-square-ids
-;   "returns a map of coord --> square ids
-;   used for the DOM elements on the page"
-;   [num-rows num-cols])
+(def start-position (fen->position start-position-fen))
 
 (def default-options
-  (js-obj "position" "start"))
+  {:position start-position})
 
 (def initial-state
   {:arrows {}
@@ -83,21 +72,44 @@
   [{:keys [root-el orientation position] :as board}]
   (gobj/set root-el "innerHTML" (html/BoardContainer board)))
 
+(defn- expand-second-arg
+  "expands shorthand versions of the second argument"
+  [js-opts]
+  (let [opts (js->clj js-opts)]
+    (cond
+      (and (string? opts) (= (str/lower-case opts) "start"))
+      {:position start-position}
+
+      (valid-fen? opts)
+      {:position (fen->position opts)}
+
+      ;; FIXME: allow passing a position object here
+      ; (valid-position? opts)
+      ; {:position opts}
+
+      ;; FIXME: allow passing in a config object here
+
+      :else
+      {})))
+
 (defn constructor
   "Called to create a new Chessboard2 object."
   ([el-id]
-   (constructor el-id default-options))
+   (constructor el-id {}))
   ([el js-opts]
    (let [root-el (dom-util/get-element el)
+         ;; FIXME: fail if the DOM element does not exist
          root-width (dom-util/get-width root-el)
+         opts1 (expand-second-arg js-opts)
          square-el-ids (squares-util/create-square-el-ids (:num-rows initial-state)
                                                           (:num-cols initial-state))
-         initial-state2 (assoc initial-state :root-el root-el
-                                             :square-el-ids square-el-ids
-                                             :board-height root-width
-                                             :board-width root-width)
+         opts2 (merge initial-state opts1)
+         opts3 (assoc opts2 :root-el root-el
+                            :square-el-ids square-el-ids
+                            :board-height root-width
+                            :board-width root-width)
          ;; create an atom per instance to track the state of the board
-         board-state (atom initial-state2)]
+         board-state (atom opts3)]
      (init-dom! @board-state)
      (add-events! root-el)
      ;; return JS object that implements the API
