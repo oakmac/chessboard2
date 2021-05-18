@@ -1,4 +1,4 @@
-{:source-paths ["src-cljs"]
+{:source-paths ["src-cljs" "resources"]
 
  :dependencies []
 

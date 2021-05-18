@@ -18,7 +18,7 @@
 (def fen-pieces
   (set (.split "rnbqkpRNBQKP" "")))
 
-(def alpha-rows (vec (.split "hgfedcba" "")))
+(def file->alpha (vec (.split "abcdefgh" "")))
 
 (defn- explode-fen-spaces
   "converts FEN empty space numbers to single characters
@@ -42,21 +42,21 @@
               ;; we are only interested in position information
               (str/replace #" .+$" "")
               explode-fen-spaces)
-        rows (.split fen "/")
+        ranks (reverse (.split fen "/"))
         board-vec (map-indexed
-                    (fn [row-idx row-str]
+                    (fn [rank-idx row-str]
                       (map-indexed
-                        (fn [col-idx square-str]
-                          {:row-idx row-idx
-                           :col-idx col-idx
+                        (fn [file-idx square-str]
+                          {:rank-idx rank-idx
+                           :file-idx file-idx
                            :fen-code square-str})
                         row-str))
-                    rows)
+                    ranks)
         every-square (flatten board-vec)]
     (reduce
-      (fn [pos {:keys [col-idx row-idx fen-code]}]
+      (fn [pos {:keys [file-idx rank-idx fen-code]}]
         (if (contains? fen-pieces fen-code)
-          (let [alpha-square (str (nth alpha-rows row-idx) (inc col-idx))]
+          (let [alpha-square (str (nth file->alpha file-idx) (inc rank-idx))]
             (assoc pos alpha-square (fen->piece-code fen-code)))
           pos))
       {}
@@ -69,3 +69,4 @@
 ;; TODO: move to testing suite
 (assert (= {} (fen->position "8/8/8/8/8/8/8/8")))
 (assert (= {"a2" "wP", "b2" "bP"} (fen->position "8/8/8/8/8/8/Pp6/8")))
+;; FIXME: need more tests here

@@ -4,10 +4,10 @@
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.util.dom :as dom-util]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
+    [com.oakmac.chessboard2.util.predicates :refer [valid-position?]]
     [com.oakmac.chessboard2.util.squares :as squares-util]
+    [goog.dom :as gdom]
     [goog.object :as gobj]))
-
-(def ruy-lopez-fen "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R")
 
 (def default-num-cols 8)
 (def default-num-rows 8)
@@ -35,10 +35,20 @@
 (defn toggle-orientation [o]
   (if (= o "white") "black" "white"))
 
+(defn- draw-position-instant!
+  "put pieces inside squares"
+  [{:keys [square-el-ids position]}]
+  (doseq [[square piece] position]
+    (let [square-id (get square-el-ids square)
+          square-el (gdom/getElement square-id)]
+      ;; FIXME: should append element here instead of innerHTML
+      ;; maybe all pieces are children of the board element; positioned absolutely
+      ;; absolute positioning should make animation easy
+      (gobj/set square-el "innerHTML" (html/Piece {:piece piece})))))
+
 (defn- draw-board!
-  "FIXME: write this"
-  [{:keys [arrows orientation position root-el]}]
-  (gobj/set root-el "innerHTML" (str "<h1>" orientation "</h1>")))
+  [{:keys [orientation]}])
+  ;; (gobj/set root-el "innerHTML" (str "<h1>" orientation "</h1>")))
 
 ;; -----------------------------------------------------------------------------
 ;; API Methods
@@ -83,9 +93,8 @@
       (valid-fen? opts)
       {:position (fen->position opts)}
 
-      ;; FIXME: allow passing a position object here
-      ; (valid-position? opts)
-      ; {:position opts}
+      (valid-position? opts)
+      {:position opts}
 
       ;; FIXME: allow passing in a config object here
 
@@ -112,6 +121,7 @@
          board-state (atom opts3)]
      (init-dom! @board-state)
      (add-events! root-el)
+     (draw-position-instant! @board-state)
      ;; return JS object that implements the API
      (js-obj
        "clear" #(position board-state {} %1)
