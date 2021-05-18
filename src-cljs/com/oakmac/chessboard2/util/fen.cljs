@@ -2,12 +2,6 @@
   (:require
     [clojure.string :as str]))
 
-(defn valid-fen?
-  [f]
-  (and (string? f)
-       ;; FIXME: write this for real
-       true))
-
 (defn fen->piece-code
   "convert FEN piece code to bP, wK, etc"
   [piece]
@@ -33,15 +27,19 @@
     (str/replace "3" "111")
     (str/replace "2" "11")))
 
+(defn simplify-fen-string
+  "1) cut off any move, casting, etc info from the end of a FEN string (we are only interested in board position)
+   2) replace all consecutive pawns with 1's"
+  [f]
+  (-> f
+      (str/replace #" .+$" "")
+      explode-fen-spaces))
+
 ;; TODO: candidate for optimization
 (defn fen->position
   "converts a FEN string to a Position Map"
   [fen]
-  (let [fen (-> fen
-              ;; cut off any move, casting, etc info from the end
-              ;; we are only interested in position information
-              (str/replace #" .+$" "")
-              explode-fen-spaces)
+  (let [fen (simplify-fen-string fen)
         ranks (reverse (.split fen "/"))
         board-vec (map-indexed
                     (fn [rank-idx row-str]
@@ -70,3 +68,29 @@
 (assert (= {} (fen->position "8/8/8/8/8/8/8/8")))
 (assert (= {"a2" "wP", "b2" "bP"} (fen->position "8/8/8/8/8/8/Pp6/8")))
 ;; FIXME: need more tests here
+
+(defn- fen-chunk? [f]
+  (and (string? f)
+       (= 8 (count f))
+       (= -1 (.search f #"[^kqrnbpKQRNBP1]"))))
+
+(defn valid-fen?
+  [f]
+  (if-not (string? f)
+    false
+    (let [f2 (simplify-fen-string f)
+          fen-chunks (.split f2 "/")]
+      (and (= 8 (count fen-chunks))
+           (every? fen-chunk? fen-chunks)))))
+
+(assert (valid-fen? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"))
+(assert (valid-fen? "8/8/8/8/8/8/8/8"))
+(assert (valid-fen? "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R"))
+(assert (valid-fen? "3r3r/1p4pp/2nb1k2/pP3p2/8/PB2PN2/p4PPP/R4RK1 b - - 0 1"))
+(assert (not (valid-fen? "3r3z/1p4pp/2nb1k2/pP3p2/8/PB2PN2/p4PPP/R4RK1 b - - 0 1")))
+(assert (not (valid-fen? "anbqkbnr/8/8/8/8/8/PPPPPPPP/8")))
+(assert (not (valid-fen? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/")))
+(assert (not (valid-fen? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBN")))
+(assert (not (valid-fen? "888888/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")))
+(assert (not (valid-fen? "888888/pppppppp/74/8/8/8/PPPPPPPP/RNBQKBNR")))
+(assert (not (valid-fen? {})))

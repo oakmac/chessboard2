@@ -14,9 +14,6 @@
 (def start-position-fen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
 (def start-position (fen->position start-position-fen))
 
-(def default-options
-  {:position start-position})
-
 (def initial-state
   {:arrows {}
    :num-rows 8
@@ -82,12 +79,19 @@
   [{:keys [root-el orientation position] :as board}]
   (gobj/set root-el "innerHTML" (html/BoardContainer board)))
 
+(defn start-position? [s]
+  (and (string? s)
+       (= "start" (str/lower-case s))))
+
+(def valid-config-keys
+  #{"position"})
+
 (defn- expand-second-arg
   "expands shorthand versions of the second argument"
   [js-opts]
   (let [opts (js->clj js-opts)]
     (cond
-      (and (string? opts) (= (str/lower-case opts) "start"))
+      (start-position? opts)
       {:position start-position}
 
       (valid-fen? opts)
@@ -96,7 +100,14 @@
       (valid-position? opts)
       {:position opts}
 
-      ;; FIXME: allow passing in a config object here
+      (map? opts)
+      (let [opts2 (select-keys opts valid-config-keys)
+            their-pos (get opts2 "position")]
+        (cond-> {}
+          (start-position? their-pos) (assoc :position start-position)
+          (valid-fen? their-pos)      (assoc :position (fen->position their-pos))
+          (valid-position? their-pos) (assoc :position their-pos)))
+          ;; FIXME: other configs values here
 
       :else
       {})))
