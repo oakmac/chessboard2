@@ -1,6 +1,14 @@
-(ns com.oakmac.chessboard2.util.predicates)
+(ns com.oakmac.chessboard2.util.predicates
+  (:require
+    [clojure.string :as str]))
 
-(defn valid-piece? [p]
+(defn start-position?
+  [s]
+  (and (string? s)
+       (= "start" (str/lower-case s))))
+
+(defn valid-piece?
+  [p]
   (and (string? p)
        (not= -1 (.search p #"^[bw][KQRNBP]$"))))
 
@@ -15,7 +23,7 @@
        (every? valid-square? (keys p))
        (every? valid-piece? (vals p))))
 
-;; FIXME move to testing
+;; TODO move to testing
 (assert (valid-square? "a1"))
 (assert (valid-square? "e2"))
 (assert (not (valid-square? "D2")))

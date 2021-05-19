@@ -4,7 +4,7 @@
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.util.dom :as dom-util]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
-    [com.oakmac.chessboard2.util.predicates :refer [valid-position?]]
+    [com.oakmac.chessboard2.util.predicates :refer [start-position? valid-position?]]
     [com.oakmac.chessboard2.util.squares :as squares-util]
     [goog.dom :as gdom]
     [goog.object :as gobj]))
@@ -34,14 +34,18 @@
 
 (defn- draw-position-instant!
   "put pieces inside squares"
-  [{:keys [square-el-ids position]}]
-  (doseq [[square piece] position]
-    (let [square-id (get square-el-ids square)
-          square-el (gdom/getElement square-id)]
-      ;; FIXME: should append element here instead of innerHTML
-      ;; maybe all pieces are children of the board element; positioned absolutely
-      ;; absolute positioning should make animation easy
-      (gobj/set square-el "innerHTML" (html/Piece {:piece piece})))))
+  [{:keys [board-width pieces-container-id piece-square-pct position square-el-ids]}]
+  (let [pieces-el (gdom/getElement pieces-container-id)
+        html (atom "")]
+    (doseq [[square piece] position]
+      ;; TODO: can do this without an atom
+      (swap! html str (html/Piece {:board-width board-width
+                                   :piece piece
+                                   :square square
+                                   :width (/ board-width 8)
+                                   :piece-square-pct piece-square-pct})))
+    ;; TODO: should append here instead of setting innerHTML (other items will be destroyed)
+    (gobj/set pieces-el "innerHTML" @html)))
 
 (defn- draw-board!
   [{:keys [orientation]}])
@@ -78,10 +82,6 @@
 (defn init-dom!
   [{:keys [root-el orientation position] :as board}]
   (gobj/set root-el "innerHTML" (html/BoardContainer board)))
-
-(defn start-position? [s]
-  (and (string? s)
-       (= "start" (str/lower-case s))))
 
 (def valid-config-keys
   #{"position"})
@@ -127,7 +127,9 @@
          opts3 (assoc opts2 :root-el root-el
                             :square-el-ids square-el-ids
                             :board-height root-width
-                            :board-width root-width)
+                            :board-width root-width
+                            :pieces-container-id (str (random-uuid))
+                            :piece-square-pct 0.9)
          ;; create an atom per instance to track the state of the board
          board-state (atom opts3)]
      (init-dom! @board-state)
@@ -145,5 +147,6 @@
        "resize" #()))))
        ; "start" #(position board-state start-position %1)))))
 
-(when js/window
+;; TODO: support other module exports here
+(when (and js/window (not (fn? (gobj/get js/window "Chessboard2"))))
   (gobj/set js/window "Chessboard2" constructor))

@@ -2,9 +2,16 @@
 
 }
 
-.board-2dea6 {
+.items-container-c9182 {
+  position: relative;
+}
+
+.board-container-41a68 {
   border: 2px solid black;
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
+}
+
+.squares-2dea6 {
   display: flex;
   flex-direction: column;
 }
@@ -27,4 +34,12 @@
 .black-b7cb6 {
   background-color: #b58863;
   color: #f0d9b5;
+}
+
+.piece-349f8 {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: absolute;
 }
