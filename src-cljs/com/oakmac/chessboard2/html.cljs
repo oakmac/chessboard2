@@ -49,7 +49,7 @@
         square-width (/ board-width 8)
         piece-pct (* 100 piece-square-pct)]
    (str
-     "<div class='piece-349f8' style='left:" left "px; top:" top "px; width: " square-width "px; height: " square-width "px;'>"
+     "<div class='piece-349f8' id='" id "' style='left:" left "px; top:" top "px; width: " square-width "px; height: " square-width "px;'>"
      ;; FIXME: this needs to be customizable for the user
      "<img src='data:image/svg+xml;base64," (piece->imgsrc piece) "' alt='' style='height: " piece-pct "%; width: " piece-pct "%;' />"
      "</div>")))

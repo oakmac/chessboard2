@@ -2,6 +2,11 @@
   (:require
     [clojure.string :as str]))
 
+(defn fen-string?
+  [s]
+  (and (string? s)
+       (= "fen" (str/lower-case s))))
+
 (defn start-position?
   [s]
   (and (string? s)

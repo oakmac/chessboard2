@@ -42,4 +42,6 @@
   flex-direction: row;
   justify-content: center;
   position: absolute;
+
+  transition: left 1s, top 1s;
 }

@@ -4,7 +4,8 @@
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.util.dom :as dom-util]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
-    [com.oakmac.chessboard2.util.predicates :refer [start-position? valid-position?]]
+    [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
+    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-position? valid-position?]]
     [com.oakmac.chessboard2.util.squares :as squares-util]
     [goog.dom :as gdom]
     [goog.object :as gobj]))
@@ -34,22 +35,52 @@
 
 (defn- draw-position-instant!
   "put pieces inside squares"
-  [{:keys [board-width pieces-container-id piece-square-pct position square-el-ids]}]
-  (let [pieces-el (gdom/getElement pieces-container-id)
+  [board-state]
+  (let [{:keys [board-width pieces-container-id piece-square-pct position square-el-ids]} @board-state
+        pieces-el (gdom/getElement pieces-container-id)
         html (atom "")]
     (doseq [[square piece] position]
       ;; TODO: can do this without an atom
-      (swap! html str (html/Piece {:board-width board-width
-                                   :piece piece
-                                   :square square
-                                   :width (/ board-width 8)
-                                   :piece-square-pct piece-square-pct})))
+      (let [piece-id (random-piece-id)]
+        (swap! html str (html/Piece {:board-width board-width
+                                     :id piece-id
+                                     :piece piece
+                                     :square square
+                                     :width (/ board-width 8)
+                                     :piece-square-pct piece-square-pct}))
+        (swap! board-state assoc-in [:square->piece-id square] piece-id)))
     ;; TODO: should append here instead of setting innerHTML (other items will be destroyed)
     (gobj/set pieces-el "innerHTML" @html)))
 
 (defn- draw-board!
   [{:keys [orientation]}])
   ;; (gobj/set root-el "innerHTML" (str "<h1>" orientation "</h1>")))
+
+(defn calculate-animations
+  "return the animations that need to happen in order to get from posA to posB"
+  [posA posB]
+  ;; remove pieces that are the same in both positions
+  ;; find all of the "move" animations
+  ;; "add piece" animations
+  ;; "clear" animations
+  [{:type "move"
+    :source "b1"
+    :destination "c3"}
+   {:type "move"
+    :source "d2"
+    :destination "d4"}])
+
+(defn square->piece-el
+  [])
+
+(defn do-animations!
+  [board-state animations]
+  (doseq [animation animations]
+    (let [piece-id (get-in @board-state [:square->piece-id (:source animation)])
+          piece-el (gdom/getElement piece-id)]
+      (when piece-el
+        (gobj/set (gobj/get piece-el "style") "left" "100px")
+        (gobj/set (gobj/get piece-el "style") "top" "200px")))))
 
 ;; -----------------------------------------------------------------------------
 ;; API Methods
@@ -70,11 +101,31 @@
 
 (defn position
   "returns or sets the current board position"
-  [board new-pos animate?]
+  [board-state new-pos animate?]
   (cond
-    (not new-pos) (:position @board)
-    (= (str/lower-case new-pos) "fen") (position->fen (:position @board))
-    :else nil))
+    ;; no first argument: return the position as a JS Object
+    (not new-pos) (-> @board-state :position clj->js)
+    ;; first argument is "fen", return position as a FEN string
+    (fen-string? new-pos) (-> @board-state :position position->fen)
+    ;; first argument is "start", set the starting position
+    (start-position? new-pos) (position board-state start-position animate?)
+    ;; new-pos is a fen string
+    (valid-fen? new-pos) (position board-state (fen->position new-pos) animate?)
+    ;; new-pos is a valid position
+    (valid-position? new-pos)
+    (if (false? animate?)
+      ;; set position instantly
+      (do
+        (swap! board-state assoc :position new-pos)
+        (draw-position-instant! board-state))
+      ;; else do animations
+      (let [animations (calculate-animations (:position @board-state) new-pos)]
+        (do-animations! board-state animations)
+        (swap! board-state assoc :position new-pos)))
+
+    :else
+    (do (js/console.warn "Invalid value passed to the position method:" (clj->js new-pos))
+        nil)))
 
 ;; -----------------------------------------------------------------------------
 ;; Constructor
@@ -125,27 +176,28 @@
                                                           (:num-cols initial-state))
          opts2 (merge initial-state opts1)
          opts3 (assoc opts2 :root-el root-el
-                            :square-el-ids square-el-ids
                             :board-height root-width
                             :board-width root-width
+                            :piece-square-pct 0.9
                             :pieces-container-id (str (random-uuid))
-                            :piece-square-pct 0.9)
+                            :square->piece-id {}
+                            :square-el-ids square-el-ids)
          ;; create an atom per instance to track the state of the board
          board-state (atom opts3)]
      (init-dom! @board-state)
      (add-events! root-el)
-     (draw-position-instant! @board-state)
+     (draw-position-instant! board-state)
      ;; return JS object that implements the API
      (js-obj
        "clear" #(position board-state {} %1)
        "destroy" "FIXME"
-       "fen" "FIXME"
+       "fen" #(position board-state "fen" false)
        "flip" #(orientation board-state "flip")
        "move" #()
        "orientation" #(orientation board-state %1)
-       "position" #()
-       "resize" #()))))
-       ; "start" #(position board-state start-position %1)))))
+       "position" #(position board-state (js->clj %1) %2)
+       "resize" #()
+       "start" #(position board-state start-position %1)))))
 
 ;; TODO: support other module exports here
 (when (and js/window (not (fn? (gobj/get js/window "Chessboard2"))))
