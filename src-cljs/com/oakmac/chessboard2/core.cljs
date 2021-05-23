@@ -59,7 +59,7 @@
 
 (defmethod do-animation! "ANIMATION_ADD"
   [board-state {:keys [piece square]}]
-  (let [{:keys [board-width pieces-container-id piece-square-pct position square-el-ids]} @board-state
+  (let [{:keys [animate-speed-ms board-width pieces-container-id piece-square-pct position square-el-ids]} @board-state
         new-piece-id (random-piece-id)
         new-piece-html (html/Piece {:board-width board-width
                                     :id new-piece-id
@@ -73,7 +73,8 @@
     ;; start opacity animation
     (js/setTimeout
       (fn []
-        (remove-class! new-piece-id "hidden-20b44"))
+        (set-style-prop! new-piece-id "opacity" "100%")
+        (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms")))
       1)
     ;; add the piece id to the board state
     (swap! board-state assoc-in [:square->piece-id square] new-piece-id)))
@@ -84,32 +85,47 @@
         piece-id (get square->piece-id source)
         piece-el (gdom/getElement piece-id)]
     (if-not piece-el
-      (js/console.warn "Unable to get piece element:" piece-id)
+      (do
+        (js/console.warn "Unable to get piece element:" piece-id source)
+        (js/console.log (pr-str square->piece-id)))
       (let [target-square-dimensions (square->dimensions destination board-width)]
+
+        ; (set-style-prop! piece-el "transition" (str "all " animate-speed-ms "ms"))
         (set-style-prop! piece-el "left" (str (:left target-square-dimensions) "px"))
         (set-style-prop! piece-el "top" (str (:top target-square-dimensions) "px"))
-        (set-style-prop! piece-el "transition" (str "all " animate-speed-ms "ms"))
+
         (when capture?
           (let [capture-piece-id (get square->piece-id destination)]
+            (js/console.log "goodbye:" capture-piece-id)
             ;; TODO: do we want some very fast animation here?
             (js/setTimeout
               (fn []
                 (remove-element! capture-piece-id))
               animate-speed-ms)))
+
         ;; update the square->piece mapping
-        (swap! board-state update :square->piece-id
-          (fn [sq->id]
-            (-> sq->id
-                (dissoc source)
-                (assoc destination piece-id))))))))
+        (swap! board-state update-in [:square->piece-id]
+               (fn [sq->id]
+                 (-> sq->id
+                     (dissoc source)
+                     (assoc destination piece-id))))))))
 
 (defmethod do-animation! "ANIMATION_CLEAR"
   [board-state {:keys [piece square]}]
-  (let [piece-id (get-in @board-state [:square->piece-id square])
+  (let [{:keys [animate-speed-ms board-width square->piece-id]} @board-state
+        piece-id (get-in @board-state [:square->piece-id square])
         piece-el (gdom/getElement piece-id)]
-    (gobj/set (gobj/get piece-el "style") "opacity" "0")))
-    ;; FIXME: remove piece-el from DOM
-    ;; FIXME: swap! board-state remove piece-id
+    ;; remove the piece from the DOM once the animation finishes
+    (.addEventListener piece-el "transitionend"
+      (fn []
+        (remove-element! piece-el)))
+
+    ;; begin fade out animation
+    (set-style-prop! piece-el "opacity" "0")
+    (set-style-prop! piece-el "transition" (str "all " animate-speed-ms))
+
+    ;; update square->piece mapping
+    (swap! board-state update :square->piece-id dissoc square)))
 
 (defmethod do-animation! :default
   [board-state animation]
@@ -140,8 +156,15 @@
 (defn set-position-with-animations!
   [board-state new-pos]
   (let [animations (calculate-animations (:position @board-state) new-pos)]
+
+    (js/console.log (pr-str animations))
+
     (doseq [anim animations]
       (do-animation! board-state anim))
+
+
+    (js/console.log (pr-str (:square->piece-id @board-state)))
+
     (swap! board-state assoc :position new-pos)))
 
 (defn set-position-instant!
@@ -225,7 +248,7 @@
                                              (:num-cols initial-state))
          opts2 (merge initial-state opts1)
          opts3 (assoc opts2 :root-el root-el
-                            :animate-speed-ms 200
+                            :animate-speed-ms 600
                             :board-height root-width
                             :board-width root-width
                             :piece-square-pct 0.9

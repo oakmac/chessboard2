@@ -30,7 +30,15 @@ $('#setRuyLopezBtn').on('click', function () {
   board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')
 })
 
-$('#setStartBtn').on('click', board.start)
+// $('#setStartBtn').on('click', board.start)
+$('#setStartBtn').on('click', function () {
+board.position({
+e1: 'wK',
+e8: 'bK',
+a7: 'bP',
+h8: 'wR'
+})
+})
 
 $('#setRookCheckmateBtn').on('click', function () {
   board.position({
