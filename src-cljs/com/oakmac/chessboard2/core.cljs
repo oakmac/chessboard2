@@ -1,19 +1,16 @@
 (ns com.oakmac.chessboard2.core
   (:require
     [clojure.string :as str]
+    [com.oakmac.chessboard2.animations :refer [calculate-animations]]
     [com.oakmac.chessboard2.html :as html]
+    [com.oakmac.chessboard2.util.board :refer [start-position]]
     [com.oakmac.chessboard2.util.dom :as dom-util]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
-    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-position? valid-position?]]
-    [com.oakmac.chessboard2.util.squares :as squares-util]
+    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-position?]]
+    [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids squares-for-board]]
     [goog.dom :as gdom]
     [goog.object :as gobj]))
-
-(def default-num-cols 8)
-(def default-num-rows 8)
-(def start-position-fen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
-(def start-position (fen->position start-position-fen))
 
 (def initial-state
   {:arrows {}
@@ -56,23 +53,6 @@
   [{:keys [orientation]}])
   ;; (gobj/set root-el "innerHTML" (str "<h1>" orientation "</h1>")))
 
-(defn calculate-animations
-  "return the animations that need to happen in order to get from posA to posB"
-  [posA posB]
-  ;; remove pieces that are the same in both positions
-  ;; find all of the "move" animations
-  ;; "add piece" animations
-  ;; "clear" animations
-  [{:type "move"
-    :source "b1"
-    :destination "c3"}
-   {:type "move"
-    :source "d2"
-    :destination "d4"}])
-
-(defn square->piece-el
-  [])
-
 (defn do-animations!
   [board-state animations]
   (doseq [animation animations]
@@ -99,6 +79,11 @@
                        (:orientation @board))
     :else (:orientation @board)))
 
+; (defn set-position!
+;   "Sets a new position on the board"
+;   [board-state new-pos animate?])
+;   ;; FIXME: write me
+
 (defn position
   "returns or sets the current board position"
   [board-state new-pos animate?]
@@ -108,7 +93,7 @@
     ;; first argument is "fen", return position as a FEN string
     (fen-string? new-pos) (-> @board-state :position position->fen)
     ;; first argument is "start", set the starting position
-    (start-position? new-pos) (position board-state start-position animate?)
+    (start-string? new-pos) (position board-state start-position animate?)
     ;; new-pos is a fen string
     (valid-fen? new-pos) (position board-state (fen->position new-pos) animate?)
     ;; new-pos is a valid position
@@ -142,7 +127,7 @@
   [js-opts]
   (let [opts (js->clj js-opts)]
     (cond
-      (start-position? opts)
+      (start-string? opts)
       {:position start-position}
 
       (valid-fen? opts)
@@ -155,7 +140,7 @@
       (let [opts2 (select-keys opts valid-config-keys)
             their-pos (get opts2 "position")]
         (cond-> {}
-          (start-position? their-pos) (assoc :position start-position)
+          (start-string? their-pos) (assoc :position start-position)
           (valid-fen? their-pos)      (assoc :position (fen->position their-pos))
           (valid-position? their-pos) (assoc :position their-pos)))
           ;; FIXME: other configs values here
@@ -172,8 +157,8 @@
          ;; FIXME: fail if the DOM element does not exist
          root-width (dom-util/get-width root-el)
          opts1 (expand-second-arg js-opts)
-         square-el-ids (squares-util/create-square-el-ids (:num-rows initial-state)
-                                                          (:num-cols initial-state))
+         square-el-ids (create-square-el-ids (:num-rows initial-state)
+                                             (:num-cols initial-state))
          opts2 (merge initial-state opts1)
          opts3 (assoc opts2 :root-el root-el
                             :board-height root-width

@@ -7,7 +7,7 @@
   (and (string? s)
        (= "fen" (str/lower-case s))))
 
-(defn start-position?
+(defn start-string?
   [s]
   (and (string? s)
        (= "start" (str/lower-case s))))
@@ -28,7 +28,6 @@
        (every? valid-square? (keys p))
        (every? valid-piece? (vals p))))
 
-;; TODO move to testing
 (assert (valid-square? "a1"))
 (assert (valid-square? "e2"))
 (assert (not (valid-square? "D2")))

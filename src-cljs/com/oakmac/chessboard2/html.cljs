@@ -1,6 +1,7 @@
 (ns com.oakmac.chessboard2.html
   (:require
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
+    [com.oakmac.chessboard2.util.board :refer [file->idx rank->idx]]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha]]
     [goog.crypt.base64 :as base64]))
 
@@ -9,26 +10,6 @@
 (defn piece->imgsrc
   [piece]
   (base64/encodeString (get wikipedia-theme (name piece))))
-
-(def file->idx
-  {"a" 0
-   "b" 1
-   "c" 2
-   "d" 3
-   "e" 4
-   "f" 5
-   "g" 6
-   "h" 7})
-
-(def rank->idx
-  {"8" 0
-   "7" 1
-   "6" 2
-   "5" 3
-   "4" 4
-   "3" 5
-   "2" 6
-   "1" 7})
 
 (defn square->dimensions
   "FIXME: write me"
