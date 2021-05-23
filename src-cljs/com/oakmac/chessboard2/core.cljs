@@ -1,6 +1,5 @@
 (ns com.oakmac.chessboard2.core
   (:require
-    [clojure.string :as str]
     [com.oakmac.chessboard2.animations :refer [calculate-animations]]
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.util.board :refer [start-position]]
@@ -8,7 +7,7 @@
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-position?]]
-    [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids squares-for-board]]
+    [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids]]
     [goog.dom :as gdom]
     [goog.object :as gobj]))
 
