@@ -58,7 +58,8 @@
                               (conj anims {:type "ANIMATION_MOVE"
                                            :source closest-piece
                                            :destination square
-                                           :piece piece})
+                                           :piece piece
+                                           :capture? (contains? posA square)})
                               anims))
                           []
                           posB)
@@ -95,19 +96,14 @@
 
     (concat move-animations add-animations clear-animations)))
 
-(def test1-posA
-  {"a1" "wQ"
-   "c3" "bP"})
-
-(def test1-posB
-  {"a2" "wQ"
-   "c3" "bP"})
-
+(def test1-posA {"a1" "wQ", "c3" "bP"})
+(def test1-posB {"a2" "wQ", "c3" "bP"})
 (def test1-anims
   #{{:type "ANIMATION_MOVE"
      :source "a1"
      :destination "a2"
-     :piece "wQ"}})
+     :piece "wQ"
+     :capture? false}})
 
 (assert (= (set (calculate-animations test1-posA test1-posB))
            test1-anims))
@@ -148,7 +144,19 @@
     {:type "ANIMATION_CLEAR" :square "c3" :piece "wP"}
     {:type "ANIMATION_ADD" :square "b2" :piece "bP"}
     {:type "ANIMATION_ADD" :square "c3" :piece "bP"}
-    {:type "ANIMATION_MOVE" :source "f6" :destination "h6" :piece "wQ"}})
+    {:type "ANIMATION_MOVE" :source "f6" :destination "h6" :piece "wQ" :capture? false}})
 
 (assert (= (set (calculate-animations test5-posA test5-posB))
            test5-anims))
+
+(def test6-posA {"a1" "wQ", "a2" "bR", "c3" "bP"})
+(def test6-posB {"a2" "wQ", "c3" "bP"})
+(def test6-anims
+  #{{:type "ANIMATION_MOVE"
+     :source "a1"
+     :destination "a2"
+     :piece "wQ"
+     :capture? true}})
+
+(assert (= (set (calculate-animations test6-posA test6-posB))
+           test6-anims))

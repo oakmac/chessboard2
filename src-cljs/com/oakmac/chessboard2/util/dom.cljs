@@ -28,3 +28,24 @@
 (defn get-width
   [el]
   (:width (get-dimensions el)))
+
+(defn set-style-prop!
+  [el prop value]
+  (-> (get-element el)
+      (gobj/get "style")
+      (gobj/set prop value)))
+
+(defn append-html!
+  [el additional-html]
+  (let [el (get-element el)
+        current-html (gobj/get el "innerHTML")]
+    (gobj/set el "innerHTML" (str current-html additional-html))))
+
+(defn remove-class!
+  [el classname]
+  (let [el (get-element el)]
+    (.remove (gobj/get el "classList") classname)))
+
+(defn remove-element!
+  [el]
+  (gdom/removeNode (get-element el)))

@@ -70,8 +70,7 @@
 ;; FIXME: need more tests here
 
 (defn- fen-chunk? [f]
-  (and (string? f)
-       (= 8 (count f))
+  (and (= 8 (count f))
        (= -1 (.search f #"[^kqrnbpKQRNBP1]"))))
 
 (defn valid-fen?

@@ -1,8 +1,7 @@
 (ns com.oakmac.chessboard2.html
   (:require
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
-    [com.oakmac.chessboard2.util.board :refer [file->idx rank->idx]]
-    [com.oakmac.chessboard2.util.squares :refer [idx->alpha]]
+    [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions]]
     [goog.crypt.base64 :as base64]))
 
 ;; TODO: they need the ability to override this
@@ -11,18 +10,6 @@
   [piece]
   (base64/encodeString (get wikipedia-theme (name piece))))
 
-(defn square->dimensions
-  "FIXME: write me"
-  [square board-width]
-  (let [square-arr (.split square "")
-        file (aget square-arr 0)
-        rank (aget square-arr 1)
-        file-idx (get file->idx file)
-        rank-idx (get rank->idx rank)
-        square-width (/ board-width 8)]
-    {:left (* file-idx square-width)
-     :top (* rank-idx square-width)}))
-
 ;; FIXME: need alt text here for the image
 (defn Piece
   [{:keys [board-width color id hidden? piece piece-square-pct square width]}]
@@ -30,7 +17,7 @@
         square-width (/ board-width 8)
         piece-pct (* 100 piece-square-pct)]
    (str
-     "<div class='piece-349f8' id='" id "' style='left:" left "px; top:" top "px; width: " square-width "px; height: " square-width "px;'>"
+     "<div class='piece-349f8" (when hidden? " hidden-20b44")  "' id='" id "' style='left:" left "px; top:" top "px; width: " square-width "px; height: " square-width "px;'>"
      ;; FIXME: this needs to be customizable for the user
      "<img src='data:image/svg+xml;base64," (piece->imgsrc piece) "' alt='' style='height: " piece-pct "%; width: " piece-pct "%;' />"
      "</div>")))

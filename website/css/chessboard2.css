@@ -41,7 +41,14 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  opacity: 100%;
   position: absolute;
 
-  transition: left 1s, top 1s;
+  /* transition: left 1s, top 1s, opacity 1s; */
+  /* transition: all 1s; */
+}
+
+.piece-349f8.hidden-20b44 {
+  opacity: 0;
+  /* transition: all 1s; */
 }

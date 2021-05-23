@@ -65,3 +65,14 @@
 (assert (= (square->distance "a1" "b2") 1))
 (assert (= (square->distance "a1" "b3") 2))
 (assert (= (square->distance "a1" "b4") 3))
+
+(defn square->dimensions
+  [square board-width]
+  (let [square-arr (.split square "")
+        file (aget square-arr 0)
+        rank (aget square-arr 1)
+        file-idx (get file->idx file)
+        rank-idx (get rank->idx rank)
+        square-width (/ board-width 8)]
+    {:left (* file-idx square-width)
+     :top (* rank-idx square-width)}))
