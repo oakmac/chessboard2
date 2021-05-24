@@ -11,6 +11,21 @@
     [goog.dom :as gdom]
     [goog.object :as gobj]))
 
+
+
+
+
+
+(defn defer
+  [f]
+  (js/setTimeout
+    (fn [] (f))
+    1))
+
+
+
+
+
 (def initial-state
   {:arrows {}
    :num-rows 8
@@ -70,45 +85,58 @@
                                     :width (/ board-width 8)})]
     ;; add this piece to the DOM
     (append-html! pieces-container-id new-piece-html)
+
     ;; start opacity animation
-    (js/setTimeout
+    (defer
       (fn []
         (set-style-prop! new-piece-id "opacity" "100%")
-        (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms")))
-      1)
+        (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms"))))
+
     ;; add the piece id to the board state
     (swap! board-state assoc-in [:square->piece-id square] new-piece-id)))
 
 (defmethod do-animation! "ANIMATION_MOVE"
   [board-state {:keys [capture? destination piece source]}]
-  (let [{:keys [animate-speed-ms board-width square->piece-id]} @board-state
-        piece-id (get square->piece-id source)
-        piece-el (gdom/getElement piece-id)]
-    (if-not piece-el
-      (do
-        (js/console.warn "Unable to get piece element:" piece-id source)
-        (js/console.log (pr-str square->piece-id)))
-      (let [target-square-dimensions (square->dimensions destination board-width)]
+  (let [{:keys [animate-speed-ms board-width pieces-container-id piece-square-pct square->piece-id]} @board-state
+        current-piece-id (get square->piece-id source)
+        new-piece-id (random-piece-id)
+        new-piece-html (html/Piece {:board-width board-width
+                                    :id new-piece-id
+                                    :hidden? false
+                                    :piece piece
+                                    :piece-square-pct piece-square-pct
+                                    :square source
+                                    :width (/ board-width 8)})
+        target-square-dimensions (square->dimensions destination board-width)]
+    ;; append the new piece to the DOM on the source square
+    (append-html! pieces-container-id new-piece-html)
+    (defer
+      (fn []
+        (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms"))
+        (set-style-prop! new-piece-id "left" (str (:left target-square-dimensions) "px"))
+        (set-style-prop! new-piece-id "top" (str (:top target-square-dimensions) "px"))))
 
-        ; (set-style-prop! piece-el "transition" (str "all " animate-speed-ms "ms"))
-        (set-style-prop! piece-el "left" (str (:left target-square-dimensions) "px"))
-        (set-style-prop! piece-el "top" (str (:top target-square-dimensions) "px"))
+    ;; destroy the existing piece
+    (when-let [current-piece-el (gdom/getElement current-piece-id)]
+      (js/console.log "destroying original source piece" current-piece-el)
+      (remove-element! current-piece-id))
 
-        (when capture?
-          (let [capture-piece-id (get square->piece-id destination)]
-            (js/console.log "goodbye:" capture-piece-id)
-            ;; TODO: do we want some very fast animation here?
-            (js/setTimeout
-              (fn []
-                (remove-element! capture-piece-id))
-              animate-speed-ms)))
+    ;; if capturing, prepare the target square to be removed
+    (when capture?
+      (let [capture-piece-id (get square->piece-id destination)]
+        (js/console.log "goodbye:" capture-piece-id)
+        ;; TODO: do we want some very fast animation here?
+        (js/setTimeout
+          (fn []
+            (remove-element! capture-piece-id))
+          animate-speed-ms)))
 
-        ;; update the square->piece mapping
-        (swap! board-state update-in [:square->piece-id]
-               (fn [sq->id]
-                 (-> sq->id
-                     (dissoc source)
-                     (assoc destination piece-id))))))))
+    ;; update the square->piece mapping
+    (swap! board-state update-in [:square->piece-id]
+           (fn [sq->id]
+             (-> sq->id
+                 (dissoc source)
+                 (assoc destination new-piece-id))))))
 
 (defmethod do-animation! "ANIMATION_CLEAR"
   [board-state {:keys [piece square]}]
