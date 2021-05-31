@@ -6,4 +6,9 @@
  {:chessboard2
   {:target :browser
    :output-to "public/js"
-   :modules {:chessboard2 {:entries [com.oakmac.chessboard2.core]}}}}}
+   :modules {:chessboard2 {:entries [com.oakmac.chessboard2.core]}}}
+
+  :node-tests
+  {:target :node-test
+   :output-to "tests.js"
+   :autorun true}}}

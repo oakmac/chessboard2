@@ -10,6 +10,12 @@ yarn install
 npx shadow-cljs release chessboard2
 ```
 
+## Tests
+
+```sh
+npx shadow-cljs compile node-tests
+```
+
 ## HTML / DOM Design
 
 - the board-container has CSS `position: relative` and known `width` and `height` values

@@ -41,10 +41,6 @@
 
 (def square->xy (memoize square->xy*))
 
-(assert (= (square->xy "a8") {:x 0 :y 0}))
-(assert (= (square->xy "a1") {:x 0 :y 7}))
-(assert (= (square->xy "b7") {:x 1 :y 1}))
-
 (defn square->distance*
   "returns the distance between two squares"
   [squareA squareB]
@@ -59,12 +55,6 @@
         y-delta))))
 
 (def square->distance (memoize square->distance*))
-
-(assert (= (square->distance "a1" "a1") 0))
-(assert (= (square->distance "a1" "a2") 1))
-(assert (= (square->distance "a1" "b2") 1))
-(assert (= (square->distance "a1" "b3") 2))
-(assert (= (square->distance "a1" "b4") 3))
 
 (defn square->dimensions
   [square board-width]

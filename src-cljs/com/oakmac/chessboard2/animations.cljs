@@ -31,10 +31,6 @@
           (= piece (get position sq)))
         nearest-squares))))
 
-(assert (= (find-closest-piece start-position "wR" "c3") "a1"))
-(assert (= (find-closest-piece start-position "wR" "f3") "h1"))
-(assert (= (find-closest-piece {} "wR" "f3") nil))
-
 (defn calculate-animations
   "returns the animations that need to happen in order to get from posA to posB"
   [posA posB]
@@ -95,68 +91,3 @@
                            posA)]
 
     (concat move-animations add-animations clear-animations)))
-
-(def test1-posA {"a1" "wQ", "c3" "bP"})
-(def test1-posB {"a2" "wQ", "c3" "bP"})
-(def test1-anims
-  #{{:type "ANIMATION_MOVE"
-     :source "a1"
-     :destination "a2"
-     :piece "wQ"
-     :capture? false}})
-
-(assert (= (set (calculate-animations test1-posA test1-posB))
-           test1-anims))
-
-(def test2-posA {})
-(def test2-posB {"b2" "bP", "c3" "bP"})
-(def test2-anims
-  #{{:type "ANIMATION_ADD" :square "b2" :piece "bP"}
-    {:type "ANIMATION_ADD" :square "c3" :piece "bP"}})
-
-(assert (= (set (calculate-animations test2-posA test2-posB))
-           test2-anims))
-
-(def test3-posA {"b2" "bP", "c3" "bP"})
-(def test3-posB {})
-(def test3-anims
-  #{{:type "ANIMATION_CLEAR" :square "b2" :piece "bP"}
-    {:type "ANIMATION_CLEAR" :square "c3" :piece "bP"}})
-
-(assert (= (set (calculate-animations test3-posA test3-posB))
-           test3-anims))
-
-(def test4-posA {"b2" "wP", "c3" "wP"})
-(def test4-posB {"b2" "bP", "c3" "bP"})
-(def test4-anims
-  #{{:type "ANIMATION_CLEAR" :square "b2" :piece "wP"}
-    {:type "ANIMATION_CLEAR" :square "c3" :piece "wP"}
-    {:type "ANIMATION_ADD" :square "b2" :piece "bP"}
-    {:type "ANIMATION_ADD" :square "c3" :piece "bP"}})
-
-(assert (= (set (calculate-animations test4-posA test4-posB))
-           test4-anims))
-
-(def test5-posA {"a1" "wP", "b2" "wP", "c3" "wP", "f6" "wQ"})
-(def test5-posB {"a1" "wP", "b2" "bP", "c3" "bP", "h6" "wQ"})
-(def test5-anims
-  #{{:type "ANIMATION_CLEAR" :square "b2" :piece "wP"}
-    {:type "ANIMATION_CLEAR" :square "c3" :piece "wP"}
-    {:type "ANIMATION_ADD" :square "b2" :piece "bP"}
-    {:type "ANIMATION_ADD" :square "c3" :piece "bP"}
-    {:type "ANIMATION_MOVE" :source "f6" :destination "h6" :piece "wQ" :capture? false}})
-
-(assert (= (set (calculate-animations test5-posA test5-posB))
-           test5-anims))
-
-(def test6-posA {"a1" "wQ", "a2" "bR", "c3" "bP"})
-(def test6-posB {"a2" "wQ", "c3" "bP"})
-(def test6-anims
-  #{{:type "ANIMATION_MOVE"
-     :source "a1"
-     :destination "a2"
-     :piece "wQ"
-     :capture? true}})
-
-(assert (= (set (calculate-animations test6-posA test6-posB))
-           test6-anims))

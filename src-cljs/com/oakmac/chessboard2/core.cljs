@@ -15,7 +15,7 @@
 
 
 
-
+;; TODO: move to util or find the version of this in goog.closure?
 (defn defer
   [f]
   (js/setTimeout

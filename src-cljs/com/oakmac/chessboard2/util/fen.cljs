@@ -64,11 +64,6 @@
   [p]
   "FIXME: write me :-)")
 
-;; TODO: move to testing suite
-(assert (= {} (fen->position "8/8/8/8/8/8/8/8")))
-(assert (= {"a2" "wP", "b2" "bP"} (fen->position "8/8/8/8/8/8/Pp6/8")))
-;; FIXME: need more tests here
-
 (defn- fen-chunk? [f]
   (and (= 8 (count f))
        (= -1 (.search f #"[^kqrnbpKQRNBP1]"))))
@@ -81,15 +76,3 @@
           fen-chunks (.split f2 "/")]
       (and (= 8 (count fen-chunks))
            (every? fen-chunk? fen-chunks)))))
-
-(assert (valid-fen? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"))
-(assert (valid-fen? "8/8/8/8/8/8/8/8"))
-(assert (valid-fen? "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R"))
-(assert (valid-fen? "3r3r/1p4pp/2nb1k2/pP3p2/8/PB2PN2/p4PPP/R4RK1 b - - 0 1"))
-(assert (not (valid-fen? "3r3z/1p4pp/2nb1k2/pP3p2/8/PB2PN2/p4PPP/R4RK1 b - - 0 1")))
-(assert (not (valid-fen? "anbqkbnr/8/8/8/8/8/PPPPPPPP/8")))
-(assert (not (valid-fen? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/")))
-(assert (not (valid-fen? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBN")))
-(assert (not (valid-fen? "888888/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")))
-(assert (not (valid-fen? "888888/pppppppp/74/8/8/8/PPPPPPPP/RNBQKBNR")))
-(assert (not (valid-fen? {})))
