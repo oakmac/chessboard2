@@ -24,3 +24,5 @@
   (is (false? (valid-square? true)))
   (is (false? (valid-square? nil)))
   (is (false? (valid-square? {}))))
+
+;; FIXME: add tests for valid-position?

@@ -44,27 +44,28 @@
                        (keys posB))
 
         ;; remove squares that are the same in both positions
-        posA (apply dissoc posA same-squares)
-        posB (apply dissoc posB same-squares)
+        ;; convert positions to atoms here: we will incrementally be removing squares from them
+        ;; as we calculate animations
+        posA (atom (apply dissoc posA same-squares))
+        posB (atom (apply dissoc posB same-squares))
 
         ;; find all of the "move" animations: pieces that exist in both position A and position B
         move-animations (reduce
                           (fn [anims [square piece]]
-                            (if-let [closest-piece (find-closest-piece posA piece square)]
-                              (conj anims {:type "ANIMATION_MOVE"
-                                           :source closest-piece
-                                           :destination square
-                                           :piece piece
-                                           :capture? (contains? posA square)})
+                            (if-let [closest-piece (find-closest-piece @posA piece square)]
+                              (let [move-animation {:type "ANIMATION_MOVE"
+                                                    :source closest-piece
+                                                    :destination square
+                                                    :piece piece
+                                                    :capture? (contains? @posA square)}]
+                                ;; remove these squares from the positions
+                                (swap! posA dissoc closest-piece)
+                                (swap! posB dissoc square)
+                                (conj anims move-animation))
                               anims))
                           []
-                          posB)
-        squares-being-moved-from (map :source move-animations)
+                          (sort (vec @posB)))
         squares-being-moved-to (set (map :destination move-animations))
-
-        ;; remove these squares from the two positions
-        posA (apply dissoc posA squares-being-moved-from)
-        posB (apply dissoc posB squares-being-moved-to)
 
         ;; find all of the "add" animations: pieces that only exist in position B and need
         ;; to be added to the board
@@ -74,7 +75,7 @@
                                         :square square
                                         :piece piece}))
                          []
-                         posB)
+                         (sort (vec @posB)))
 
         ;; find all of the "clear" animations: pieces that only exist in position A
         ;; and need to be removed from the board
@@ -88,6 +89,7 @@
                                             :piece piece})
                                anims))
                            []
-                           posA)]
+                           (sort (vec @posA)))]
 
-    (concat move-animations add-animations clear-animations)))
+    ;; return a vector of the animations
+    (vec (concat move-animations add-animations clear-animations))))
