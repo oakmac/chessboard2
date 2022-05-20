@@ -1,7 +1,9 @@
+.clj-kondo/
+.DS_Store
+.lsp/
 .shadow-cljs/
+*.diff
 node_modules/
 public/js/
-website/js/chessboard.js
-.DS_Store
 tests.js
-*.diff
+website/js/chessboard.js
