@@ -12,14 +12,12 @@
   [idx]
   (nth alphas idx))
 
-(defn- squares-for-board*
+(defn squares-for-board
   "returns a collection of all the squares on a board"
   [num-rows num-cols]
   (for [row-idx (range 0 num-rows)
         col-idx (range 0 num-cols)]
     (str (idx->alpha row-idx) (inc col-idx))))
-
-(def squares-for-board (memoize squares-for-board*))
 
 (defn create-square-el-ids
   "TODO: write doc string here"
@@ -30,7 +28,7 @@
     {}
     (squares-for-board num-rows num-cols)))
 
-(defn- square->xy*
+(defn square->xy
   "Converts an alphanumeric square to a {:x :y} map"
   [sq]
   (let [sq-arr (.split sq "")
@@ -39,9 +37,7 @@
     {:x (get file->idx file)
      :y (get rank->idx rank)}))
 
-(def square->xy (memoize square->xy*))
-
-(defn square->distance*
+(defn square->distance
   "returns the distance between two squares"
   [squareA squareB]
   (if (= squareA squareB)
@@ -53,8 +49,6 @@
       (if (>= x-delta y-delta)
         x-delta
         y-delta))))
-
-(def square->distance (memoize square->distance*))
 
 (defn square->dimensions
   [square board-width]

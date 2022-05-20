@@ -4,6 +4,8 @@
 // This file builds the contents of the website/ folder.
 // -----------------------------------------------------------------------------
 
+// FIXME: add logging to this script
+
 // libraries
 const fs = require('fs-plus')
 const kidif = require('kidif')

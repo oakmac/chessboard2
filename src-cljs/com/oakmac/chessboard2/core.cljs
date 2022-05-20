@@ -5,26 +5,15 @@
     [com.oakmac.chessboard2.util.board :refer [start-position]]
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [append-html! remove-class! remove-element! set-style-prop!]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
+    [com.oakmac.chessboard2.util.functions :refer [defer]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
     [goog.dom :as gdom]
     [goog.object :as gobj]))
 
-
-
-
-
-;; TODO: move to util or find the version of this in goog.closure?
-(defn defer
-  [f]
-  (js/setTimeout
-    (fn [] (f))
-    1))
-
-
-
-
+;; TODO
+;; - add showNotation config option
 
 (def initial-state
   {:arrows {}
@@ -68,12 +57,13 @@
   [{:keys [orientation]}])
   ;; (gobj/set root-el "innerHTML" (str "<h1>" orientation "</h1>")))
 
-(defmulti do-animation!
-  (fn [_board-state animation]
+(defmulti animation->dom-op
+  "Convert an Animation to the DOM operation necessary for it to take place"
+  (fn [animation _board-state]
     (:type animation)))
 
-(defmethod do-animation! "ANIMATION_ADD"
-  [board-state {:keys [piece square]}]
+(defmethod animation->dom-op "ANIMATION_ADD"
+  [{:keys [piece square] :as animation} board-state]
   (let [{:keys [animate-speed-ms board-width pieces-container-id piece-square-pct position square-el-ids]} @board-state
         new-piece-id (random-piece-id)
         new-piece-html (html/Piece {:board-width board-width
@@ -83,20 +73,27 @@
                                     :piece-square-pct piece-square-pct
                                     :square square
                                     :width (/ board-width 8)})]
-    ;; add this piece to the DOM
-    (append-html! pieces-container-id new-piece-html)
+    {:new-html new-piece-html
+     :defer-fn (fn []
+                 ;; start opacity animation
+                 (set-style-prop! new-piece-id "opacity" "100%")
+                 (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms")))
+     :new-square->piece (hash-map square new-piece-id)}))
 
-    ;; start opacity animation
-    (defer
-      (fn []
-        (set-style-prop! new-piece-id "opacity" "100%")
-        (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms"))))
+    ; ;; add this piece to the DOM
+    ; (append-html! pieces-container-id new-piece-html)
+    ;
+    ; ;; start opacity animation
+    ; (defer
+    ;   (fn []
+    ;     (set-style-prop! new-piece-id "opacity" "100%")
+    ;     (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms"))))
+    ;
+    ; ;; add the piece id to the board state
+    ; (swap! board-state assoc-in [:square->piece-id square] new-piece-id)))
 
-    ;; add the piece id to the board state
-    (swap! board-state assoc-in [:square->piece-id square] new-piece-id)))
-
-(defmethod do-animation! "ANIMATION_MOVE"
-  [board-state {:keys [capture? destination piece source]}]
+(defmethod animation->dom-op "ANIMATION_MOVE"
+  [{:keys [capture? destination piece source] :as animation} board-state]
   (let [{:keys [animate-speed-ms board-width pieces-container-id piece-square-pct square->piece-id]} @board-state
         current-piece-id (get square->piece-id source)
         new-piece-id (random-piece-id)
@@ -108,65 +105,143 @@
                                     :square source
                                     :width (/ board-width 8)})
         target-square-dimensions (square->dimensions destination board-width)]
-    ;; append the new piece to the DOM on the source square
-    (append-html! pieces-container-id new-piece-html)
-    (defer
-      (fn []
-        (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms"))
-        (set-style-prop! new-piece-id "left" (str (:left target-square-dimensions) "px"))
-        (set-style-prop! new-piece-id "top" (str (:top target-square-dimensions) "px"))))
 
-    ;; destroy the existing piece
-    (when-let [current-piece-el (gdom/getElement current-piece-id)]
-      (js/console.log "destroying original source piece" current-piece-el)
-      (remove-element! current-piece-id))
+    {:new-html new-piece-html
+     :defer-fn (fn []
+                 ;; start move animation
+                 (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms"))
+                 (set-style-prop! new-piece-id "left" (str (:left target-square-dimensions) "px"))
+                 (set-style-prop! new-piece-id "top" (str (:top target-square-dimensions) "px")))
+     :remove-el current-piece-id
+     ;; FIXME: figure out what we need for capture here
+     :new-square->piece (hash-map destination new-piece-id)
+     :delete-square->piece source}))
 
-    ;; if capturing, prepare the target square to be removed
-    (when capture?
-      (let [capture-piece-id (get square->piece-id destination)]
-        (js/console.log "goodbye:" capture-piece-id)
-        ;; TODO: do we want some very fast animation here?
-        (js/setTimeout
-          (fn []
-            (remove-element! capture-piece-id))
-          animate-speed-ms)))
+    ; ;; append the new piece to the DOM on the source square
+    ; (append-html! pieces-container-id new-piece-html)
+    ; (defer
+    ;   (fn []
+    ;     (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms"))
+    ;     (set-style-prop! new-piece-id "left" (str (:left target-square-dimensions) "px"))
+    ;     (set-style-prop! new-piece-id "top" (str (:top target-square-dimensions) "px"))))
+    ;
+    ; ;; destroy the existing piece
+    ; (when-let [current-piece-el (gdom/getElement current-piece-id)]
+    ;   (remove-element! current-piece-id))
+    ;
+    ; ;; if capturing, prepare the target square to be removed
+    ; (when capture?
+    ;   (let [capture-piece-id (get square->piece-id destination)]
+    ;     ;; FIXME: attach to animation event here, not setTimeout
+    ;     ;; TODO: do we want some very fast animation here of the piece being captured?
+    ;     (js/setTimeout
+    ;       (fn []
+    ;         (remove-element! capture-piece-id))
+    ;       animate-speed-ms)))
+    ;
+    ; ;; update the square->piece mapping
+    ; (swap! board-state update-in [:square->piece-id]
+    ;        (fn [sq->id]
+    ;          (-> sq->id
+    ;              (dissoc source)
+    ;              (assoc destination new-piece-id))))))
 
-    ;; update the square->piece mapping
-    (swap! board-state update-in [:square->piece-id]
-           (fn [sq->id]
-             (-> sq->id
-                 (dissoc source)
-                 (assoc destination new-piece-id))))))
-
-(defmethod do-animation! "ANIMATION_CLEAR"
-  [board-state {:keys [piece square]}]
+(defmethod animation->dom-op "ANIMATION_CLEAR"
+  [{:keys [piece square] :as animation} board-state]
   (let [{:keys [animate-speed-ms board-width square->piece-id]} @board-state
-        piece-id (get-in @board-state [:square->piece-id square])
-        piece-el (gdom/getElement piece-id)]
-    ;; remove the piece from the DOM once the animation finishes
-    (.addEventListener piece-el "transitionend"
-      (fn []
-        (remove-element! piece-el)))
+        piece-id (get square->piece-id square)]
+    {:delete-square->piece square
+     :fade-out-piece piece-id}))
 
-    ;; begin fade out animation
-    (set-style-prop! piece-el "opacity" "0")
-    (set-style-prop! piece-el "transition" (str "all " animate-speed-ms))
+    ; ;; remove the piece from the DOM once the animation finishes
+    ; (.addEventListener piece-el "transitionend"
+    ;   (fn []
+    ;     (remove-element! piece-el)))
+    ;
+    ; ;; begin fade out animation
+    ; (set-style-prop! piece-el "opacity" "0")
+    ; (set-style-prop! piece-el "transition" (str "all " animate-speed-ms))
+    ;
+    ; ;; update square->piece mapping
+    ; (swap! board-state update :square->piece-id dissoc square)))
 
-    ;; update square->piece mapping
-    (swap! board-state update :square->piece-id dissoc square)))
-
-(defmethod do-animation! :default
-  [board-state animation]
+(defmethod animation->dom-op :default
+  [animation _board-state]
   (js/console.warn "Unknown animation type:" animation))
 
-; (defn do-animations!
-;   [board-state animations]
-;   (doseq [animation animations]
-;     (do-animation! board-state animation)))
+
+
+
+
+
+
+;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;; !!! FIXME: this function is not working correctly
+;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;; TODO: move this to DOM util?
+(defn fade-out-el!
+  "fades a DOM element to zero opacity and removes it from the DOM"
+  [el-id animate-speed-ms]
+  (when-let [el (dom-util/get-element el-id)]
+    ;; remove the piece from the DOM once the animation finishes
+    (.addEventListener el "transitionend"
+      (fn []
+        (js/console.log "transition end")
+        (remove-element! el)))
+
+    ;; begin fade out animation
+    (set-style-prop! el "transition" (str "all " animate-speed-ms "ms"))
+    (set-style-prop! el "opacity" "0.5")))
+
+
+
+
+
+
+
+(defn apply-dom-ops!
+  "Apply DOM operations to the board"
+  [board-state ops]
+  (let [{:keys [animate-speed-ms pieces-container-id]} @board-state]
+    ;; remove elements
+    (let [removes (map :remove-el ops)]
+      (doseq [el-id removes]
+        (when el-id
+          (remove-element! el-id))))
+
+    ;; append new HTML
+    (let [new-html (->> (map :new-html ops)
+                        (apply str))]
+      (append-html! pieces-container-id new-html))
+
+    ;; functions to run on the next stack
+    (defer (fn []
+             (doseq [{:keys [defer-fn]} ops]
+               (when (fn? defer-fn) (defer-fn)))))
+
+    ;; piece fade-outs
+    (let [fade-outs (map :fade-out-piece ops)]
+      (doseq [piece-id fade-outs]
+        (when piece-id
+          (fade-out-el! piece-id animate-speed-ms))))
+
+    ;; FIXME: captures
+
+    ;; update the board-state with new piece-ids
+    (let [dissocs (map :delete-square->piece ops)
+          updates (map :new-square->piece ops)]
+      (swap! board-state update :square->piece-id
+        (fn [m]
+          (as-> m $
+           (apply dissoc $ dissocs)
+           (apply merge $ updates)))))))
 
 ;; -----------------------------------------------------------------------------
 ;; API Methods
 
+;; FIXME: lower-case "white" or "black" argument
 (defn orientation
   [board arg]
   (cond
@@ -183,16 +258,9 @@
 
 (defn set-position-with-animations!
   [board-state new-pos]
-  (let [animations (calculate-animations (:position @board-state) new-pos)]
-
-    (js/console.log (pr-str animations))
-
-    (doseq [anim animations]
-      (do-animation! board-state anim))
-
-
-    (js/console.log (pr-str (:square->piece-id @board-state)))
-
+  (let [animations (calculate-animations (:position @board-state) new-pos)
+        dom-ops (map #(animation->dom-op % board-state) animations)]
+    (apply-dom-ops! board-state dom-ops)
     (swap! board-state assoc :position new-pos)))
 
 (defn set-position-instant!
@@ -224,6 +292,7 @@
       (valid-position? new-pos) (set-position! board-state new-pos animate?)
       ;; ¯\_(ツ)_/¯
       :else
+      ;; FIXME: error code here
       (do (js/console.warn "Invalid value passed to the position method:" (clj->js new-pos))
           nil))))
 
@@ -263,6 +332,8 @@
       :else
       {})))
 
+(def default-animate-speed-ms 120)
+
 (defn constructor
   "Called to create a new Chessboard2 object."
   ([el-id]
@@ -276,7 +347,7 @@
                                              (:num-cols initial-state))
          opts2 (merge initial-state opts1)
          opts3 (assoc opts2 :root-el root-el
-                            :animate-speed-ms 600
+                            :animate-speed-ms 1200
                             :board-height root-width
                             :board-width root-width
                             :piece-square-pct 0.9
@@ -292,6 +363,8 @@
      (js-obj
        "clear" #(position board-state {} %1)
        "destroy" "FIXME"
+       "getItems" "FIXME: return all items on the board (pieces, arrows, circles, etc)"
+       "items" "FIXME: alias of getItems"
        "fen" #(position board-state "fen" false)
        "flip" #(orientation board-state "flip")
        "move" #()

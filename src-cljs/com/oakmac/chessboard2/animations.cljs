@@ -18,6 +18,8 @@
     ;; so we can just return the rest of the sequence
     (rest surrounding-squares)))
 
+;; FIXME: pre-calculate this when the script loads (deferred)
+;; dramatically speeds up the animation calculations
 (def create-radius (memoize create-radius*))
 
 (defn find-closest-piece

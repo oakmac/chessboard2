@@ -330,7 +330,7 @@ CHESSBOARD_EXAMPLES["3001"] = {
   description: "Use the <a href=\"docs.html#methods:start\"><code class=\"js plain\">start</code></a> and <a href=\"docs.html#methods:position\"><code class=\"js plain\">position</code></a> methods to set the board position.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"setRuyLopezBtn\">Ruy Lopez</button>\n<button id=\"setStartBtn\">Start Position</button>\n<button id=\"setRookCheckmateBtn\">Rook Checkmate</button>",
   name: "Set Position",
-  jsStr: "var board = Chessboard2('myBoard')\n\n$('#setRuyLopezBtn').on('click', function () {\n  board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')\n})\n\n// $('#setStartBtn').on('click', board.start)\n$('#setStartBtn').on('click', function () {\nboard.position({\ne1: 'wK',\ne8: 'bK',\na7: 'bP',\nh8: 'wR'\n})\n})\n\n$('#setRookCheckmateBtn').on('click', function () {\n  board.position({\n    a4: 'bK',\n    c4: 'wK',\n    a7: 'wR'\n  })\n})",
+  jsStr: "var board = Chessboard2('myBoard')\n\n$('#setRuyLopezBtn').on('click', function () {\n  board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')\n})\n\n$('#setStartBtn').on('click', board.start)\n\n$('#setRookCheckmateBtn').on('click', function () {\n  board.position({\n    a4: 'bK',\n    c4: 'wK',\n    a7: 'wR'\n  })\n})",
   jsFn: function () {
 var board = Chessboard2('myBoard')
 
@@ -338,15 +338,7 @@ $('#setRuyLopezBtn').on('click', function () {
   board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')
 })
 
-// $('#setStartBtn').on('click', board.start)
-$('#setStartBtn').on('click', function () {
-board.position({
-e1: 'wK',
-e8: 'bK',
-a7: 'bP',
-h8: 'wR'
-})
-})
+$('#setStartBtn').on('click', board.start)
 
 $('#setRookCheckmateBtn').on('click', function () {
   board.position({
