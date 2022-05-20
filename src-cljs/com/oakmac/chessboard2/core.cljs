@@ -169,37 +169,24 @@
   [animation _board-state]
   (js/console.warn "Unknown animation type:" animation))
 
-
-
-
-
-
-
-;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-;; !!! FIXME: this function is not working correctly
-;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ;; TODO: move this to DOM util?
 (defn fade-out-el!
   "fades a DOM element to zero opacity and removes it from the DOM"
   [el-id animate-speed-ms]
   (when-let [el (dom-util/get-element el-id)]
+    ;; remove transition
+    (set-style-prop! el "transition" "")
+
     ;; remove the piece from the DOM once the animation finishes
     (.addEventListener el "transitionend"
       (fn []
-        (js/console.log "transition end")
         (remove-element! el)))
 
-    ;; begin fade out animation
-    (set-style-prop! el "transition" (str "all " animate-speed-ms "ms"))
-    (set-style-prop! el "opacity" "0.5")))
-
-
-
-
-
-
+    ;; begin fade out animation on next stack
+    (defer
+      (fn []
+       (set-style-prop! el "transition" (str "all " animate-speed-ms "ms"))
+       (set-style-prop! el "opacity" "0")))))
 
 (defn apply-dom-ops!
   "Apply DOM operations to the board"
@@ -347,7 +334,7 @@
                                              (:num-cols initial-state))
          opts2 (merge initial-state opts1)
          opts3 (assoc opts2 :root-el root-el
-                            :animate-speed-ms 1200
+                            :animate-speed-ms default-animate-speed-ms
                             :board-height root-width
                             :board-width root-width
                             :piece-square-pct 0.9
