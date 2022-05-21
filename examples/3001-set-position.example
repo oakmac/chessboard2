@@ -15,6 +15,7 @@ Use the <a href="docs.html#methods:start"><code class="js plain">start</code></a
 
 <button id="setPawns1">Pawns 1</button>
 <button id="setPawns2">Pawns 2</button>
+<button id="setPawns3">Pawns 3</button>
 
 ===== JS
 var board = Chessboard2('myBoard')
@@ -35,20 +36,32 @@ $('#setRookCheckmateBtn').on('click', function () {
 
 $('#setPawns1').on('click', function () {
   board.position({
-    c4: 'wP',
-    d4: 'wP',
-    e4: 'wP',
+    a1: 'wP', b1: 'wP', c1: 'wP', d1: 'wP', e1: 'wP', d1: 'wP', f1: 'wP', g1: 'wP', h1: 'wP',
+    a2: 'wP', b2: 'wP', c2: 'wP', d2: 'wP', e2: 'wP', d2: 'wP', f2: 'wP', g2: 'wP', h2: 'wP',
+    a3: 'wP', b3: 'wP', c3: 'wP', d3: 'wP', e3: 'wP', d3: 'wP', f3: 'wP', g3: 'wP', h3: 'wP',
+    a4: 'wP', b4: 'wP', c4: 'wP', d4: 'wP', e4: 'wP', d4: 'wP', f4: 'wP', g4: 'wP', h4: 'wP',
 
-    c5: 'bP',
-    d5: 'bP',
-    e5: 'bP'
+    a5: 'bP', b5: 'bP', c5: 'bP', d5: 'bP', e5: 'bP', d5: 'bP', f5: 'bP', g5: 'bP', h5: 'bP',
+    a6: 'bP', b6: 'bP', c6: 'bP', d6: 'bP', e6: 'bP', d6: 'bP', f6: 'bP', g6: 'bP', h6: 'bP',
+    a7: 'bP', b7: 'bP', c7: 'bP', d7: 'bP', e7: 'bP', d7: 'bP', f7: 'bP', g7: 'bP', h7: 'bP',
+    a8: 'bP', b8: 'bP', c8: 'bP', d8: 'bP', e8: 'bP', d8: 'bP', f8: 'bP', g8: 'bP', h8: 'bP'
   })
 })
 
 $('#setPawns2').on('click', function () {
   board.position({
-    c4: 'bP',
-    d4: 'bP',
-    e4: 'bP'
+    a5: 'wP', b5: 'wP', c5: 'wP', d5: 'wP', e5: 'wP', d5: 'wP', f5: 'wP', g5: 'wP', h5: 'wP',
+    a6: 'wP', b6: 'wP', c6: 'wP', d6: 'wP', e6: 'wP', d6: 'wP', f6: 'wP', g6: 'wP', h6: 'wP',
+    a7: 'wP', b7: 'wP', c7: 'wP', d7: 'wP', e7: 'wP', d7: 'wP', f7: 'wP', g7: 'wP', h7: 'wP',
+    a8: 'wP', b8: 'wP', c8: 'wP', d8: 'wP', e8: 'wP', d8: 'wP', f8: 'wP', g8: 'wP', h8: 'wP'
+  })
+})
+
+$('#setPawns3').on('click', function () {
+  board.position({
+    a1: 'bP', b1: 'bP', c1: 'bP', d1: 'bP', e1: 'bP', d1: 'bP', f1: 'bP', g1: 'bP', h1: 'bP',
+    a2: 'bP', b2: 'bP', c2: 'bP', d2: 'bP', e2: 'bP', d2: 'bP', f2: 'bP', g2: 'bP', h2: 'bP',
+    a3: 'bP', b3: 'bP', c3: 'bP', d3: 'bP', e3: 'bP', d3: 'bP', f3: 'bP', g3: 'bP', h3: 'bP',
+    a4: 'bP', b4: 'bP', c4: 'bP', d4: 'bP', e4: 'bP', d4: 'bP', f4: 'bP', g4: 'bP', h4: 'bP'
   })
 })

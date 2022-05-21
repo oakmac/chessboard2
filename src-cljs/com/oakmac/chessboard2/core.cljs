@@ -38,9 +38,11 @@
 (defn- draw-position-instant!
   "put pieces inside squares"
   [board-state]
-  (let [{:keys [board-width pieces-container-id piece-square-pct position]} @board-state
+  (let [{:keys [board-width pieces-container-id piece-square-pct position square->piece-id]} @board-state
         html (atom "")]
-    ;; FIXME: instantly remove any piece elements from the DOM
+    ;; remove existing pieces from the DOM
+    (doseq [el-id (vals square->piece-id)]
+      (remove-element! el-id))
     ;; clear the :square->piece-id map
     (swap! board-state assoc :square->piece-id {})
     (doseq [[square piece] position]
@@ -311,7 +313,7 @@
        "items" "FIXME: alias of getItems"
        "fen" #(position board-state "fen" false)
        "flip" #(orientation board-state "flip")
-       "move" #()
+       "move" #() ;; FIXME
        "orientation" #(orientation board-state %1)
        "position" #(position board-state (js->clj %1) %2)
        "resize" #()

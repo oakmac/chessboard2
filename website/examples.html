@@ -328,9 +328,9 @@ $('#showPositionBtn').on('click', clickShowPositionBtn)
 
 CHESSBOARD_EXAMPLES["3001"] = {
   description: "Use the <a href=\"docs.html#methods:start\"><code class=\"js plain\">start</code></a> and <a href=\"docs.html#methods:position\"><code class=\"js plain\">position</code></a> methods to set the board position.",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"setStartBtn\">Start Position</button>\n<button id=\"setRuyLopezBtn\">Ruy Lopez</button>\n<button id=\"setRookCheckmateBtn\">Rook Checkmate</button>\n\r\n<button id=\"setPawns1\">Pawns 1</button>\r\n<button id=\"setPawns2\">Pawns 2</button>",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"setStartBtn\">Start Position</button>\n<button id=\"setRuyLopezBtn\">Ruy Lopez</button>\n<button id=\"setRookCheckmateBtn\">Rook Checkmate</button>\n\r\n<button id=\"setPawns1\">Pawns 1</button>\r\n<button id=\"setPawns2\">Pawns 2</button>\r\n<button id=\"setPawns3\">Pawns 3</button>",
   name: "Set Position",
-  jsStr: "var board = Chessboard2('myBoard')\n\n$('#setStartBtn').on('click', board.start)\n\n$('#setRuyLopezBtn').on('click', function () {\n  board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')\n})\n\n$('#setRookCheckmateBtn').on('click', function () {\n  board.position({\n    a4: 'bK',\n    c4: 'wK',\n    a7: 'wR'\n  })\n})\n\n$('#setPawns1').on('click', function () {\n  board.position({\n    c4: 'wP',\n    d4: 'wP',\n    e4: 'wP',\n\n    c5: 'bP',\n    d5: 'bP',\n    e5: 'bP'\n  })\n})\n\n$('#setPawns2').on('click', function () {\n  board.position({\n    c4: 'bP',\n    d4: 'bP',\n    e4: 'bP'\n  })\n})",
+  jsStr: "var board = Chessboard2('myBoard')\n\n$('#setStartBtn').on('click', board.start)\n\n$('#setRuyLopezBtn').on('click', function () {\n  board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')\n})\n\n$('#setRookCheckmateBtn').on('click', function () {\n  board.position({\n    a4: 'bK',\n    c4: 'wK',\n    a7: 'wR'\n  })\n})\n\n$('#setPawns1').on('click', function () {\n  board.position({\n    a1: 'wP', b1: 'wP', c1: 'wP', d1: 'wP', e1: 'wP', d1: 'wP', f1: 'wP', g1: 'wP', h1: 'wP',\n    a2: 'wP', b2: 'wP', c2: 'wP', d2: 'wP', e2: 'wP', d2: 'wP', f2: 'wP', g2: 'wP', h2: 'wP',\n    a3: 'wP', b3: 'wP', c3: 'wP', d3: 'wP', e3: 'wP', d3: 'wP', f3: 'wP', g3: 'wP', h3: 'wP',\n    a4: 'wP', b4: 'wP', c4: 'wP', d4: 'wP', e4: 'wP', d4: 'wP', f4: 'wP', g4: 'wP', h4: 'wP',\n\n    a5: 'bP', b5: 'bP', c5: 'bP', d5: 'bP', e5: 'bP', d5: 'bP', f5: 'bP', g5: 'bP', h5: 'bP',\n    a6: 'bP', b6: 'bP', c6: 'bP', d6: 'bP', e6: 'bP', d6: 'bP', f6: 'bP', g6: 'bP', h6: 'bP',\n    a7: 'bP', b7: 'bP', c7: 'bP', d7: 'bP', e7: 'bP', d7: 'bP', f7: 'bP', g7: 'bP', h7: 'bP',\n    a8: 'bP', b8: 'bP', c8: 'bP', d8: 'bP', e8: 'bP', d8: 'bP', f8: 'bP', g8: 'bP', h8: 'bP'\n  })\n})\n\n$('#setPawns2').on('click', function () {\n  board.position({\n    a5: 'wP', b5: 'wP', c5: 'wP', d5: 'wP', e5: 'wP', d5: 'wP', f5: 'wP', g5: 'wP', h5: 'wP',\n    a6: 'wP', b6: 'wP', c6: 'wP', d6: 'wP', e6: 'wP', d6: 'wP', f6: 'wP', g6: 'wP', h6: 'wP',\n    a7: 'wP', b7: 'wP', c7: 'wP', d7: 'wP', e7: 'wP', d7: 'wP', f7: 'wP', g7: 'wP', h7: 'wP',\n    a8: 'wP', b8: 'wP', c8: 'wP', d8: 'wP', e8: 'wP', d8: 'wP', f8: 'wP', g8: 'wP', h8: 'wP'\n  })\n})\n\n$('#setPawns3').on('click', function () {\n  board.position({\n    a1: 'bP', b1: 'bP', c1: 'bP', d1: 'bP', e1: 'bP', d1: 'bP', f1: 'bP', g1: 'bP', h1: 'bP',\n    a2: 'bP', b2: 'bP', c2: 'bP', d2: 'bP', e2: 'bP', d2: 'bP', f2: 'bP', g2: 'bP', h2: 'bP',\n    a3: 'bP', b3: 'bP', c3: 'bP', d3: 'bP', e3: 'bP', d3: 'bP', f3: 'bP', g3: 'bP', h3: 'bP',\n    a4: 'bP', b4: 'bP', c4: 'bP', d4: 'bP', e4: 'bP', d4: 'bP', f4: 'bP', g4: 'bP', h4: 'bP'\n  })\n})",
   jsFn: function () {
 var board = Chessboard2('myBoard')
 
@@ -350,21 +350,33 @@ $('#setRookCheckmateBtn').on('click', function () {
 
 $('#setPawns1').on('click', function () {
   board.position({
-    c4: 'wP',
-    d4: 'wP',
-    e4: 'wP',
+    a1: 'wP', b1: 'wP', c1: 'wP', d1: 'wP', e1: 'wP', d1: 'wP', f1: 'wP', g1: 'wP', h1: 'wP',
+    a2: 'wP', b2: 'wP', c2: 'wP', d2: 'wP', e2: 'wP', d2: 'wP', f2: 'wP', g2: 'wP', h2: 'wP',
+    a3: 'wP', b3: 'wP', c3: 'wP', d3: 'wP', e3: 'wP', d3: 'wP', f3: 'wP', g3: 'wP', h3: 'wP',
+    a4: 'wP', b4: 'wP', c4: 'wP', d4: 'wP', e4: 'wP', d4: 'wP', f4: 'wP', g4: 'wP', h4: 'wP',
 
-    c5: 'bP',
-    d5: 'bP',
-    e5: 'bP'
+    a5: 'bP', b5: 'bP', c5: 'bP', d5: 'bP', e5: 'bP', d5: 'bP', f5: 'bP', g5: 'bP', h5: 'bP',
+    a6: 'bP', b6: 'bP', c6: 'bP', d6: 'bP', e6: 'bP', d6: 'bP', f6: 'bP', g6: 'bP', h6: 'bP',
+    a7: 'bP', b7: 'bP', c7: 'bP', d7: 'bP', e7: 'bP', d7: 'bP', f7: 'bP', g7: 'bP', h7: 'bP',
+    a8: 'bP', b8: 'bP', c8: 'bP', d8: 'bP', e8: 'bP', d8: 'bP', f8: 'bP', g8: 'bP', h8: 'bP'
   })
 })
 
 $('#setPawns2').on('click', function () {
   board.position({
-    c4: 'bP',
-    d4: 'bP',
-    e4: 'bP'
+    a5: 'wP', b5: 'wP', c5: 'wP', d5: 'wP', e5: 'wP', d5: 'wP', f5: 'wP', g5: 'wP', h5: 'wP',
+    a6: 'wP', b6: 'wP', c6: 'wP', d6: 'wP', e6: 'wP', d6: 'wP', f6: 'wP', g6: 'wP', h6: 'wP',
+    a7: 'wP', b7: 'wP', c7: 'wP', d7: 'wP', e7: 'wP', d7: 'wP', f7: 'wP', g7: 'wP', h7: 'wP',
+    a8: 'wP', b8: 'wP', c8: 'wP', d8: 'wP', e8: 'wP', d8: 'wP', f8: 'wP', g8: 'wP', h8: 'wP'
+  })
+})
+
+$('#setPawns3').on('click', function () {
+  board.position({
+    a1: 'bP', b1: 'bP', c1: 'bP', d1: 'bP', e1: 'bP', d1: 'bP', f1: 'bP', g1: 'bP', h1: 'bP',
+    a2: 'bP', b2: 'bP', c2: 'bP', d2: 'bP', e2: 'bP', d2: 'bP', f2: 'bP', g2: 'bP', h2: 'bP',
+    a3: 'bP', b3: 'bP', c3: 'bP', d3: 'bP', e3: 'bP', d3: 'bP', f3: 'bP', g3: 'bP', h3: 'bP',
+    a4: 'bP', b4: 'bP', c4: 'bP', d4: 'bP', e4: 'bP', d4: 'bP', f4: 'bP', g4: 'bP', h4: 'bP'
   })
 })
   }
@@ -372,28 +384,58 @@ $('#setPawns2').on('click', function () {
 
 CHESSBOARD_EXAMPLES["3002"] = {
   description: "Pass <code class=\"js keyword\">false</code> as the second argument to the <a href=\"docs.html#methods:start\"><code class=\"js plain\">start</code></a> and <a href=\"docs.html#methods:position\"><code class=\"js plain\">position</code></a> methods to set the board position instantly.",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"setRuyLopezBtn\">Ruy Lopez</button>\n<button id=\"setStartBtn\">Start Position</button>\n<button id=\"setRookCheckmateBtn\">Rook Checkmate</button>",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"setStartBtn\">Start Position</button>\r\n<button id=\"setRuyLopezBtn\">Ruy Lopez</button>\r\n<button id=\"setRookCheckmateBtn\">Rook Checkmate</button>\r\n\r\n<button id=\"setPawns1\">Pawns 1</button>\r\n<button id=\"setPawns2\">Pawns 2</button>\r\n<button id=\"setPawns3\">Pawns 3</button>",
   name: "Set Position Instantly",
-  jsStr: "var board = Chessboard2('myBoard')\n\n$('#setRuyLopezBtn').on('click', function () {\n  var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'\n  board.position(ruyLopez, false)\n})\n\n$('#setStartBtn').on('click', function () {\n  board.start(false)\n})\n\n$('#setRookCheckmateBtn').on('click', function () {\n  var rookCheckmate = {\n    a4: 'bK',\n    c4: 'wK',\n    a7: 'wR'\n  }\n  board.position(rookCheckmate, false)\n})",
+  jsStr: "var board = Chessboard2('myBoard')\r\n\r\n$('#setStartBtn').on('click', function() {\r\n  board.start(false)\r\n})\r\n\r\n$('#setRuyLopezBtn').on('click', function () {\r\n  board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R', false)\r\n})\r\n\r\n$('#setRookCheckmateBtn').on('click', function () {\r\n  board.position({\r\n    a4: 'bK',\r\n    c4: 'wK',\r\n    a7: 'wR'\r\n  }, false)\r\n})\r\n\r\n$('#setPawns1').on('click', function () {\r\n  board.position({\r\n    a1: 'wP', b1: 'wP', c1: 'wP', d1: 'wP', e1: 'wP', d1: 'wP', f1: 'wP', g1: 'wP', h1: 'wP',\r\n    a2: 'wP', b2: 'wP', c2: 'wP', d2: 'wP', e2: 'wP', d2: 'wP', f2: 'wP', g2: 'wP', h2: 'wP',\r\n    a3: 'wP', b3: 'wP', c3: 'wP', d3: 'wP', e3: 'wP', d3: 'wP', f3: 'wP', g3: 'wP', h3: 'wP',\r\n    a4: 'wP', b4: 'wP', c4: 'wP', d4: 'wP', e4: 'wP', d4: 'wP', f4: 'wP', g4: 'wP', h4: 'wP',\r\n\r\n    a5: 'bP', b5: 'bP', c5: 'bP', d5: 'bP', e5: 'bP', d5: 'bP', f5: 'bP', g5: 'bP', h5: 'bP',\r\n    a6: 'bP', b6: 'bP', c6: 'bP', d6: 'bP', e6: 'bP', d6: 'bP', f6: 'bP', g6: 'bP', h6: 'bP',\r\n    a7: 'bP', b7: 'bP', c7: 'bP', d7: 'bP', e7: 'bP', d7: 'bP', f7: 'bP', g7: 'bP', h7: 'bP',\r\n    a8: 'bP', b8: 'bP', c8: 'bP', d8: 'bP', e8: 'bP', d8: 'bP', f8: 'bP', g8: 'bP', h8: 'bP'\r\n  }, false)\r\n})\r\n\r\n$('#setPawns2').on('click', function () {\r\n  board.position({\r\n    a5: 'wP', b5: 'wP', c5: 'wP', d5: 'wP', e5: 'wP', d5: 'wP', f5: 'wP', g5: 'wP', h5: 'wP',\r\n    a6: 'wP', b6: 'wP', c6: 'wP', d6: 'wP', e6: 'wP', d6: 'wP', f6: 'wP', g6: 'wP', h6: 'wP',\r\n    a7: 'wP', b7: 'wP', c7: 'wP', d7: 'wP', e7: 'wP', d7: 'wP', f7: 'wP', g7: 'wP', h7: 'wP',\r\n    a8: 'wP', b8: 'wP', c8: 'wP', d8: 'wP', e8: 'wP', d8: 'wP', f8: 'wP', g8: 'wP', h8: 'wP'\r\n  }, false)\r\n})\r\n\r\n$('#setPawns3').on('click', function () {\r\n  board.position({\r\n    a1: 'bP', b1: 'bP', c1: 'bP', d1: 'bP', e1: 'bP', d1: 'bP', f1: 'bP', g1: 'bP', h1: 'bP',\r\n    a2: 'bP', b2: 'bP', c2: 'bP', d2: 'bP', e2: 'bP', d2: 'bP', f2: 'bP', g2: 'bP', h2: 'bP',\r\n    a3: 'bP', b3: 'bP', c3: 'bP', d3: 'bP', e3: 'bP', d3: 'bP', f3: 'bP', g3: 'bP', h3: 'bP',\r\n    a4: 'bP', b4: 'bP', c4: 'bP', d4: 'bP', e4: 'bP', d4: 'bP', f4: 'bP', g4: 'bP', h4: 'bP'\r\n  }, false)\r\n})",
   jsFn: function () {
 var board = Chessboard2('myBoard')
 
-$('#setRuyLopezBtn').on('click', function () {
-  var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
-  board.position(ruyLopez, false)
-})
-
-$('#setStartBtn').on('click', function () {
+$('#setStartBtn').on('click', function() {
   board.start(false)
 })
 
+$('#setRuyLopezBtn').on('click', function () {
+  board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R', false)
+})
+
 $('#setRookCheckmateBtn').on('click', function () {
-  var rookCheckmate = {
+  board.position({
     a4: 'bK',
     c4: 'wK',
     a7: 'wR'
-  }
-  board.position(rookCheckmate, false)
+  }, false)
+})
+
+$('#setPawns1').on('click', function () {
+  board.position({
+    a1: 'wP', b1: 'wP', c1: 'wP', d1: 'wP', e1: 'wP', d1: 'wP', f1: 'wP', g1: 'wP', h1: 'wP',
+    a2: 'wP', b2: 'wP', c2: 'wP', d2: 'wP', e2: 'wP', d2: 'wP', f2: 'wP', g2: 'wP', h2: 'wP',
+    a3: 'wP', b3: 'wP', c3: 'wP', d3: 'wP', e3: 'wP', d3: 'wP', f3: 'wP', g3: 'wP', h3: 'wP',
+    a4: 'wP', b4: 'wP', c4: 'wP', d4: 'wP', e4: 'wP', d4: 'wP', f4: 'wP', g4: 'wP', h4: 'wP',
+
+    a5: 'bP', b5: 'bP', c5: 'bP', d5: 'bP', e5: 'bP', d5: 'bP', f5: 'bP', g5: 'bP', h5: 'bP',
+    a6: 'bP', b6: 'bP', c6: 'bP', d6: 'bP', e6: 'bP', d6: 'bP', f6: 'bP', g6: 'bP', h6: 'bP',
+    a7: 'bP', b7: 'bP', c7: 'bP', d7: 'bP', e7: 'bP', d7: 'bP', f7: 'bP', g7: 'bP', h7: 'bP',
+    a8: 'bP', b8: 'bP', c8: 'bP', d8: 'bP', e8: 'bP', d8: 'bP', f8: 'bP', g8: 'bP', h8: 'bP'
+  }, false)
+})
+
+$('#setPawns2').on('click', function () {
+  board.position({
+    a5: 'wP', b5: 'wP', c5: 'wP', d5: 'wP', e5: 'wP', d5: 'wP', f5: 'wP', g5: 'wP', h5: 'wP',
+    a6: 'wP', b6: 'wP', c6: 'wP', d6: 'wP', e6: 'wP', d6: 'wP', f6: 'wP', g6: 'wP', h6: 'wP',
+    a7: 'wP', b7: 'wP', c7: 'wP', d7: 'wP', e7: 'wP', d7: 'wP', f7: 'wP', g7: 'wP', h7: 'wP',
+    a8: 'wP', b8: 'wP', c8: 'wP', d8: 'wP', e8: 'wP', d8: 'wP', f8: 'wP', g8: 'wP', h8: 'wP'
+  }, false)
+})
+
+$('#setPawns3').on('click', function () {
+  board.position({
+    a1: 'bP', b1: 'bP', c1: 'bP', d1: 'bP', e1: 'bP', d1: 'bP', f1: 'bP', g1: 'bP', h1: 'bP',
+    a2: 'bP', b2: 'bP', c2: 'bP', d2: 'bP', e2: 'bP', d2: 'bP', f2: 'bP', g2: 'bP', h2: 'bP',
+    a3: 'bP', b3: 'bP', c3: 'bP', d3: 'bP', e3: 'bP', d3: 'bP', f3: 'bP', g3: 'bP', h3: 'bP',
+    a4: 'bP', b4: 'bP', c4: 'bP', d4: 'bP', e4: 'bP', d4: 'bP', f4: 'bP', g4: 'bP', h4: 'bP'
+  }, false)
 })
   }
 };
