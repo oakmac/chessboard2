@@ -68,6 +68,20 @@
     :square "f6"
     :piece "bR"}])
 
+(def test8-posA {"a1" "wP", "b1" "bP"})
+(def test8-posB {"b1" "wP", "c1" "bP"})
+(def test8-anims
+  [{:type "ANIMATION_MOVE"
+    :source "a1"
+    :destination "b1"
+    :piece "wP"
+    :capture? false}
+   {:type "ANIMATION_MOVE"
+    :source "b1"
+    :destination "c1"
+    :piece "bP"
+    :capture? false}])
+
 (deftest calculate-animations-test
   (is (= (calculate-animations test1-posA test1-posB) test1-anims))
   (is (= (calculate-animations test2-posA test2-posB) test2-anims))
@@ -75,4 +89,5 @@
   (is (= (calculate-animations test4-posA test4-posB) test4-anims))
   (is (= (calculate-animations test5-posA test5-posB) test5-anims))
   (is (= (calculate-animations test6-posA test6-posB) test6-anims))
-  (is (= (calculate-animations test7-posA test7-posB) test7-anims)))
+  (is (= (calculate-animations test7-posA test7-posB) test7-anims))
+  (is (= (calculate-animations test8-posA test8-posB) test8-anims)))

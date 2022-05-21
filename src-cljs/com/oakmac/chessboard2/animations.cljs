@@ -34,7 +34,7 @@
         nearest-squares))))
 
 (defn calculate-animations
-  "returns the animations that need to happen in order to get from posA to posB"
+  "returns a vector of animations that need to happen in order to get from posA to posB"
   [posA posB]
   (let [;; which squares are the same in both positions?
         same-squares (reduce
@@ -58,8 +58,7 @@
                               (let [move-animation {:type "ANIMATION_MOVE"
                                                     :source closest-piece
                                                     :destination square
-                                                    :piece piece
-                                                    :capture? (contains? @posA square)}]
+                                                    :piece piece}]
                                 ;; remove these squares from the positions
                                 (swap! posA dissoc closest-piece)
                                 (swap! posB dissoc square)
@@ -68,6 +67,12 @@
                           []
                           (sort (vec @posB)))
         squares-being-moved-to (set (map :destination move-animations))
+
+        ;; calculate captures
+        move-animations2 (map
+                           (fn [{:keys [destination] :as anim}]
+                             (assoc anim :capture? (contains? @posA destination)))
+                           move-animations)
 
         ;; find all of the "add" animations: pieces that only exist in position B and need
         ;; to be added to the board
@@ -94,4 +99,4 @@
                            (sort (vec @posA)))]
 
     ;; return a vector of the animations
-    (vec (concat move-animations add-animations clear-animations))))
+    (vec (concat move-animations2 add-animations clear-animations))))
