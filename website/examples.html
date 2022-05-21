@@ -328,23 +328,43 @@ $('#showPositionBtn').on('click', clickShowPositionBtn)
 
 CHESSBOARD_EXAMPLES["3001"] = {
   description: "Use the <a href=\"docs.html#methods:start\"><code class=\"js plain\">start</code></a> and <a href=\"docs.html#methods:position\"><code class=\"js plain\">position</code></a> methods to set the board position.",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"setRuyLopezBtn\">Ruy Lopez</button>\n<button id=\"setStartBtn\">Start Position</button>\n<button id=\"setRookCheckmateBtn\">Rook Checkmate</button>",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"setStartBtn\">Start Position</button>\n<button id=\"setRuyLopezBtn\">Ruy Lopez</button>\n<button id=\"setRookCheckmateBtn\">Rook Checkmate</button>\n\r\n<button id=\"setPawns1\">Pawns 1</button>\r\n<button id=\"setPawns2\">Pawns 2</button>",
   name: "Set Position",
-  jsStr: "var board = Chessboard2('myBoard')\n\n$('#setRuyLopezBtn').on('click', function () {\n  board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')\n})\n\n$('#setStartBtn').on('click', board.start)\n\n$('#setRookCheckmateBtn').on('click', function () {\n  board.position({\n    a4: 'bK',\n    c4: 'wK',\n    a7: 'wR'\n  })\n})",
+  jsStr: "var board = Chessboard2('myBoard')\n\n$('#setStartBtn').on('click', board.start)\n\n$('#setRuyLopezBtn').on('click', function () {\n  board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')\n})\n\n$('#setRookCheckmateBtn').on('click', function () {\n  board.position({\n    a4: 'bK',\n    c4: 'wK',\n    a7: 'wR'\n  })\n})\n\n$('#setPawns1').on('click', function () {\n  board.position({\n    c4: 'wP',\n    d4: 'wP',\n    e4: 'wP',\n\n    c5: 'bP',\n    d5: 'bP',\n    e5: 'bP'\n  })\n})\n\n$('#setPawns2').on('click', function () {\n  board.position({\n    c4: 'bP',\n    d4: 'bP',\n    e4: 'bP'\n  })\n})",
   jsFn: function () {
 var board = Chessboard2('myBoard')
+
+$('#setStartBtn').on('click', board.start)
 
 $('#setRuyLopezBtn').on('click', function () {
   board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')
 })
-
-$('#setStartBtn').on('click', board.start)
 
 $('#setRookCheckmateBtn').on('click', function () {
   board.position({
     a4: 'bK',
     c4: 'wK',
     a7: 'wR'
+  })
+})
+
+$('#setPawns1').on('click', function () {
+  board.position({
+    c4: 'wP',
+    d4: 'wP',
+    e4: 'wP',
+
+    c5: 'bP',
+    d5: 'bP',
+    e5: 'bP'
+  })
+})
+
+$('#setPawns2').on('click', function () {
+  board.position({
+    c4: 'bP',
+    d4: 'bP',
+    e4: 'bP'
   })
 })
   }

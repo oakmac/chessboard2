@@ -20,6 +20,14 @@ npx shadow-cljs compile node-tests
 
 - everything that chessboardjs v1 has
 - `getItems()` return all items
+- "pulse" a piece with some simple animations
+- "bounce" a piece?
+- animate an arrow
+- `isAnimating` boolean
+- `arrows()` returns array of the arrows on the board
+- `addArrow(src, dest, '#color')`
+- `addArrow({src, dest, color})`
+- `removeArrow(<arrowId>, <arrowId>, etc)`
 
 ## HTML / DOM Design
 
