@@ -527,6 +527,33 @@ $(window).resize(board.resize)
   }
 };
 
+CHESSBOARD_EXAMPLES["3008"] = {
+  description: "TODO: write me :)",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"addDefaultArrowBtn\">Add Default Arrow</button>\n<button id=\"addGreenArrowBtn\">Add Arrow with Color</button>\n<button id=\"moveArrowBtn\">Move Arrow</button>\n<button id=\"clearArrowsBtn\">Clear Arrows</button>",
+  name: "Analysis Arrows",
+  jsStr: "const board = Chessboard2('myBoard', 'start')\nlet arrow1 = null\nlet arrow2 = null\n\n$('#addDefaultArrowBtn').on('click', function () {\n  arrow1 = board.addArrow('e2-e4')\n  // board.addArrow('e2', 'e4')\n})\n\n$('#addGreenArrowBtn').on('click', function () {\n  arrow2 = board.addArrow('c7-c5', 'orange')\n})\n\n$('#moveArrowBtn').on('click', function () {\n  board.moveArrow(arrow1.id, 'd2-d4')\n})\n\n$('#clearArrowsBtn').on('click', board.clearArrows)",
+  jsFn: function () {
+const board = Chessboard2('myBoard', 'start')
+let arrow1 = null
+let arrow2 = null
+
+$('#addDefaultArrowBtn').on('click', function () {
+  arrow1 = board.addArrow('e2-e4')
+  // board.addArrow('e2', 'e4')
+})
+
+$('#addGreenArrowBtn').on('click', function () {
+  arrow2 = board.addArrow('c7-c5', 'orange')
+})
+
+$('#moveArrowBtn').on('click', function () {
+  board.moveArrow(arrow1.id, 'd2-d4')
+})
+
+$('#clearArrowsBtn').on('click', board.clearArrows)
+  }
+};
+
 CHESSBOARD_EXAMPLES["4000"] = {
   description: "The <a href=\"docs.html#config:onChange\"><code class=\"js plain\">onChange</code></a> event fires when the board position changes.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"ruyLopezBtn\">Ruy Lopez</button>\n<button id=\"startPositionBtn\">Start Position</button>",

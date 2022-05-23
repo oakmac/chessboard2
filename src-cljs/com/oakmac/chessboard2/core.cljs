@@ -17,6 +17,9 @@
 ;; TODO
 ;; - add showNotation config option
 
+;; dev toggle
+(def warn-on-extra-items? true)
+
 (def initial-state
   {:arrows {}
    :num-rows 8
@@ -38,7 +41,7 @@
 (defn- draw-position-instant!
   "put pieces inside squares"
   [board-state]
-  (let [{:keys [board-width pieces-container-id piece-square-pct position square->piece-id]} @board-state
+  (let [{:keys [board-width items-container-id piece-square-pct position square->piece-id]} @board-state
         html (atom "")]
     ;; remove existing pieces from the DOM
     (doseq [el-id (vals square->piece-id)]
@@ -55,11 +58,15 @@
                                      :width (/ board-width 8)
                                      :piece-square-pct piece-square-pct}))
         (swap! board-state assoc-in [:square->piece-id square] piece-id)))
-    (append-html! pieces-container-id @html)))
+    (append-html! items-container-id @html)))
 
 (defn- draw-board!
   [{:keys [orientation]}])
   ;; (gobj/set root-el "innerHTML" (str "<h1>" orientation "</h1>")))
+
+(defn get-all-item-elements-from-dom
+  [items-container-id]
+  (gobj/get (gdom/getElement items-container-id) "children"))
 
 ;; PERF: drop this multimethod, use a vanilla cond
 (defmulti animation->dom-op
@@ -69,7 +76,7 @@
 
 (defmethod animation->dom-op "ANIMATION_ADD"
   [{:keys [piece square] :as animation} board-state]
-  (let [{:keys [animate-speed-ms board-width pieces-container-id piece-square-pct position square-el-ids]} @board-state
+  (let [{:keys [animate-speed-ms board-width items-container-id piece-square-pct position square-el-ids]} @board-state
         new-piece-id (random-piece-id)
         new-piece-html (html/Piece {:board-width board-width
                                     :id new-piece-id
@@ -87,7 +94,7 @@
 
 (defmethod animation->dom-op "ANIMATION_MOVE"
   [{:keys [capture? destination piece source] :as animation} board-state]
-  (let [{:keys [animate-speed-ms board-width pieces-container-id piece-square-pct square->piece-id]} @board-state
+  (let [{:keys [animate-speed-ms board-width piece-square-pct square->piece-id]} @board-state
         current-piece-id (get square->piece-id source)
         new-piece-id (random-piece-id)
         new-piece-html (html/Piece {:board-width board-width
@@ -113,7 +120,7 @@
 
 (defmethod animation->dom-op "ANIMATION_CLEAR"
   [{:keys [piece square] :as animation} board-state]
-  (let [{:keys [animate-speed-ms board-width square->piece-id]} @board-state
+  (let [{:keys [square->piece-id]} @board-state
         piece-id (get square->piece-id square)]
     {:delete-square->piece square
      :fade-out-piece piece-id}))
@@ -144,7 +151,7 @@
 (defn apply-dom-ops!
   "Apply DOM operations to the board"
   [board-state ops]
-  (let [{:keys [animate-speed-ms pieces-container-id]} @board-state]
+  (let [{:keys [animate-speed-ms items-container-id]} @board-state]
     ;; remove elements
     (let [removes (map :remove-el ops)]
       (doseq [el-id removes]
@@ -154,7 +161,7 @@
     ;; append new HTML
     (let [new-html (->> (map :new-html ops)
                         (apply str))]
-      (append-html! pieces-container-id new-html))
+      (append-html! items-container-id new-html))
 
     ;; functions to run on the next stack
     (defer (fn []
@@ -183,6 +190,11 @@
 
 ;; -----------------------------------------------------------------------------
 ;; API Methods
+
+(def default-arrow-color "green")
+
+; (defn add-arrow
+;   ([board]))
 
 (defn orientation
  ([board]
@@ -218,7 +230,14 @@
   [board-state new-pos animate?]
   (if animate?
     (set-position-with-animations! board-state new-pos)
-    (set-position-instant! board-state new-pos)))
+    (set-position-instant! board-state new-pos))
+  (when warn-on-extra-items?
+    (js/setTimeout
+      (fn []
+        (let [items-els (get-all-item-elements-from-dom (:items-container-id @board-state))]
+          (js/console.log (gobj/get items-els "length"))))
+          ;; TODO: compare the internal items collection length here
+      (+ 50 (:animate-speed-ms @board-state)))))
 
 (defn position
   "returns or sets the current board position"
@@ -296,8 +315,9 @@
                             :animate-speed-ms default-animate-speed-ms
                             :board-height root-width
                             :board-width root-width
+                            :items {}
                             :piece-square-pct 0.9
-                            :pieces-container-id (str (random-uuid))
+                            :items-container-id (str (random-uuid))
                             :square->piece-id {}
                             :square-el-ids square-el-ids)
          ;; create an atom per instance to track the state of the board
@@ -307,17 +327,50 @@
      (draw-position-instant! board-state)
      ;; return a JS object that implements the API
      (js-obj
+       "addArrow" #() ;; FIXME: add an arrow to the board
+       "addCircle" #() ;; FIXME: add a circle to the board
+       "addItem" #() ;; FIXME: add an item to the board
+       "arrows" #() ;; FIXME: returns an object of the arrows on the board
+       "bouncePiece" #() ;; FIXME
+       "circles" #() ;; FIXME: returns an object of the circles on the board
        "clear" #(position board-state {} %1)
-       "destroy" "FIXME"
-       "getItems" "FIXME: return all items on the board (pieces, arrows, circles, etc)"
-       "items" "FIXME: alias of getItems"
+       "clearArrows" #() ;; FIXME
+       "clearCircles" #() ;; FIXME
+       "clearItems" #() ;; FIXME
+       "clearPieces" #() ;; FIXME
+       "clearSquareHighlights" #() ;; FIXME
+       "config" #() ;; FIXME
+       "destroy" #() ;; FIXME
        "fen" #(position board-state "fen" false)
        "flip" #(orientation board-state "flip")
+       "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
+       "getArrows" #() ;; FIXME: returns a collection of all the Arrows on the board
+       "getCircles" #() ;; FIXME: returns a collection of all the Circles on the board
+       "getConfig" #() ;; FIXME
+       "getItems" #() ;; FIXME: return all items on the board (pieces, arrows, circles, etc)
+       "getNotation" #() ;; FIXME
+       "getPieces" #() ;; FIXME
+       "getSquares" #() ;; FIXME
+       "items" #() ;; FIXME: alias of getItems
        "move" #() ;; FIXME
+       "moveArrow" #() ;; FIXME
+       "moveCircle" #() ;; FIXME
+       "moveItem" #() ;; FIXME
+       "movePiece" #() ;; FIXME
+       "notation" #() ;; FIXME: returns the current state with 0 arg, allows changing with other args
        "orientation" #(orientation board-state %1)
+       "pieces" #() ;; FIXME: returns an object of the pieces on the board
        "position" #(position board-state (js->clj %1) %2)
+       "pulsePiece" #() ;; FIXME
+       "removeArrow" #() ;; FIXME: remove an arrow from the board
+       "removeCircle" #() ;; FIXME: remove a circle from the board
        "resize" #()
-       "start" #(position board-state start-position %1)))))
+       "setConfig" #() ;; FIXME
+       "setNotation" #() ;; FIXME
+       "setSquare" #() ;; FIXME ;; .setSquare('e2', 'blue')
+       "squares" #() ;; FIXME
+       "start" #(position board-state start-position %1)
+       "toggleNotation" #())))) ;; FIXME
 
 ;; TODO: support other module exports / formats here
 (when (and js/window (not (fn? (gobj/get js/window "Chessboard2"))))

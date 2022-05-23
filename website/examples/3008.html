@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>chessboardjs Example #3008 - Analysis Arrows</title>
+  <base href="../" />
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/chessboard2.css">
+</head>
+<body>
+<p><a href="examples#3008">&larr; Back to all examples.</a></p>
+
+<p>TODO: write me :)</p>
+
+<!--- Begin Example HTML ------------------------------------------------------>
+<div id="myBoard" style="width: 400px"></div>
+<button id="addDefaultArrowBtn">Add Default Arrow</button>
+<button id="addGreenArrowBtn">Add Arrow with Color</button>
+<button id="moveArrowBtn">Move Arrow</button>
+<button id="clearArrowsBtn">Clear Arrows</button>
+<!--- End Example HTML -------------------------------------------------------->
+
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/chessboard.js"></script>
+<script>
+// --- Begin Example JS --------------------------------------------------------
+const board = Chessboard2('myBoard', 'start')
+let arrow1 = null
+let arrow2 = null
+
+$('#addDefaultArrowBtn').on('click', function () {
+  arrow1 = board.addArrow('e2-e4')
+  // board.addArrow('e2', 'e4')
+})
+
+$('#addGreenArrowBtn').on('click', function () {
+  arrow2 = board.addArrow('c7-c5', 'orange')
+})
+
+$('#moveArrowBtn').on('click', function () {
+  board.moveArrow(arrow1.id, 'd2-d4')
+})
+
+$('#clearArrowsBtn').on('click', board.clearArrows)
+// --- End Example JS ----------------------------------------------------------
+</script>
+</body>
+</html>

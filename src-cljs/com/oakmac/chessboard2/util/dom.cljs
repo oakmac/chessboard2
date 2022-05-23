@@ -3,6 +3,9 @@
     [goog.dom :as gdom]
     [goog.object :as gobj]))
 
+(defn query-select [q]
+  (.querySelector js/document q))
+
 (defn get-element
   "does it's best to grab a native DOM element from it's argument
   arg can be either:

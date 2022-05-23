@@ -28,6 +28,7 @@ npx shadow-cljs compile node-tests
 - `addArrow(src, dest, '#color')`
 - `addArrow({src, dest, color})`
 - `removeArrow(<arrowId>, <arrowId>, etc)`
+- use a `data-chessboard-draggable` property to allow items to be dropped to the board
 
 ## HTML / DOM Design
 

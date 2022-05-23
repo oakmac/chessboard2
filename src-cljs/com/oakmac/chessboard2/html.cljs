@@ -33,11 +33,11 @@
 
 ;; TODO: this function is a hot mess; refactor to something more functional / elegant
 (defn BoardContainer
-  [{:keys [board-height num-rows num-cols square-el-ids pieces-container-id]}]
+  [{:keys [board-height num-rows num-cols square-el-ids items-container-id]}]
   (str
     "<div class=chessboard-21da3>"
     "<div class=board-container-41a68 style='height: " board-height "px; width: " board-height "px;'>"
-    "<div id='" pieces-container-id "' class=items-container-c9182 style='height:0'></div>"
+    "<div id='" items-container-id "' class=items-container-c9182 style='height:0'></div>"
     "<div class=squares-2dea6 style='height:" board-height "px;'>"
     (let [html (atom "")
           white? (atom true)]
