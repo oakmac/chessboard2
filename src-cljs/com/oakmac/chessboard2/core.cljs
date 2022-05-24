@@ -191,14 +191,22 @@
 ;; -----------------------------------------------------------------------------
 ;; API Methods
 
-(def default-arrow-color "green")
+;; TODO: change to green arrows?
+(def default-arrow-color "#888")
+(def default-arrow-opacity 0.8)
 (def default-arrow-config
   {:color default-arrow-color})
 
 (defn add-arrow
   [board-state arg1 arg2 arg3]
-  (let [id (random-item-id)
-        arrow-html (html/Arrow {:id id})]
+  (let [{:keys [board-width]} @board-state
+        id (random-item-id)
+        arrow-html (html/Arrow {:board-width board-width
+                                :color default-arrow-color
+                                :end "c3"
+                                :id id
+                                :opacity default-arrow-opacity
+                                :start "b1"})]
     (apply-dom-ops! board-state [{:new-html arrow-html}])))
 
   ;  (add-arrow board nil))

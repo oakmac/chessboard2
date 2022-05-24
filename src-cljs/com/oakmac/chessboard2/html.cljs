@@ -1,30 +1,48 @@
 (ns com.oakmac.chessboard2.html
   (:require
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
-    [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions]]
+    [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]
+    [com.oakmac.chessboard2.util.template :refer [template]]
     [goog.crypt.base64 :as base64]))
 
 (defn Arrow
-  [{:keys [color id]}]
-  (str
-    "<div class='item-18a5b arrow-bc3c7' id='" id "'>"
-    "<svg width='300' height='200'>"
-
-    "
-      <defs>
-        <marker id='arrow' viewBox='0 0 10 10' refX='5' refY='5'
-            markerWidth='6' markerHeight='3'
-            orient='auto-start-reverse'>
-          <path d='M 0 0 L 10 5 L 0 10 z' fill='blue'></path>
-        </marker>
-      </defs>
-
-      <line x1='20' x2='40' y1='10' y2='40' stroke='blue' stroke-width='10' stroke-linecap='round' marker-end='url(#arrow)'></line>
-    "
-
-      ; "<rect width='100%' height='100%' fill='green' />"
-    "</svg>"
-    "</div>"))
+  [{:keys [board-width color end id opacity start]}]
+  (let [{:keys [height width left top]} (squares->rect-dimensions start end board-width)
+        square-width (/ board-width 8)
+        start-dims (square->dimensions start board-width)
+        end-dims (square->dimensions end board-width)
+        start-x (- (:center-left start-dims) left)
+        start-y (- (:center-top start-dims) top)
+        end-x (- (:center-left end-dims) left)
+        end-y (- (:center-top end-dims) top)]
+    (template
+      (str
+        "<div class='item-18a5b arrow-bc3c7' id='{id}'"
+            " style='left:{left}px; top:{top}px;'>"
+        "<svg width='{width}' height='{height}'>"
+          "<defs>"
+            "<marker id='arrow' viewBox='0 0 10 10' refX='5' refY='5' "
+                   " markerWidth='6' markerHeight='3'"
+                   " orient='auto-start-reverse'>"
+               "<path d='M 0 0 L 10 5 L 0 10 z' fill='{color}'></path>"
+            "</marker>"
+          "</defs>"
+          "<line x1='{start-x}' y1='{start-y}' x2='{end-x}' y2='{end-y}'"
+             " stroke='{color}' stroke-opacity='{opacity}' stroke-width='10'"
+             " stroke-linecap='round' marker-end='url(#arrow)'></line>"
+        "</svg>"
+        "</div>")
+      {:color color
+       :end-x end-x
+       :end-y end-y
+       :height height
+       :id id
+       :left left
+       :opacity opacity
+       :start-x start-x
+       :start-y start-y
+       :top top
+       :width width})))
 
 ;; TODO: they need the ability to override this
 ;; should be able to put random things on the board, like a toaster SVG

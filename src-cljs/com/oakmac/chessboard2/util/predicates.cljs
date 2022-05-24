@@ -27,3 +27,5 @@
   (and (map? p)
        (every? valid-square? (keys p))
        (every? valid-piece? (vals p))))
+
+;; FIXME: valid-move?

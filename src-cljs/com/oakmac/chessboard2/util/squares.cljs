@@ -57,6 +57,29 @@
         rank (aget square-arr 1)
         file-idx (get file->idx file)
         rank-idx (get rank->idx rank)
+        ;; FIXME: need to support boards with variable number of height / width squares
+        ;; ie: a 4x6 square board
+        square-width (/ board-width 8)
+        left (* file-idx square-width)
+        top (* rank-idx square-width)]
+    {:center-left (+ left (/ square-width 2))
+     :center-top (+ top (/ square-width 2))
+     :left left
+     :top top}))
+
+(defn squares->rect-dimensions
+  "Given two squares, draw a rectangle around them and returns the dimensions"
+  [corner1 corner2 board-width]
+  (let [dims1 (square->dimensions corner1 board-width)
+        dims2 (square->dimensions corner2 board-width)
+        max-left (max (:left dims1) (:left dims2))
+        max-top (max (:top dims1) (:top dims2))
+        min-left (min (:left dims1) (:left dims2))
+        min-top (min (:top dims1) (:top dims2))
+        ;; TODO: this will need to be variable
+        square-height (/ board-width 8)
         square-width (/ board-width 8)]
-    {:left (* file-idx square-width)
-     :top (* rank-idx square-width)}))
+     {:height (+ (- max-top min-top) square-height)
+      :width (+ (- max-left min-left) square-width)
+      :left min-left
+      :top min-top}))
