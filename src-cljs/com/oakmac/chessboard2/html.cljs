@@ -4,6 +4,28 @@
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions]]
     [goog.crypt.base64 :as base64]))
 
+(defn Arrow
+  [{:keys [color id]}]
+  (str
+    "<div class='item-18a5b arrow-bc3c7' id='" id "'>"
+    "<svg width='300' height='200'>"
+
+    "
+      <defs>
+        <marker id='arrow' viewBox='0 0 10 10' refX='5' refY='5'
+            markerWidth='6' markerHeight='3'
+            orient='auto-start-reverse'>
+          <path d='M 0 0 L 10 5 L 0 10 z' fill='blue'></path>
+        </marker>
+      </defs>
+
+      <line x1='20' x2='40' y1='10' y2='40' stroke='blue' stroke-width='10' stroke-linecap='round' marker-end='url(#arrow)'></line>
+    "
+
+      ; "<rect width='100%' height='100%' fill='green' />"
+    "</svg>"
+    "</div>"))
+
 ;; TODO: they need the ability to override this
 ;; should be able to put random things on the board, like a toaster SVG
 (defn piece->imgsrc

@@ -4,3 +4,7 @@
 
 (defn random-piece-id []
   (str "piece-" (random-base58)))
+
+;; FIXME: move to different ns
+(defn random-item-id []
+  (str "item-" (random-base58)))

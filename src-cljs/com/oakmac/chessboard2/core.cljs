@@ -7,7 +7,7 @@
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [append-html! remove-class! remove-element! set-style-prop!]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.functions :refer [defer]]
-    [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
+    [com.oakmac.chessboard2.util.pieces :refer [random-item-id random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
@@ -192,9 +192,18 @@
 ;; API Methods
 
 (def default-arrow-color "green")
+(def default-arrow-config
+  {:color default-arrow-color})
 
-; (defn add-arrow
-;   ([board]))
+(defn add-arrow
+  [board-state arg1 arg2 arg3]
+  (let [id (random-item-id)
+        arrow-html (html/Arrow {:id id})]
+    (apply-dom-ops! board-state [{:new-html arrow-html}])))
+
+  ;  (add-arrow board nil))
+  ; ([board location]
+  ;  (add-arrow board location default-arrow-config)))
 
 (defn orientation
  ([board]
@@ -327,7 +336,7 @@
      (draw-position-instant! board-state)
      ;; return a JS object that implements the API
      (js-obj
-       "addArrow" #() ;; FIXME: add an arrow to the board
+       "addArrow" (partial add-arrow board-state)
        "addCircle" #() ;; FIXME: add a circle to the board
        "addItem" #() ;; FIXME: add an item to the board
        "arrows" #() ;; FIXME: returns an object of the arrows on the board
