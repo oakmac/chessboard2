@@ -18,6 +18,7 @@
 <button id="addDefaultArrowBtn">Add Default Arrow</button>
 <button id="addGreenArrowBtn">Add Arrow with Color</button>
 <button id="moveArrowBtn">Move Arrow</button>
+<button id="logArrowsBtn">console.log Arrows</button>
 <button id="clearArrowsBtn">Clear Arrows</button>
 <!--- End Example HTML -------------------------------------------------------->
 
@@ -45,7 +46,15 @@ $('#moveArrowBtn').on('click', function () {
   board.moveArrow(arrow1.id, 'd2-d4')
 })
 
-$('#clearArrowsBtn').on('click', board.clearArrows)
+$('#logArrowsBtn').on('click', function () {
+  console.log('Arrows:')
+  console.log(board.getArrows())
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+})
+
+$('#clearArrowsBtn').on('click', function () {
+  board.clearArrows()
+})
 // --- End Example JS ----------------------------------------------------------
 </script>
 </body>

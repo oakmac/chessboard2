@@ -362,6 +362,7 @@
        "flip" #(orientation board-state "flip")
        "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
        "getArrows" #() ;; FIXME: returns a collection of all the Arrows on the board
+                       ;; you should be able to specify the collection as an Array, Object, or Map
        "getCircles" #() ;; FIXME: returns a collection of all the Circles on the board
        "getConfig" #() ;; FIXME
        "getItems" #() ;; FIXME: return all items on the board (pieces, arrows, circles, etc)
