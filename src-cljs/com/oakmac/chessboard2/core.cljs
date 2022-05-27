@@ -8,7 +8,7 @@
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.functions :refer [defer]]
     [com.oakmac.chessboard2.util.pieces :refer [random-item-id random-piece-id]]
-    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-position?]]
+    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move? valid-square? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
     [goog.dom :as gdom]
@@ -194,24 +194,78 @@
 ;; TODO: change to green arrows?
 (def default-arrow-color "#888")
 (def default-arrow-opacity 0.8)
+(def default-arrow-size 0.4) ;; TODO: do "small", "medium", "large" here?
 (def default-arrow-config
   {:color default-arrow-color})
 
+(defn- looks-like-an-arrow-config? [js-cfg]
+  (and (object? js-cfg)
+       (valid-square? (gobj/get js-cfg "start"))
+       (valid-square? (gobj/get js-cfg "end"))))
+
+(defn move->map
+  "Converts a move String to a map"
+  [m]
+  (let [arr (.split m "-")]
+    {:start (aget arr 0)
+     :end (aget arr 1)}))
+
 (defn add-arrow
-  [board-state arg1 arg2 arg3]
+  "Adds an analysis arrow to the board. Returns the id of the new arrow."
+  [board-state {:keys [color end opacity size start] :as arrow-config}]
   (let [{:keys [board-width]} @board-state
         id (random-item-id)
+        arrow-item {:id id
+                    :type "CHESSBOARD_ARROW"
+                    :start start
+                    :end end
+                    :color color
+                    :opacity opacity}
         arrow-html (html/Arrow {:board-width board-width
-                                :color default-arrow-color
-                                :end "c3"
+                                :color color
+                                :end end
                                 :id id
-                                :opacity default-arrow-opacity
-                                :start "b1"})]
-    (apply-dom-ops! board-state [{:new-html arrow-html}])))
+                                :opacity opacity
+                                :start start})]
+    (apply-dom-ops! board-state [{:new-html arrow-html}])
+    (swap! board-state assoc-in [:items id] arrow-item)
+    id))
 
-  ;  (add-arrow board nil))
-  ; ([board location]
-  ;  (add-arrow board location default-arrow-config)))
+(defn valid-size? [s]
+  ;; FIXME: write me
+  true)
+
+(defn js-add-arrow
+  [board-state arg1 arg2 arg3]
+  (let [cfg (cond-> default-arrow-config
+              (valid-move? arg1) (merge (move->map arg1))
+              (valid-color? arg2) (merge {:color arg2})
+              (valid-size? arg2) (merge {:size arg2})
+              (valid-size? arg3) (merge {:size arg3})
+              (looks-like-an-arrow-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
+    (add-arrow board-state cfg)))
+
+;; TODO: move to predicates ns
+(defn arrow-item? [item]
+  (= "CHESSBOARD_ARROW" (:type item)))
+
+(defn clear-arrows
+  "Removes all Analysis Arrows from the board"
+  [board-state]
+  (let [arrow-ids (->> @board-state
+                       :items
+                       vals
+                       (filter arrow-item?)
+                       (map :id))
+        dom-ops (map
+                  (fn [id]
+                    {:remove-el id})
+                  arrow-ids)]
+    (apply-dom-ops! board-state dom-ops)
+    (swap! board-state update-in [:items]
+           (fn [items]
+             (apply dissoc items arrow-ids)))
+    nil))
 
 (defn orientation
  ([board]
@@ -344,14 +398,14 @@
      (draw-position-instant! board-state)
      ;; return a JS object that implements the API
      (js-obj
-       "addArrow" (partial add-arrow board-state)
+       "addArrow" (partial js-add-arrow board-state)
        "addCircle" #() ;; FIXME: add a circle to the board
        "addItem" #() ;; FIXME: add an item to the board
        "arrows" #() ;; FIXME: returns an object of the arrows on the board
        "bouncePiece" #() ;; FIXME
        "circles" #() ;; FIXME: returns an object of the circles on the board
        "clear" #(position board-state {} %1)
-       "clearArrows" #() ;; FIXME
+       "clearArrows" (partial clear-arrows board-state)
        "clearCircles" #() ;; FIXME
        "clearItems" #() ;; FIXME
        "clearPieces" #() ;; FIXME

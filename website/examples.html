@@ -529,28 +529,34 @@ $(window).resize(board.resize)
 
 CHESSBOARD_EXAMPLES["3008"] = {
   description: "TODO: write me :)",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"addDefaultArrowBtn\">Add Default Arrow</button>\n<button id=\"addGreenArrowBtn\">Add Arrow with Color</button>\n<button id=\"moveArrowBtn\">Move Arrow</button>\n<button id=\"logArrowsBtn\">console.log Arrows</button>\n<button id=\"clearArrowsBtn\">Clear Arrows</button>",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"addArrow1Btn\">Add Arrow 1</button>\n<button id=\"addArrow2Btn\">Add Arrow 2</button>\n<button id=\"addArrow3Btn\">Add Arrow 3</button>\n<button id=\"logArrowsBtn\">console.log Arrows</button>\n<button id=\"clearArrowsBtn\">Clear Arrows</button>",
   name: "Analysis Arrows",
-  jsStr: "const board = Chessboard2('myBoard', 'start')\nlet arrow1 = null\nlet arrow2 = null\n\n$('#addDefaultArrowBtn').on('click', function () {\n  arrow1 = board.addArrow('e2-e4')\n  // board.addArrow('e2', 'e4')\n  // board.addArrow('e2-e4', '#ffee66', 'pulse')\n  // board.addArrow('e2-e4', '#ffee66', 'flash')\n  // board.addArrow({start: 'e2', end: 'e4', color: 'red', animate-in: 'pulse'})\n})\n\n$('#addGreenArrowBtn').on('click', function () {\n  arrow2 = board.addArrow('c7-c5', 'orange')\n})\n\n$('#moveArrowBtn').on('click', function () {\n  board.moveArrow(arrow1.id, 'd2-d4')\n})\n\n$('#logArrowsBtn').on('click', function () {\n  console.log('Arrows:')\n  console.log(board.getArrows())\n  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')\n})\n\n$('#clearArrowsBtn').on('click', function () {\n  board.clearArrows()\n})",
+  jsStr: "const board = Chessboard2('myBoard', 'start')\nlet arrow1Id = null\nlet arrow2Id = null\nlet arrow3Id = null\n\n$('#addArrow1Btn').on('click', function () {\n  arrow1Id = board.addArrow('e2-e4')\n  console.log('added Arrow 1 with id:', arrow1Id)\n})\n\n$('#addArrow2Btn').on('click', function () {\n  arrow2Id = board.addArrow('c7-c5', '#ffee66', 'small')\n  console.log('added Arrow 2 with id:', arrow2Id)\n})\n\n$('#addArrow3Btn').on('click', function () {\n  arrow3Id = board.addArrow({\n    color: 'orange',\n    end: 'f3',\n    opacity: 100,\n    size: 'large',\n    start: 'g1'\n  })\n  console.log('added Arrow 3 with id:', arrow3Id)\n})\n\n$('#logArrowsBtn').on('click', function () {\n  console.log('Arrows:')\n  console.log(board.getArrows())\n  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')\n})\n\n$('#clearArrowsBtn').on('click', function () {\n  board.clearArrows()\n})",
   jsFn: function () {
 const board = Chessboard2('myBoard', 'start')
-let arrow1 = null
-let arrow2 = null
+let arrow1Id = null
+let arrow2Id = null
+let arrow3Id = null
 
-$('#addDefaultArrowBtn').on('click', function () {
-  arrow1 = board.addArrow('e2-e4')
-  // board.addArrow('e2', 'e4')
-  // board.addArrow('e2-e4', '#ffee66', 'pulse')
-  // board.addArrow('e2-e4', '#ffee66', 'flash')
-  // board.addArrow({start: 'e2', end: 'e4', color: 'red', animate-in: 'pulse'})
+$('#addArrow1Btn').on('click', function () {
+  arrow1Id = board.addArrow('e2-e4')
+  console.log('added Arrow 1 with id:', arrow1Id)
 })
 
-$('#addGreenArrowBtn').on('click', function () {
-  arrow2 = board.addArrow('c7-c5', 'orange')
+$('#addArrow2Btn').on('click', function () {
+  arrow2Id = board.addArrow('c7-c5', '#ffee66', 'small')
+  console.log('added Arrow 2 with id:', arrow2Id)
 })
 
-$('#moveArrowBtn').on('click', function () {
-  board.moveArrow(arrow1.id, 'd2-d4')
+$('#addArrow3Btn').on('click', function () {
+  arrow3Id = board.addArrow({
+    color: 'orange',
+    end: 'f3',
+    opacity: 100,
+    size: 'large',
+    start: 'g1'
+  })
+  console.log('added Arrow 3 with id:', arrow3Id)
 })
 
 $('#logArrowsBtn').on('click', function () {

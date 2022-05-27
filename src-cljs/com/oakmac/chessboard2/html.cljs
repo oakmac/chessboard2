@@ -3,7 +3,10 @@
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]
     [com.oakmac.chessboard2.util.template :refer [template]]
-    [goog.crypt.base64 :as base64]))
+    [goog.crypt.base64 :as base64]
+
+    ;; TODO: rename this
+    [com.oakmac.chessboard2.util.pieces :refer [random-item-id]]))
 
 (defn Arrow
   [{:keys [board-width color end id opacity start]}]
@@ -14,14 +17,15 @@
         start-x (- (:center-left start-dims) left)
         start-y (- (:center-top start-dims) top)
         end-x (- (:center-left end-dims) left)
-        end-y (- (:center-top end-dims) top)]
+        end-y (- (:center-top end-dims) top)
+        marker-id (str "marker-" (random-item-id))]
     (template
       (str
         "<div class='item-18a5b arrow-bc3c7' id='{id}'"
             " style='left:{left}px; top:{top}px;'>"
         "<svg width='{width}' height='{height}'>"
           "<defs>"
-            "<marker id='arrow' viewBox='0 0 10 10' refX='5' refY='5' "
+            "<marker id='{marker-id}' viewBox='0 0 10 10' refX='5' refY='5' "
                    " markerWidth='6' markerHeight='3'"
                    " orient='auto-start-reverse'>"
                "<path d='M 0 0 L 10 5 L 0 10 z' fill='{color}'></path>"
@@ -29,7 +33,7 @@
           "</defs>"
           "<line x1='{start-x}' y1='{start-y}' x2='{end-x}' y2='{end-y}'"
              " stroke='{color}' stroke-opacity='{opacity}' stroke-width='10'"
-             " stroke-linecap='round' marker-end='url(#arrow)'></line>"
+             " stroke-linecap='round' marker-end='url(#{marker-id})'></line>"
         "</svg>"
         "</div>")
       {:color color
@@ -37,6 +41,7 @@
        :end-y end-y
        :height height
        :id id
+       :marker-id marker-id
        :left left
        :opacity opacity
        :start-x start-x

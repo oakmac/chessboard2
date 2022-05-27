@@ -17,6 +17,8 @@
   (and (string? p)
        (not= -1 (.search p #"^[bw][KQRNBP]$"))))
 
+;; FIXME: this will not work for non 8x8 boards
+;; need to make this function accept board size args
 (defn valid-square?
   [s]
   (and (string? s)
@@ -28,4 +30,15 @@
        (every? valid-square? (keys p))
        (every? valid-piece? (vals p))))
 
-;; FIXME: valid-move?
+(defn valid-move?
+  [m]
+  (and (string? m)
+    (let [mv-arr (.split m "-")]
+      (and (= (count mv-arr) 2)
+           (not= (aget mv-arr 0) (aget mv-arr 1))
+           (valid-square? (aget mv-arr 0))
+           (valid-square? (aget mv-arr 1))))))
+
+;; FIXME: write me
+(defn valid-color? [c]
+  (and (string? c)))

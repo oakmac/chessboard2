@@ -15,9 +15,9 @@
 
 <!--- Begin Example HTML ------------------------------------------------------>
 <div id="myBoard" style="width: 400px"></div>
-<button id="addDefaultArrowBtn">Add Default Arrow</button>
-<button id="addGreenArrowBtn">Add Arrow with Color</button>
-<button id="moveArrowBtn">Move Arrow</button>
+<button id="addArrow1Btn">Add Arrow 1</button>
+<button id="addArrow2Btn">Add Arrow 2</button>
+<button id="addArrow3Btn">Add Arrow 3</button>
 <button id="logArrowsBtn">console.log Arrows</button>
 <button id="clearArrowsBtn">Clear Arrows</button>
 <!--- End Example HTML -------------------------------------------------------->
@@ -27,23 +27,29 @@
 <script>
 // --- Begin Example JS --------------------------------------------------------
 const board = Chessboard2('myBoard', 'start')
-let arrow1 = null
-let arrow2 = null
+let arrow1Id = null
+let arrow2Id = null
+let arrow3Id = null
 
-$('#addDefaultArrowBtn').on('click', function () {
-  arrow1 = board.addArrow('e2-e4')
-  // board.addArrow('e2', 'e4')
-  // board.addArrow('e2-e4', '#ffee66', 'pulse')
-  // board.addArrow('e2-e4', '#ffee66', 'flash')
-  // board.addArrow({start: 'e2', end: 'e4', color: 'red', animate-in: 'pulse'})
+$('#addArrow1Btn').on('click', function () {
+  arrow1Id = board.addArrow('e2-e4')
+  console.log('added Arrow 1 with id:', arrow1Id)
 })
 
-$('#addGreenArrowBtn').on('click', function () {
-  arrow2 = board.addArrow('c7-c5', 'orange')
+$('#addArrow2Btn').on('click', function () {
+  arrow2Id = board.addArrow('c7-c5', '#ffee66', 'small')
+  console.log('added Arrow 2 with id:', arrow2Id)
 })
 
-$('#moveArrowBtn').on('click', function () {
-  board.moveArrow(arrow1.id, 'd2-d4')
+$('#addArrow3Btn').on('click', function () {
+  arrow3Id = board.addArrow({
+    color: 'orange',
+    end: 'f3',
+    opacity: 100,
+    size: 'large',
+    start: 'g1'
+  })
+  console.log('added Arrow 3 with id:', arrow3Id)
 })
 
 $('#logArrowsBtn').on('click', function () {
