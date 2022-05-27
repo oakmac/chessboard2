@@ -12,6 +12,7 @@ TODO: write me :)
 <button id="addArrow1Btn">Add Arrow 1</button>
 <button id="addArrow2Btn">Add Arrow 2</button>
 <button id="addArrow3Btn">Add Arrow 3</button>
+<button id="removeArrow3Btn">Remove Arrow 3</button>
 <button id="logArrowsBtn">console.log Arrows</button>
 <button id="clearArrowsBtn">Clear Arrows</button>
 
@@ -40,6 +41,10 @@ $('#addArrow3Btn').on('click', function () {
     start: 'g1'
   })
   console.log('added Arrow 3 with id:', arrow3Id)
+})
+
+$('#removeArrow3Btn').on('click', function () {
+  board.removeArrow(arrow3Id)
 })
 
 $('#logArrowsBtn').on('click', function () {

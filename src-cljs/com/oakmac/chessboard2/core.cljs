@@ -7,6 +7,7 @@
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [append-html! remove-class! remove-element! set-style-prop!]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.functions :refer [defer]]
+    [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.pieces :refer [random-item-id random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move? valid-square? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
@@ -21,11 +22,15 @@
 (def warn-on-extra-items? true)
 
 (def initial-state
-  {:arrows {}
+  {:items {}
    :num-rows 8
    :num-cols 8
    :orientation "white"
    :position {}})
+
+;; TODO: move to predicates ns
+(defn arrow-item? [item]
+  (= "CHESSBOARD_ARROW" (:type item)))
 
 (defn click-root-el [js-evt]
   (.log js/console "clicked root element:" js-evt))
@@ -214,7 +219,7 @@
   "Adds an analysis arrow to the board. Returns the id of the new arrow."
   [board-state {:keys [color end opacity size start] :as arrow-config}]
   (let [{:keys [board-width]} @board-state
-        id (random-item-id)
+        id (random-id "item")
         arrow-item {:id id
                     :type "CHESSBOARD_ARROW"
                     :start start
@@ -231,6 +236,17 @@
     (swap! board-state assoc-in [:items id] arrow-item)
     id))
 
+(defn remove-arrow
+  "Remove an Analysis Arrow from the board"
+  [board-state item-id]
+  (apply-dom-ops! board-state [{:remove-el item-id}])
+  (swap! board-state update-in [:items] dissoc item-id))
+
+(defn js-remove-arrow
+  [board-state item-id]
+  ;; TODO: validation, ensure that item-id is valid
+  (remove-arrow board-state item-id))
+
 (defn valid-size? [s]
   ;; FIXME: write me
   true)
@@ -245,9 +261,19 @@
               (looks-like-an-arrow-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
     (add-arrow board-state cfg)))
 
-;; TODO: move to predicates ns
-(defn arrow-item? [item]
-  (= "CHESSBOARD_ARROW" (:type item)))
+(defn get-arrows
+  ([board-state]
+   (get-arrows board-state "array"))
+  ([board-state data-fmt]
+   (let [arrows (->> @board-state
+                     :items
+                     vals
+                     (filter arrow-item?))
+         lc-data-fmt (str/lower-case data-fmt)]
+     (condp = lc-data-fmt
+       "object" () ;; FIXME: write this
+       "map" () ;; FIXME: convert to Map
+       (clj->js arrows)))))
 
 (defn clear-arrows
   "Removes all Analysis Arrows from the board"
@@ -415,8 +441,7 @@
        "fen" #(position board-state "fen" false)
        "flip" #(orientation board-state "flip")
        "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
-       "getArrows" #() ;; FIXME: returns a collection of all the Arrows on the board
-                       ;; you should be able to specify the collection as an Array, Object, or Map
+       "getArrows" (partial get-arrows board-state)
        "getCircles" #() ;; FIXME: returns a collection of all the Circles on the board
        "getConfig" #() ;; FIXME
        "getItems" #() ;; FIXME: return all items on the board (pieces, arrows, circles, etc)
@@ -434,7 +459,7 @@
        "pieces" #() ;; FIXME: returns an object of the pieces on the board
        "position" #(position board-state (js->clj %1) %2)
        "pulsePiece" #() ;; FIXME
-       "removeArrow" #() ;; FIXME: remove an arrow from the board
+       "removeArrow" (partial js-remove-arrow board-state)
        "removeCircle" #() ;; FIXME: remove a circle from the board
        "resize" #()
        "setConfig" #() ;; FIXME

@@ -1,12 +1,10 @@
 (ns com.oakmac.chessboard2.html
   (:require
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
+    [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]
     [com.oakmac.chessboard2.util.template :refer [template]]
-    [goog.crypt.base64 :as base64]
-
-    ;; TODO: rename this
-    [com.oakmac.chessboard2.util.pieces :refer [random-item-id]]))
+    [goog.crypt.base64 :as base64]))
 
 (defn Arrow
   [{:keys [board-width color end id opacity start]}]
@@ -18,14 +16,14 @@
         start-y (- (:center-top start-dims) top)
         end-x (- (:center-left end-dims) left)
         end-y (- (:center-top end-dims) top)
-        marker-id (str "marker-" (random-item-id))]
+        marker-id (random-id "marker")]
     (template
       (str
         "<div class='item-18a5b arrow-bc3c7' id='{id}'"
             " style='left:{left}px; top:{top}px;'>"
         "<svg width='{width}' height='{height}'>"
           "<defs>"
-            "<marker id='{marker-id}' viewBox='0 0 10 10' refX='5' refY='5' "
+            "<marker id='{marker-id}' viewBox='0 0 10 10' refX='5' refY='5'"
                    " markerWidth='6' markerHeight='3'"
                    " orient='auto-start-reverse'>"
                "<path d='M 0 0 L 10 5 L 0 10 z' fill='{color}'></path>"
