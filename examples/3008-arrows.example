@@ -48,8 +48,15 @@ $('#removeArrow3Btn').on('click', function () {
 })
 
 $('#logArrowsBtn').on('click', function () {
-  console.log('Arrows:')
+  console.log('Arrows Array:')
   console.log(board.getArrows())
+
+  console.log('Arrows Object:')
+  console.log(board.getArrows('object'))
+
+  console.log('Arrows Map:')
+  console.log(board.getArrows('map'))
+
   console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 })
 

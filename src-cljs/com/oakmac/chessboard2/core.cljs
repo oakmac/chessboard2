@@ -17,6 +17,10 @@
 
 ;; TODO
 ;; - add showNotation config option
+;; - .move() should accept an Object
+;;   - optional callback function that completes when the move is finished
+;;   - animate speed option (per move)
+;; - .move('0-0') and .move('0-0-0') should work as expected
 
 ;; dev toggle
 (def warn-on-extra-items? true)
@@ -31,6 +35,15 @@
 ;; TODO: move to predicates ns
 (defn arrow-item? [item]
   (= "CHESSBOARD_ARROW" (:type item)))
+
+;; TODO: move to util namespace
+(defn clj->js-map
+  "Converts a Clojure Map to a JavaScript Map"
+  [clj-map]
+  (let [js-map (js/Map.)]
+    (doseq [[k v] clj-map]
+      (.set js-map (clj->js k) (clj->js v)))
+    js-map))
 
 (defn click-root-el [js-evt]
   (.log js/console "clicked root element:" js-evt))
@@ -203,7 +216,7 @@
 (def default-arrow-config
   {:color default-arrow-color})
 
-(defn- looks-like-an-arrow-config? [js-cfg]
+(defn- looks-like-a-js-arrow-config? [js-cfg]
   (and (object? js-cfg)
        (valid-square? (gobj/get js-cfg "start"))
        (valid-square? (gobj/get js-cfg "end"))))
@@ -244,11 +257,13 @@
 
 (defn js-remove-arrow
   [board-state item-id]
-  ;; TODO: validation, ensure that item-id is valid
+  ;; TODO: validation here, warn if item-id is not valid
   (remove-arrow board-state item-id))
 
 (defn valid-size? [s]
   ;; FIXME: write me
+  ;; size should be an enum like "small", "medium", "large"
+  ;; or a number
   true)
 
 (defn js-add-arrow
@@ -258,22 +273,27 @@
               (valid-color? arg2) (merge {:color arg2})
               (valid-size? arg2) (merge {:size arg2})
               (valid-size? arg3) (merge {:size arg3})
-              (looks-like-an-arrow-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
+              (looks-like-a-js-arrow-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
     (add-arrow board-state cfg)))
 
 (defn get-arrows
-  ([board-state]
-   (get-arrows board-state "array"))
-  ([board-state data-fmt]
-   (let [arrows (->> @board-state
-                     :items
-                     vals
-                     (filter arrow-item?))
-         lc-data-fmt (str/lower-case data-fmt)]
-     (condp = lc-data-fmt
-       "object" () ;; FIXME: write this
-       "map" () ;; FIXME: convert to Map
-       (clj->js arrows)))))
+  "Returns a map of the Arrow Items on the board"
+  [board-state]
+  (let [arrows (->> @board-state
+                    :items
+                    vals
+                    (filter arrow-item?))]
+    (zipmap (map :id arrows) arrows)))
+
+(defn js-get-arrows
+  "Returns the Arrow Items on the board as either an Array (default), JS Object, or JS Map"
+  [board-state return-fmt]
+  (let [arrows (get-arrows board-state)
+        lc-return-fmt (safe-lower-case return-fmt)]
+    (case lc-return-fmt
+      "object" (clj->js arrows)
+      "map" (clj->js-map arrows)
+      (clj->js (vec (vals arrows))))))
 
 (defn clear-arrows
   "Removes all Analysis Arrows from the board"
@@ -424,50 +444,65 @@
      (draw-position-instant! board-state)
      ;; return a JS object that implements the API
      (js-obj
+       ;; TODO: do we need to allow a method for setting multiple arrows in one call?
        "addArrow" (partial js-add-arrow board-state)
-       "addCircle" #() ;; FIXME: add a circle to the board
-       "addItem" #() ;; FIXME: add an item to the board
        "arrows" #() ;; FIXME: returns an object of the arrows on the board
-       "bouncePiece" #() ;; FIXME
-       "circles" #() ;; FIXME: returns an object of the circles on the board
-       "clear" #(position board-state {} %1)
        "clearArrows" (partial clear-arrows board-state)
+       "getArrows" (partial js-get-arrows board-state)
+       "removeArrow" (partial js-remove-arrow board-state)
+
+       "addCircle" #() ;; FIXME: add a circle to the board
+       "circles" #() ;; FIXME: returns an object of the circles on the board
        "clearCircles" #() ;; FIXME
-       "clearItems" #() ;; FIXME
-       "clearPieces" #() ;; FIXME
-       "clearSquareHighlights" #() ;; FIXME
+       "getCircles" #() ;; FIXME: returns a collection of all the Circles on the board
+       "removeCircle" #() ;; FIXME: remove a circle from the board
+
        "config" #() ;; FIXME
+       "getConfig" #() ;; FIXME
+       "setConfig" #() ;; FIXME
+
+       "addItem" #() ;; FIXME: add an item to the board
+       "clearItems" #() ;; FIXME
+       "getItems" #() ;; FIXME: return all items on the board (pieces, arrows, circles, etc)
+       "items" #() ;; FIXME: alias of getItems
+       "moveItem" #() ;; FIXME
+
+       "addPiece" #()
+       "clearPieces" #() ;; FIXME
+       "getPieces" #() ;; FIXME
+       "pieces" #() ;; FIXME: returns an object of the pieces on the board
+       "removePiece" #()
+
+       "clear" #(position board-state {} %1)
+       "move" #() ;; FIXME
+       "movePiece" #() ;; FIXME
+       "position" #(position board-state (js->clj %1) %2)
+
+       "bouncePiece" #() ;; FIXME
+       "clearSquareHighlights" #() ;; FIXME
        "destroy" #() ;; FIXME
        "fen" #(position board-state "fen" false)
        "flip" #(orientation board-state "flip")
        "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
-       "getArrows" (partial get-arrows board-state)
-       "getCircles" #() ;; FIXME: returns a collection of all the Circles on the board
-       "getConfig" #() ;; FIXME
-       "getItems" #() ;; FIXME: return all items on the board (pieces, arrows, circles, etc)
-       "getNotation" #() ;; FIXME
-       "getPieces" #() ;; FIXME
-       "getSquares" #() ;; FIXME
-       "items" #() ;; FIXME: alias of getItems
-       "move" #() ;; FIXME
-       "moveArrow" #() ;; FIXME
-       "moveCircle" #() ;; FIXME
-       "moveItem" #() ;; FIXME
-       "movePiece" #() ;; FIXME
-       "notation" #() ;; FIXME: returns the current state with 0 arg, allows changing with other args
-       "orientation" #(orientation board-state %1)
-       "pieces" #() ;; FIXME: returns an object of the pieces on the board
-       "position" #(position board-state (js->clj %1) %2)
-       "pulsePiece" #() ;; FIXME
-       "removeArrow" (partial js-remove-arrow board-state)
-       "removeCircle" #() ;; FIXME: remove a circle from the board
-       "resize" #()
-       "setConfig" #() ;; FIXME
-       "setNotation" #() ;; FIXME
+
+       "getSquares" #() ;; FIXME: squares can have colors, ids, properties like "black" and "white"
+                        ;;        whether they are highlighted or not
        "setSquare" #() ;; FIXME ;; .setSquare('e2', 'blue')
        "squares" #() ;; FIXME
-       "start" #(position board-state start-position %1)
-       "toggleNotation" #())))) ;; FIXME
+
+       "getNotation" #() ;; FIXME
+       "hideNotation" #() ;; FIXME
+       "notation" #() ;; FIXME: returns the current state with 0 arg, allows changing with other args
+       "showNotation" #() ;; FIXME
+       "toggleNotation" #() ;; FIXME
+
+       "orientation" #(orientation board-state %1)
+
+       "pulsePiece" #() ;; FIXME
+
+       "resize" #()
+
+       "start" #(position board-state start-position %1)))))
 
 ;; TODO: support other module exports / formats here
 (when (and js/window (not (fn? (gobj/get js/window "Chessboard2"))))
