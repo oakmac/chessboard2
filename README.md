@@ -48,3 +48,4 @@ npx shadow-cljs compile node-tests
 - maybe use the "squares as background image" technique like Wikipedia
   - would reduce the number of DOM elements
   - but less customizable for consumers
+- [duck chess](https://duckchess.com/) should be implementable

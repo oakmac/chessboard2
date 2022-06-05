@@ -110,6 +110,9 @@
                  (set-style-prop! new-piece-id "opacity" "100%"))
      :new-square->piece (hash-map square new-piece-id)}))
 
+;; TODO:
+;; - Should we re-use the same DOM element here instead of destroying + creating a new one?
+;; - Is it important for item-ids to persist?
 (defmethod animation->dom-op "ANIMATION_MOVE"
   [{:keys [capture? destination piece source] :as animation} board-state]
   (let [{:keys [animate-speed-ms board-width piece-square-pct square->piece-id]} @board-state
