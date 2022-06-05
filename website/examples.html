@@ -598,6 +598,48 @@ $('#clearArrowsBtn').on('click', function () {
   }
 };
 
+CHESSBOARD_EXAMPLES["3010"] = {
+  description: "TODO: write me :)",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"itemsBtn1\">.items()</button>\n<button id=\"itemsBtn2\">.getItems()</button>\n<button id=\"itemsBtn3\">Log Items</button>\n<button id=\"flipBoardBtn\">Flip Board</button>\n<button id=\"clearArrowsBtn\">Clear Arrows</button>\n<button id=\"addArrowsBtn\">Add Arrows</button>",
+  name: "Items",
+  jsStr: "const board = Chessboard2('myBoard', 'start')\n\n$('#addArrowsBtn').on('click', function () {\n  board.addArrow('e2-e4')\n  board.addArrow('c7-c5', 'small')\n  board.addArrow('a3-c3', 'medium')\n  board.addArrow('g1-f3')\n  board.addArrow('g1-h3', 'large')\n})\n\n$('#itemsBtn1').on('click', function () {\n  console.log(board.items())\n})\n\n$('#itemsBtn2').on('click', function () {\n  console.log(board.getItems())\n})\n\n$('#itemsBtn3').on('click', function () {\n  console.log('Items Array:')\n  console.log(board.getItems())\n\n  console.log('Items Object:')\n  console.log(board.getItems('object'))\n\n  console.log('Items Map:')\n  console.log(board.getItems('map'))\n\n  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')\n})\n\n$('#flipBoardBtn').on('click', board.flip)\n$('#clearArrowsBtn').on('click', board.clearArrows)",
+  jsFn: function () {
+const board = Chessboard2('myBoard', 'start')
+
+$('#addArrowsBtn').on('click', function () {
+  board.addArrow('e2-e4')
+  board.addArrow('c7-c5', 'small')
+  board.addArrow('a3-c3', 'medium')
+  board.addArrow('g1-f3')
+  board.addArrow('g1-h3', 'large')
+})
+
+$('#itemsBtn1').on('click', function () {
+  console.log(board.items())
+})
+
+$('#itemsBtn2').on('click', function () {
+  console.log(board.getItems())
+})
+
+$('#itemsBtn3').on('click', function () {
+  console.log('Items Array:')
+  console.log(board.getItems())
+
+  console.log('Items Object:')
+  console.log(board.getItems('object'))
+
+  console.log('Items Map:')
+  console.log(board.getItems('map'))
+
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+})
+
+$('#flipBoardBtn').on('click', board.flip)
+$('#clearArrowsBtn').on('click', board.clearArrows)
+  }
+};
+
 CHESSBOARD_EXAMPLES["4000"] = {
   description: "The <a href=\"docs.html#config:onChange\"><code class=\"js plain\">onChange</code></a> event fires when the board position changes.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"ruyLopezBtn\">Ruy Lopez</button>\n<button id=\"startPositionBtn\">Start Position</button>",

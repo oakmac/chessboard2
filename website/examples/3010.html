@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>chessboardjs Example #3010 - Items</title>
+  <base href="../" />
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/chessboard2.css">
+</head>
+<body>
+<p><a href="examples#3010">&larr; Back to all examples.</a></p>
+
+<p>TODO: write me :)</p>
+
+<!--- Begin Example HTML ------------------------------------------------------>
+<div id="myBoard" style="width: 400px"></div>
+<button id="itemsBtn1">.items()</button>
+<button id="itemsBtn2">.getItems()</button>
+<button id="itemsBtn3">Log Items</button>
+<button id="flipBoardBtn">Flip Board</button>
+<button id="clearArrowsBtn">Clear Arrows</button>
+<button id="addArrowsBtn">Add Arrows</button>
+<!--- End Example HTML -------------------------------------------------------->
+
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/chessboard.js"></script>
+<script>
+// --- Begin Example JS --------------------------------------------------------
+const board = Chessboard2('myBoard', 'start')
+
+$('#addArrowsBtn').on('click', function () {
+  board.addArrow('e2-e4')
+  board.addArrow('c7-c5', 'small')
+  board.addArrow('a3-c3', 'medium')
+  board.addArrow('g1-f3')
+  board.addArrow('g1-h3', 'large')
+})
+
+$('#itemsBtn1').on('click', function () {
+  console.log(board.items())
+})
+
+$('#itemsBtn2').on('click', function () {
+  console.log(board.getItems())
+})
+
+$('#itemsBtn3').on('click', function () {
+  console.log('Items Array:')
+  console.log(board.getItems())
+
+  console.log('Items Object:')
+  console.log(board.getItems('object'))
+
+  console.log('Items Map:')
+  console.log(board.getItems('map'))
+
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+})
+
+$('#flipBoardBtn').on('click', board.flip)
+$('#clearArrowsBtn').on('click', board.clearArrows)
+// --- End Example JS ----------------------------------------------------------
+</script>
+</body>
+</html>

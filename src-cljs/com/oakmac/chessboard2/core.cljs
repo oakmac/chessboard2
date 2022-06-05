@@ -214,12 +214,10 @@
 ;; -----------------------------------------------------------------------------
 ;; API Methods
 
-;; TODO: change to green arrows?
-(def default-arrow-color "#888") ;; try #003088
-(def default-arrow-opacity 0.4)
-(def default-arrow-size 0.4) ;; TODO: do "small", "medium", "large" here?
 (def default-arrow-config
-  {:color default-arrow-color})
+  {:color "#777"
+   :opacity 0.8
+   :size "large"})
 
 (defn- looks-like-a-js-arrow-config? [js-cfg]
   (and (object? js-cfg)
@@ -233,26 +231,47 @@
     {:start (aget arr 0)
      :end (aget arr 1)}))
 
+(def tshirt-sizes
+  #{"small" "medium" "large"})
+
+(defn percent? [n]
+  (and (number? n)
+       (>= n 0)))
+
+(defn valid-arrow-size? [s]
+  (or (contains? tshirt-sizes s)
+      (percent? s)))
+
+(defn size-string->number
+  "Converts a size string to a number. Does nothing if s is already a number."
+  [s]
+  (let [lc-s (safe-lower-case s)]
+    (cond
+      (= lc-s "small") 0.4
+      (= lc-s "medium") 0.7
+      (= lc-s "large") 0.9
+      (number? s) s
+      ;; NOTE: this should never happen
+      :else 0.9)))
+
 (defn add-arrow
   "Adds an analysis arrow to the board. Returns the id of the new arrow."
   [board-state {:keys [color end opacity size start] :as arrow-config}]
   (let [{:keys [board-width]} @board-state
         id (random-id "item")
+        size (size-string->number size)
         arrow-item {:id id
                     :type "CHESSBOARD_ARROW"
                     :start start
                     :end end
                     :color color
-                    :opacity opacity}
+                    :opacity opacity
+                    :size size}
         arrow-html (html/Arrow {:board-width board-width
                                 :color color
                                 :end end
                                 :id id
-                                :size (case size
-                                        "small" 0.3
-                                        "medium" 0.5
-                                        "large" 0.7
-                                        0.5)
+                                :size size
                                 :opacity opacity
                                 :start start})]
     (apply-dom-ops! board-state [{:new-html arrow-html}])
@@ -283,20 +302,15 @@
   ;; TODO: (move->map new-move) ??
   (move-arrow board-state item-id new-move))
 
-(defn valid-size? [s]
-  (case s
-    "small" true
-    "medium" true
-    "large" true
-    false))
-
 (defn js-add-arrow
   [board-state arg1 arg2 arg3]
   (let [cfg (cond-> default-arrow-config
               (valid-move? arg1) (merge (move->map arg1))
-              (valid-color? arg2) (merge {:color arg2})
-              (valid-size? arg2) (merge {:size arg2})
-              (valid-size? arg3) (merge {:size arg3})
+              (and (valid-color? arg2)
+                   (not (valid-arrow-size? arg2)))
+              (merge {:color arg2})
+              (valid-arrow-size? arg2) (merge {:size arg2})
+              (valid-arrow-size? arg3) (merge {:size arg3})
               (looks-like-a-js-arrow-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
     (add-arrow board-state cfg)))
 
@@ -318,6 +332,22 @@
       "object" (clj->js arrows)
       "map" (clj->js-map arrows)
       (clj->js (vec (vals arrows))))))
+
+(defn get-items
+  "Returns a map of the Items on the board."
+  [board-state]
+  (:items @board-state))
+
+;; TODO: make the "return multiple collection formats" code generic
+(defn js-get-items
+  "Returns the Items on the board as either an Array (default), JS Object, or JS Map"
+  [board-state return-fmt]
+  (let [items (get-items board-state)
+        lc-return-fmt (safe-lower-case return-fmt)]
+    (case lc-return-fmt
+      "object" (clj->js items)
+      "map" (clj->js-map items)
+      (clj->js (vec (vals items))))))
 
 (defn clear-arrows
   "Removes all Analysis Arrows from the board"
@@ -512,8 +542,8 @@
 
        "addItem" #() ;; FIXME: add an item to the board
        "clearItems" #() ;; FIXME
-       "getItems" #() ;; FIXME: return all items on the board (pieces, arrows, circles, etc)
-       "items" #() ;; FIXME: alias of getItems
+       "getItems" (partial js-get-items board-state)
+       "items" (partial js-get-items board-state)
        "moveItem" #() ;; FIXME
 
        "addPiece" #()

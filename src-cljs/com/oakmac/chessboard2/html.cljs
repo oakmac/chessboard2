@@ -9,10 +9,14 @@
 
 (def use-css-arrow? true)
 
+(defn hypotenuse [a b]
+  (js/Math.sqrt
+    (+ (js/Math.pow a 2)
+       (js/Math.pow b 2))))
+
 (defn ArrowCSS
   [{:keys [board-width color end id opacity size start]}]
-  (let [{:keys [_height _width _left _top]} (squares->rect-dimensions start end board-width)
-        square-width (/ board-width 8)
+  (let [square-width (/ board-width 8)
         start-dims (square->dimensions start board-width)
         end-dims (square->dimensions end board-width)
         start-x-css (:center-left start-dims)
@@ -21,17 +25,16 @@
         end-y-css (:center-top end-dims)
         dx (- end-x-css start-x-css)
         dy (- end-y-css start-y-css)
-        arrow-width (* square-width size)
-        top-offset (- (/ arrow-width 2))
-        line-length (- (js/Math.sqrt ;; TODO add condition for animited, growing arrow
-                         (+
-                           (js/Math.pow dy 2)
-                           (js/Math.pow dx 2)))
-                       arrow-width)
-        line-thickness (/ arrow-width 3)
+        arrow-width (* square-width size 0.8)
+        arrow-height (* square-width size)
+        top-offset (- (/ arrow-height 2))
+        line-thickness (/ arrow-height 3)
+        border-radius (/ line-thickness 2)
+        line-length (+ (hypotenuse dy dx)
+                       (* -1 arrow-width)
+                       (* 2 border-radius))
         angle (+ (js/Math.atan (/ dy dx))
-                 (if (< dx 0) js/Math.PI 0))
-        border-radius (/ line-thickness 2)]
+                 (if (< dx 0) js/Math.PI 0))]
     (template
       (str
         "<div class='item-18a5b arrow-bc3c7' id='{id}'"
@@ -40,22 +43,28 @@
             "opacity: {opacity};"
             "transform:"
               "translate({start-x-css}px, {start-y-css}px)"
-              "rotate({angle}rad)'>"
+              "rotate({angle}rad);'>"
           "<div class='arrow-line-a8dce' style='"
             "background-color: {color};"
             "width: {line-length}px;"
             "height: {line-thickness}px;"
+            "margin-left: {arrow-margin-left}px;"
             "border-top-left-radius: {border-radius}px;"
-            "border-bottom-left-radius: {border-radius}px;'>"
+            "border-bottom-left-radius: {border-radius}px;"
+            "'>"
           "</div>"
-          "<div class='arrow-head-38dfa' style="
-            "'background-color: {color};"
+          "<div class='arrow-head-38dfa' style='"
+            "background-color: {color};"
+            "height: {arrow-height}px;"
             "width: {arrow-width}px;"
-            "height: {arrow-width}px;'>"
+            "'>"
           "</div>"
         "</div>")
       {:angle angle
+       :arrow-height arrow-height
        :arrow-width arrow-width
+       ;; push the arrow so that the center of the rounded edge is in the center of the square
+       :arrow-margin-left (* -1 border-radius)
        :color color
        :border-radius border-radius
        :id id
@@ -66,7 +75,7 @@
        :start-y-css start-y-css
        :top-offset top-offset})))
 
-;; TODO: deprecate this eventually
+;; TODO: deprecate this approach
 (defn ArrowSVG
   [{:keys [board-width color end id opacity _size start]}]
   (let [{:keys [height width left top]} (squares->rect-dimensions start end board-width)
