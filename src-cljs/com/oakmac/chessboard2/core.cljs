@@ -210,8 +210,8 @@
 ;; API Methods
 
 ;; TODO: change to green arrows?
-(def default-arrow-color "#888")
-(def default-arrow-opacity 0.8)
+(def default-arrow-color "#888") ;; try #003088
+(def default-arrow-opacity 0.4)
 (def default-arrow-size 0.4) ;; TODO: do "small", "medium", "large" here?
 (def default-arrow-config
   {:color default-arrow-color})
@@ -463,6 +463,8 @@
      (draw-position-instant! board-state)
      ;; return a JS object that implements the API
      (js-obj
+       ;; TODO: do we need to animate arrows from square to square?
+       ;;       I think this might be worth prototyping at least to see the effect
        ;; TODO: do we need to allow a method for setting multiple arrows in one call?
        "addArrow" (partial js-add-arrow board-state)
        "arrows" #() ;; FIXME: returns an object of the arrows on the board
