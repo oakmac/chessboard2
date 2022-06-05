@@ -243,6 +243,11 @@
                                 :color color
                                 :end end
                                 :id id
+                                :size (case size
+                                        "small" 0.3
+                                        "medium" 0.5
+                                        "large" 0.7
+                                        nil 0.5)
                                 :opacity opacity
                                 :start start})]
     (apply-dom-ops! board-state [{:new-html arrow-html}])
@@ -260,11 +265,25 @@
   ;; TODO: validation here, warn if item-id is not valid
   (remove-arrow board-state item-id))
 
+(defn move-arrow
+  "Move an Analysis Arrow on the board"
+  [board-state item-id new-move])
+  ;; TODO: apply-dom-ops
+
+
+(defn js-move-arrow
+  [board-state item-id new-move]
+  ;; TODO: validation here, warn if item-id is not valid
+  (valid-move? new-move)
+  ;; TODO: (move->map new-move) ??
+  (move-arrow board-state item-id new-move))
+
 (defn valid-size? [s]
-  ;; FIXME: write me
-  ;; size should be an enum like "small", "medium", "large"
-  ;; or a number
-  true)
+  (case s
+    "small" true
+    "medium" true
+    "large" true
+    false))
 
 (defn js-add-arrow
   [board-state arg1 arg2 arg3]
@@ -450,6 +469,7 @@
        "clearArrows" (partial clear-arrows board-state)
        "getArrows" (partial js-get-arrows board-state)
        "removeArrow" (partial js-remove-arrow board-state)
+       "moveArrow" (partial js-move-arrow board-state)
 
        "addCircle" #() ;; FIXME: add a circle to the board
        "circles" #() ;; FIXME: returns an object of the circles on the board
