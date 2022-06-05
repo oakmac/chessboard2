@@ -8,16 +8,12 @@
 
 (def use-css-arrow? true)
 
-(defn Arrow
+(defn ArrowCSS
   [{:keys [board-width color end id opacity size start]}]
-  (let [{:keys [height width left top]} (squares->rect-dimensions start end board-width)
+  (let [{:keys [_height _width _left _top]} (squares->rect-dimensions start end board-width)
         square-width (/ board-width 8)
         start-dims (square->dimensions start board-width)
         end-dims (square->dimensions end board-width)
-        start-x (- (:center-left start-dims) left)
-        start-y (- (:center-top start-dims) top)
-        end-x (- (:center-left end-dims) left)
-        end-y (- (:center-top end-dims) top)
         start-x-css (:center-left start-dims)
         start-y-css (:center-top start-dims)
         end-x-css (:center-left end-dims)
@@ -34,71 +30,86 @@
         line-thickness (/ arrow-width 3)
         angle (+ (js/Math.atan (/ dy dx))
                  (if (< dx 0) js/Math.PI 0))
-        border-radius (/ line-thickness 2)
+        border-radius (/ line-thickness 2)]
+    (template
+      (str
+        "<div class='item-18a5b arrow-bc3c7' id='{id}'"
+          "style='"
+            "top: {top-offset}px;"
+            "opacity: {opacity};"
+            "transform:"
+              "translate({start-x-css}px, {start-y-css}px)"
+              "rotate({angle}rad)'>"
+          "<div class='arrow-line-a8dce' style='"
+            "background-color: {color};"
+            "width: {line-length}px;"
+            "height: {line-thickness}px;"
+            "border-top-left-radius: {border-radius}px;"
+            "border-bottom-left-radius: {border-radius}px;'>"
+          "</div>"
+          "<div class='arrow-head-38dfa' style="
+            "'background-color: {color};"
+            "width: {arrow-width}px;"
+            "height: {arrow-width}px;'>"
+          "</div>"
+        "</div>")
+      {:angle angle
+       :arrow-width arrow-width
+       :color color
+       :border-radius border-radius
+       :id id
+       :line-length line-length
+       :line-thickness line-thickness
+       :opacity opacity
+       :start-x-css start-x-css
+       :start-y-css start-y-css
+       :top-offset top-offset})))
+
+;; TODO: deprecate this eventually
+(defn ArrowSVG
+  [{:keys [board-width color end id opacity _size start]}]
+  (let [{:keys [height width left top]} (squares->rect-dimensions start end board-width)
+        start-dims (square->dimensions start board-width)
+        end-dims (square->dimensions end board-width)
+        start-x (- (:center-left start-dims) left)
+        start-y (- (:center-top start-dims) top)
+        end-x (- (:center-left end-dims) left)
+        end-y (- (:center-top end-dims) top)
         marker-id (random-id "marker")]
-    (if use-css-arrow?
-      (template
-        (str
-          "<div class='item-18a5b arrow-bc3c7' id='{id}'"
-            "style='"
-              "top: {top-offset}px;"
-              "opacity: {opacity};"
-              "transform:"
-                "translate({start-x-css}px, {start-y-css}px)"
-                "rotate({angle}rad)'>"
-            "<div class='arrow-line-a8dce' style='"
-              "background-color: {color};"
-              "width: {line-length}px;"
-              "height: {line-thickness}px;"
-              "border-top-left-radius: {border-radius}px;"
-              "border-bottom-left-radius: {border-radius}px;'>"
-            "</div>"
-            "<div class='arrow-head-38dfa' style="
-              "'background-color: {color};"
-              "width: {arrow-width}px;"
-              "height: {arrow-width}px;'>"
-            "</div>"
-          "</div>")
-        {:angle angle
-         :arrow-width arrow-width
-         :color color
-         :border-radius border-radius
-         :id id
-         :line-length line-length
-         :line-thickness line-thickness
-         :opacity opacity
-         :start-x-css start-x-css
-         :start-y-css start-y-css
-         :top-offset top-offset})
-      (template
-        (str
-          "<div class='item-18a5b arrow-bc3c7' id='{id}'"
-              " style='left:{left}px; top:{top}px;'>"
-          "<svg width='{width}' height='{height}'>"
-            "<defs>"
-              "<marker id='{marker-id}' viewBox='0 0 10 10' refX='5' refY='5'"
-                     " markerWidth='6' markerHeight='3'"
-                     " orient='auto-start-reverse'>"
-                 "<path d='M 0 0 L 10 5 L 0 10 z' fill='{color}'></path>"
-              "</marker>"
-            "</defs>"
-            "<line x1='{start-x}' y1='{start-y}' x2='{end-x}' y2='{end-y}'"
-               " stroke='{color}' stroke-opacity='{opacity}' stroke-width='10'"
-               " stroke-linecap='round' marker-end='url(#{marker-id})'></line>"
-          "</svg>"
-          "</div>")
-        {:color color
-         :end-x end-x
-         :end-y end-y
-         :height height
-         :id id
-         :marker-id marker-id
-         :left left
-         :opacity opacity
-         :start-x start-x
-         :start-y start-y
-         :top top
-         :width width}))))
+    (template
+      (str
+        "<div class='item-18a5b arrow-bc3c7' id='{id}'"
+            " style='left:{left}px; top:{top}px;'>"
+        "<svg width='{width}' height='{height}'>"
+          "<defs>"
+            "<marker id='{marker-id}' viewBox='0 0 10 10' refX='5' refY='5'"
+                   " markerWidth='6' markerHeight='3'"
+                   " orient='auto-start-reverse'>"
+               "<path d='M 0 0 L 10 5 L 0 10 z' fill='{color}'></path>"
+            "</marker>"
+          "</defs>"
+          "<line x1='{start-x}' y1='{start-y}' x2='{end-x}' y2='{end-y}'"
+             " stroke='{color}' stroke-opacity='{opacity}' stroke-width='10'"
+             " stroke-linecap='round' marker-end='url(#{marker-id})'></line>"
+        "</svg>"
+        "</div>")
+      {:color color
+       :end-x end-x
+       :end-y end-y
+       :height height
+       :id id
+       :marker-id marker-id
+       :left left
+       :opacity opacity
+       :start-x start-x
+       :start-y start-y
+       :top top
+       :width width})))
+
+(defn Arrow [arrow-config]
+  (if use-css-arrow?
+    (ArrowCSS arrow-config)
+    (ArrowSVG arrow-config)))
 
 ;; TODO: they need the ability to override this
 ;; should be able to put random things on the board, like a toaster SVG
