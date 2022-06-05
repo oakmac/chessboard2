@@ -16,10 +16,26 @@
   flex-direction: column;
 }
 
+.squares-2dea6.orientation-white-4de03 {
+  flex-direction: column;
+}
+
+.squares-2dea6.orientation-black-a8276 {
+  flex-direction: column-reverse;
+}
+
 .rank-98fa8 {
   display: flex;
   flex-direction: row;
   flex: 1;
+}
+
+.squares-2dea6.orientation-white-4de03 .rank-98fa8 {
+  flex-direction: row;
+}
+
+.squares-2dea6.orientation-black-a8276 .rank-98fa8 {
+  flex-direction: row-reverse;
 }
 
 .square-4b72b {

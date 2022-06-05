@@ -480,18 +480,16 @@ $('#startPositionBtn').on('click', board.start)
 
 CHESSBOARD_EXAMPLES["3005"] = {
   description: "Use the <a href=\"docs.html#methods:orientation\"><code class=\"js plain\">orientation</code></a> method to retrieve and set the orientation. Use the <a href=\"docs.html#methods:flip\"><code class=\"js plain\">flip</code></a> method to flip orientation.",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"showOrientationBtn\">Show orientation in console</button>\n<button id=\"flipOrientationBtn\">Flip orientation</button>\n<br />\n<button id=\"whiteOrientationBtn\">White orientation</button>\n<button id=\"blackOrientationBtn\">Black orientation</button>",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"showOrientationBtn\">Show orientation in console</button>\n<button id=\"whiteOrientationBtn\">White orientation</button>\n<button id=\"blackOrientationBtn\">Black orientation</button>\n<button id=\"flipOrientationBtn\">Flip orientation</button>",
   name: "Orientation",
-  jsStr: "var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'\nvar board = Chessboard2('myBoard', ruyLopez)\n\n$('#showOrientationBtn').on('click', function () {\n  console.log('Board orientation is: ' + board.orientation())\n})\n\n$('#flipOrientationBtn').on('click', board.flip)\n\n$('#whiteOrientationBtn').on('click', function () {\n  board.orientation('white')\n})\n\n$('#blackOrientationBtn').on('click', function () {\n  board.orientation('black')\n})",
+  jsStr: "const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'\nconst board = Chessboard2('myBoard', ruyLopez)\n\n$('#showOrientationBtn').on('click', function () {\n  console.log('Board orientation is: ' + board.orientation())\n})\n\n$('#whiteOrientationBtn').on('click', function () {\n  board.orientation('white')\n})\n\n$('#blackOrientationBtn').on('click', function () {\n  board.orientation('black')\n})\n\n$('#flipOrientationBtn').on('click', board.flip)",
   jsFn: function () {
-var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
-var board = Chessboard2('myBoard', ruyLopez)
+const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
+const board = Chessboard2('myBoard', ruyLopez)
 
 $('#showOrientationBtn').on('click', function () {
   console.log('Board orientation is: ' + board.orientation())
 })
-
-$('#flipOrientationBtn').on('click', board.flip)
 
 $('#whiteOrientationBtn').on('click', function () {
   board.orientation('white')
@@ -500,6 +498,8 @@ $('#whiteOrientationBtn').on('click', function () {
 $('#blackOrientationBtn').on('click', function () {
   board.orientation('black')
 })
+
+$('#flipOrientationBtn').on('click', board.flip)
   }
 };
 

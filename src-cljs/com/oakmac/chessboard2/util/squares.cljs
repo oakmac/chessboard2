@@ -3,10 +3,39 @@
     [com.oakmac.chessboard2.util.base58 :refer [random-base58]]
     [com.oakmac.chessboard2.util.board :refer [file->idx rank->idx]]))
 
+;; TODO: create this dynamically
+(def black-rank->idx
+  {"1" 0
+   "2" 1
+   "3" 2
+   "4" 3
+   "5" 4
+   "6" 5
+   "7" 6
+   "8" 7})
+
+(def black-file->idx
+  {"a" 7
+   "b" 6
+   "c" 5
+   "d" 4
+   "e" 3
+   "f" 2
+   "g" 1
+   "h" 0})
+
 (defn- random-square-id []
   (str "square-" (random-base58)))
 
 (def alphas (vec (.split "abcdefghijklmnopqrstuvwxyz" "")))
+
+(def alpha->idx
+  (zipmap alphas
+          (range 0 (count alphas))))
+
+(def reverse-alpha->idx
+  (zipmap (reverse alphas)
+          (range 0 (count alphas))))
 
 (defn idx->alpha
   [idx]
@@ -30,12 +59,17 @@
 
 (defn square->xy
   "Converts an alphanumeric square to a {:x :y} map"
-  [sq]
-  (let [sq-arr (.split sq "")
-        file (aget sq-arr 0)
-        rank (aget sq-arr 1)]
-    {:x (get file->idx file)
-     :y (get rank->idx rank)}))
+  ([sq]
+   (square->xy sq "white"))
+  ([sq orientation]
+   (let [sq-arr (.split sq "")
+         file (aget sq-arr 0)
+         rank (aget sq-arr 1)]
+     (if (= orientation "white")
+       {:x (get alpha->idx file)
+        :y (get rank->idx rank)}
+       {:x (get black-file->idx file)
+        :y (get black-rank->idx rank)}))))
 
 (defn square->distance
   "returns the distance between two squares"
@@ -50,22 +84,21 @@
         x-delta
         y-delta))))
 
+;; FIXME: remove multi-arity here, should always pass in orientation
 (defn square->dimensions
-  [square board-width]
-  (let [square-arr (.split square "")
-        file (aget square-arr 0)
-        rank (aget square-arr 1)
-        file-idx (get file->idx file)
-        rank-idx (get rank->idx rank)
-        ;; FIXME: need to support boards with variable number of height / width squares
-        ;; ie: a 4x6 square board
-        square-width (/ board-width 8)
-        left (* file-idx square-width)
-        top (* rank-idx square-width)]
-    {:center-left (+ left (/ square-width 2))
-     :center-top (+ top (/ square-width 2))
-     :left left
-     :top top}))
+  ([square board-width]
+   (square->dimensions square board-width "white"))
+  ([square board-width orientation]
+   (let [{:keys [x y]} (square->xy square orientation)
+         ;; FIXME: need to support boards with variable number of height / width squares
+         ;; ie: a 4x6 square board
+         square-width (/ board-width 8)
+         left (* x square-width)
+         top (* y square-width)]
+     {:center-left (+ left (/ square-width 2))
+      :center-top (+ top (/ square-width 2))
+      :left left
+      :top top})))
 
 (defn squares->rect-dimensions
   "Given two squares, draw a rectangle around them and returns the dimensions"

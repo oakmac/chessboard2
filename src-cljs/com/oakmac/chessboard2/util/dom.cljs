@@ -44,6 +44,11 @@
         current-html (gobj/get el "innerHTML")]
     (gobj/set el "innerHTML" (str current-html additional-html))))
 
+(defn add-class!
+  [el classname]
+  (let [el (get-element el)]
+    (.add (gobj/get el "classList") classname)))
+
 (defn remove-class!
   [el classname]
   (let [el (get-element el)]

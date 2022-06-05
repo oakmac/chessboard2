@@ -16,24 +16,21 @@
 <!--- Begin Example HTML ------------------------------------------------------>
 <div id="myBoard" style="width: 400px"></div>
 <button id="showOrientationBtn">Show orientation in console</button>
-<button id="flipOrientationBtn">Flip orientation</button>
-<br />
 <button id="whiteOrientationBtn">White orientation</button>
 <button id="blackOrientationBtn">Black orientation</button>
+<button id="flipOrientationBtn">Flip orientation</button>
 <!--- End Example HTML -------------------------------------------------------->
 
 <script src="js/jquery-3.4.1.min.js"></script>
 <script src="js/chessboard.js"></script>
 <script>
 // --- Begin Example JS --------------------------------------------------------
-var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
-var board = Chessboard2('myBoard', ruyLopez)
+const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
+const board = Chessboard2('myBoard', ruyLopez)
 
 $('#showOrientationBtn').on('click', function () {
   console.log('Board orientation is: ' + board.orientation())
 })
-
-$('#flipOrientationBtn').on('click', board.flip)
 
 $('#whiteOrientationBtn').on('click', function () {
   board.orientation('white')
@@ -42,6 +39,8 @@ $('#whiteOrientationBtn').on('click', function () {
 $('#blackOrientationBtn').on('click', function () {
   board.orientation('black')
 })
+
+$('#flipOrientationBtn').on('click', board.flip)
 // --- End Example JS ----------------------------------------------------------
 </script>
 </body>

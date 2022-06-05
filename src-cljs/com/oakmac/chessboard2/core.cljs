@@ -2,9 +2,10 @@
   (:require
     [clojure.string :as str]
     [com.oakmac.chessboard2.animations :refer [calculate-animations]]
+    [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.util.board :refer [start-position]]
-    [com.oakmac.chessboard2.util.dom :as dom-util :refer [append-html! remove-class! remove-element! set-style-prop!]]
+    [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element! set-style-prop!]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.functions :refer [defer]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
@@ -59,7 +60,7 @@
 (defn- draw-position-instant!
   "put pieces inside squares"
   [board-state]
-  (let [{:keys [board-width items-container-id piece-square-pct position square->piece-id]} @board-state
+  (let [{:keys [board-width items-container-id orientation piece-square-pct position square->piece-id]} @board-state
         html (atom "")]
     ;; remove existing pieces from the DOM
     (doseq [el-id (vals square->piece-id)]
@@ -69,12 +70,13 @@
     (doseq [[square piece] position]
       ;; TODO: can do this without an atom
       (let [piece-id (random-piece-id)]
-        (swap! html str (html/Piece {:board-width board-width
+        (swap! html str (html/Piece {:board-orientation orientation
+                                     :board-width board-width
                                      :id piece-id
                                      :piece piece
+                                     :piece-square-pct piece-square-pct
                                      :square square
-                                     :width (/ board-width 8)
-                                     :piece-square-pct piece-square-pct}))
+                                     :width (/ board-width 8)}))
         (swap! board-state assoc-in [:square->piece-id square] piece-id)))
     (append-html! items-container-id @html)))
 
@@ -335,21 +337,41 @@
              (apply dissoc items arrow-ids)))
     nil))
 
+(defn set-white-orientation!
+  [board]
+  (let [squares-selector (str "#" (:container-id @board) " ." css/squares)
+        squares-el (dom-util/get-element squares-selector)]
+    (remove-class! squares-el css/orientation-black)
+    (add-class! squares-el css/orientation-white)
+    (swap! board assoc :orientation "white")
+    (draw-position-instant! board)))
+
+(defn set-black-orientation!
+  [board]
+  (let [squares-selector (str "#" (:container-id @board) " ." css/squares)
+        squares-el (dom-util/get-element squares-selector)]
+    (remove-class! squares-el css/orientation-white)
+    (add-class! squares-el css/orientation-black)
+    (swap! board assoc :orientation "black")
+    (draw-position-instant! board)))
+
 (defn orientation
  ([board]
   (orientation board nil))
  ([board arg]
-  (let [lc-arg (safe-lower-case arg)]
+  (let [lc-arg (safe-lower-case arg)
+        squares-selector (str "#" (:container-id @board) " ." css/squares)]
     (cond
-      (= lc-arg "white") (do (swap! board assoc :orientation "white")
-                             (draw-board! @board)
+      (= lc-arg "white") (do (set-white-orientation! board)
                              "white")
-      (= lc-arg "black") (do (swap! board assoc :orientation "black")
-                             (draw-board! @board)
+      (= lc-arg "black") (do (set-black-orientation! board)
                              "black")
       (= lc-arg "flip") (do (swap! board update :orientation toggle-orientation)
-                            (draw-board! @board)
-                            (:orientation @board))
+                            (let [new-orientation (:orientation @board)]
+                              (if (= new-orientation "white")
+                                (set-white-orientation! board)
+                                (set-black-orientation! board))
+                              new-orientation))
       :else (:orientation @board)))))
 
 (defn set-position-with-animations!
@@ -403,8 +425,8 @@
 ;; Constructor
 
 (defn init-dom!
-  [{:keys [root-el orientation position] :as board}]
-  (gobj/set root-el "innerHTML" (html/BoardContainer board)))
+  [{:keys [root-el] :as board-cfg}]
+  (gobj/set root-el "innerHTML" (html/BoardContainer board-cfg)))
 
 (def valid-config-keys
   #{"position"})
@@ -445,6 +467,7 @@
   ([el js-opts]
    (let [root-el (dom-util/get-element el)
          ;; FIXME: fail if the DOM element does not exist
+         container-id (random-id "container")
          root-width (dom-util/get-width root-el)
          opts1 (expand-second-arg js-opts)
          square-el-ids (create-square-el-ids (:num-rows initial-state)
@@ -454,9 +477,10 @@
                             :animate-speed-ms default-animate-speed-ms
                             :board-height root-width
                             :board-width root-width
+                            :container-id container-id
                             :items {}
-                            :piece-square-pct 0.9
                             :items-container-id (str (random-uuid))
+                            :piece-square-pct 0.9
                             :square->piece-id {}
                             :square-el-ids square-el-ids)
          ;; create an atom per instance to track the state of the board

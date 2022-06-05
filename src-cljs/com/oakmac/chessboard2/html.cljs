@@ -1,5 +1,6 @@
 (ns com.oakmac.chessboard2.html
   (:require
+    [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]
@@ -119,8 +120,8 @@
 
 ;; FIXME: need alt text here for the image
 (defn Piece
-  [{:keys [board-width color id hidden? piece piece-square-pct square width]}]
-  (let [{:keys [left top]} (square->dimensions square board-width)
+  [{:keys [board-orientation board-width color id hidden? piece piece-square-pct square width]}]
+  (let [{:keys [left top]} (square->dimensions square board-width board-orientation)
         square-width (/ board-width 8)
         piece-pct (* 100 piece-square-pct)]
    (str
@@ -138,14 +139,35 @@
                   (if (= color "white") "white-3b784" "black-b7cb6"))]
     (str "<div class='" classes "' id='" id "' data-square-coord='" coord "'></div>")))
 
+; (defn Squares
+;   [{:keys [board-height num-rows num-cols square-el-ids items-container-id] :as opts}]
+;   (let [html (atom "")
+;         white? (atom true)]
+;     (doseq [rank-idx (reverse (range 0 num-rows))]
+;       (swap! html str (str "<div class='rank-98fa8' data-rank-idx='" (inc rank-idx) "'>"))
+;       (doseq [col-idx (range 0 num-cols)]
+;         (let [coord (str (idx->alpha col-idx) (inc rank-idx))]
+;           (swap! html str (Square {:coord coord
+;                                    :color (if @white? "white" "black")
+;                                    :id (get square-el-ids coord)}))
+;           (swap! white? not)))
+;       (swap! html str (str "</div>"))
+;       (swap! white? not))
+;     @html))
+
 ;; TODO: this function is a hot mess; refactor to something more functional / elegant
 (defn BoardContainer
-  [{:keys [board-height num-rows num-cols square-el-ids items-container-id]}]
+  [{:keys [board-height container-id num-rows num-cols orientation square-el-ids items-container-id] :as opts}]
   (str
-    "<div class=chessboard-21da3>"
+    "<div class=chessboard-21da3 id=" container-id ">"
     "<div class=board-container-41a68 style='height: " board-height "px; width: " board-height "px;'>"
     "<div id='" items-container-id "' class=items-container-c9182 style='height:0'></div>"
-    "<div class=squares-2dea6 style='height:" board-height "px;'>"
+    "<div class='" css/squares " "
+      (if (= orientation "white")
+        css/orientation-white
+        css/orientation-black)
+      "' style='height:" board-height "px;'>"
+    ; (Squares opts)
     (let [html (atom "")
           white? (atom true)]
       (doseq [rank-idx (reverse (range 0 num-rows))]
