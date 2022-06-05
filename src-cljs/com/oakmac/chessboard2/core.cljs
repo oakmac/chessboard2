@@ -247,7 +247,7 @@
                                         "small" 0.3
                                         "medium" 0.5
                                         "large" 0.7
-                                        nil 0.5)
+                                        0.5)
                                 :opacity opacity
                                 :start start})]
     (apply-dom-ops! board-state [{:new-html arrow-html}])
