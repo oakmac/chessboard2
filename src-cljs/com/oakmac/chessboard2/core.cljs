@@ -13,6 +13,7 @@
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move? valid-square? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
+    [goog.array :as garray]
     [goog.dom :as gdom]
     [goog.object :as gobj]))
 
@@ -57,11 +58,27 @@
 (defn toggle-orientation [o]
   (if (= o "white") "black" "white"))
 
-;; FIXME: write this
+(defn get-all-item-elements-from-dom
+  "returns an Array of all Item elements currently in the DOM"
+  [items-container-id]
+  (gobj/get (gdom/getElement items-container-id) "children"))
+
+(defn get-item-el-ids
+  "returns a Set of all the Item ids currently in the DOM"
+  [items-container-id]
+  (let [item-els (get-all-item-elements-from-dom items-container-id)
+        ids (atom #{})]
+    (garray/forEach item-els
+      (fn [itm]
+        (swap! ids conj (gobj/get itm "id"))))
+    @ids))
+
+;; TODO: I thnk we need to convert this function to use only dom-ops
+;; need to decide if Pieces are considered Items or not
 (defn- draw-items-instant!
   "Update all Items in the DOM instantly (ie: no animation)"
   [board-state]
-  (let [{:keys [board-width items-container-id orientation piece-square-pct position square->piece-id]} @board-state
+  (let [{:keys [board-width items items-container-id orientation piece-square-pct position square->piece-id]} @board-state
         html (atom "")]
     ;; remove existing pieces from the DOM
     (doseq [el-id (vals square->piece-id)]
@@ -84,10 +101,6 @@
 (defn- draw-board!
   [{:keys [orientation]}])
   ;; (gobj/set root-el "innerHTML" (str "<h1>" orientation "</h1>")))
-
-(defn get-all-item-elements-from-dom
-  [items-container-id]
-  (gobj/get (gdom/getElement items-container-id) "children"))
 
 ;; PERF: drop this multimethod, use a vanilla cond
 (defmulti animation->dom-op
@@ -295,7 +308,6 @@
   [board-state item-id new-move])
   ;; TODO: apply-dom-ops
 
-
 (defn js-move-arrow
   [board-state item-id new-move]
   ;; TODO: validation here, warn if item-id is not valid
@@ -325,7 +337,7 @@
     (zipmap (map :id arrows) arrows)))
 
 (defn js-get-arrows
-  "Returns the Arrow Items on the board as either an Array (default), JS Object, or JS Map"
+  "Returns the Arrow Items on the board as either a JS Array (default), JS Object, or JS Map"
   [board-state return-fmt]
   (let [arrows (get-arrows board-state)
         lc-return-fmt (safe-lower-case return-fmt)]
@@ -341,7 +353,7 @@
 
 ;; TODO: make the "return multiple collection formats" code generic
 (defn js-get-items
-  "Returns the Items on the board as either an Array (default), JS Object, or JS Map"
+  "Returns the Items on the board as either a JS Array (default), JS Object, or JS Map"
   [board-state return-fmt]
   (let [items (get-items board-state)
         lc-return-fmt (safe-lower-case return-fmt)]
@@ -504,13 +516,14 @@
          square-el-ids (create-square-el-ids (:num-rows initial-state)
                                              (:num-cols initial-state))
          opts2 (merge initial-state opts1)
+         items-container-id (random-id "items-container")
          opts3 (assoc opts2 :root-el root-el
                             :animate-speed-ms default-animate-speed-ms
                             :board-height root-width
                             :board-width root-width
                             :container-id container-id
                             :items {}
-                            :items-container-id (str (random-uuid))
+                            :items-container-id items-container-id
                             :piece-square-pct 0.9
                             :square->piece-id {}
                             :square-el-ids square-el-ids)
