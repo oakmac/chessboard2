@@ -58,5 +58,15 @@
 }
 
 .arrow-bc3c7 {
+  display: flex;
+  align-items: center;
+  transform-origin: center left;
+}
 
+.arrow-head-38dfa {
+  clip-path: polygon(0 0, 0 100%, 100% 50%);
+  margin-left: -1px;
+}
+
+.arrow-line-a8dce {
 }

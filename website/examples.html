@@ -529,9 +529,9 @@ $(window).resize(board.resize)
 
 CHESSBOARD_EXAMPLES["3008"] = {
   description: "TODO: write me :)",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"addArrow1Btn\">Add Arrow 1</button>\n<button id=\"addArrow2Btn\">Add Arrow 2</button>\n<button id=\"addArrow3Btn\">Add Arrow 3</button>\n<button id=\"removeArrow3Btn\">Remove Arrow 3</button>\n<button id=\"logArrowsBtn\">console.log Arrows</button>\n<button id=\"clearArrowsBtn\">Clear Arrows</button>",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"addArrow1Btn\">Add Arrow 1</button>\n<button id=\"addArrow2Btn\">Add Arrow 2</button>\n<button id=\"addArrow3Btn\">Add Arrow 3</button>\n<button id=\"addArrow4Btn\">Add Arrow 4</button>\n<button id=\"moveArrow4Btn\">Move Arrow 4</button>\n<br />\n<button id=\"addArrow5Btn\">Add Arrow 5</button>\n<button id=\"removeArrow5Btn\">Remove Arrow 5</button>\n<button id=\"logArrowsBtn\">console.log Arrows</button>\n<button id=\"clearArrowsBtn\">Clear Arrows</button>",
   name: "Analysis Arrows",
-  jsStr: "const board = Chessboard2('myBoard', 'start')\nlet arrow1Id = null\nlet arrow2Id = null\nlet arrow3Id = null\n\n$('#addArrow1Btn').on('click', function () {\n  arrow1Id = board.addArrow('e2-e4')\n  console.log('added Arrow 1 with id:', arrow1Id)\n})\n\n$('#addArrow2Btn').on('click', function () {\n  arrow2Id = board.addArrow('c7-c5', '#ffee66', 'small')\n  console.log('added Arrow 2 with id:', arrow2Id)\n})\n\n$('#addArrow3Btn').on('click', function () {\n  arrow3Id = board.addArrow({\n    color: 'orange',\n    end: 'f3',\n    opacity: 100,\n    size: 'large',\n    start: 'g1'\n  })\n  console.log('added Arrow 3 with id:', arrow3Id)\n})\n\n$('#removeArrow3Btn').on('click', function () {\n  board.removeArrow(arrow3Id)\n})\n\n$('#logArrowsBtn').on('click', function () {\n  console.log('Arrows Array:')\n  console.log(board.getArrows())\n\n  console.log('Arrows Object:')\n  console.log(board.getArrows('object'))\n\n  console.log('Arrows Map:')\n  console.log(board.getArrows('map'))\n\n  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')\n})\n\n$('#clearArrowsBtn').on('click', function () {\n  board.clearArrows()\n})",
+  jsStr: "const board = Chessboard2('myBoard', 'start')\nlet arrow1Id = null\nlet arrow2Id = null\nlet arrow3Id = null\n\n$('#addArrow1Btn').on('click', function () {\n  arrow1Id = board.addArrow('e2-e4')\n  console.log('added Arrow 1 with id:', arrow1Id)\n})\n\n$('#addArrow2Btn').on('click', function () {\n  arrow2Id = board.addArrow('c7-c5', '#ffee66', 'small')\n  console.log('added \"small\" Arrow 2 with id:', arrow2Id)\n})\n\n$('#addArrow3Btn').on('click', function () {\n  arrow3Id = board.addArrow('d7-d5', '#66eeff', 'medium')\n  console.log('added \"medium\" Arrow 3 with id:', arrow3Id)\n})\n\n$('#addArrow4Btn').on('click', function () {\n  arrow4Id = board.addArrow('e7-e5', '#aaff22', 'large')\n  console.log('added \"large\" Arrow 4 with id:', arrow4Id)\n})\n\n$('#moveArrow4Btn').on('click', function () {\n  board.moveArrow(arrow4Id, 'g8-f6')\n  console.log('move Arrow 4 with id:', arrow4Id)\n})\n\n$('#addArrow5Btn').on('click', function () {\n  arrow5Id = board.addArrow({\n    color: 'orange',\n    end: 'f3',\n    opacity: 100,\n    size: 'large',\n    start: 'g1'\n  })\n  console.log('added Arrow 5 with id:', arrow5Id)\n})\n\n$('#removeArrow5Btn').on('click', function () {\n  board.removeArrow(arrow5Id)\n  console.log('remove Arrow 5 with id:', arrow5Id)\n})\n\n$('#logArrowsBtn').on('click', function () {\n  console.log('Arrows Array:')\n  console.log(board.getArrows())\n\n  console.log('Arrows Object:')\n  console.log(board.getArrows('object'))\n\n  console.log('Arrows Map:')\n  console.log(board.getArrows('map'))\n\n  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')\n})\n\n$('#clearArrowsBtn').on('click', function () {\n  board.clearArrows()\n})",
   jsFn: function () {
 const board = Chessboard2('myBoard', 'start')
 let arrow1Id = null
@@ -545,22 +545,38 @@ $('#addArrow1Btn').on('click', function () {
 
 $('#addArrow2Btn').on('click', function () {
   arrow2Id = board.addArrow('c7-c5', '#ffee66', 'small')
-  console.log('added Arrow 2 with id:', arrow2Id)
+  console.log('added "small" Arrow 2 with id:', arrow2Id)
 })
 
 $('#addArrow3Btn').on('click', function () {
-  arrow3Id = board.addArrow({
+  arrow3Id = board.addArrow('d7-d5', '#66eeff', 'medium')
+  console.log('added "medium" Arrow 3 with id:', arrow3Id)
+})
+
+$('#addArrow4Btn').on('click', function () {
+  arrow4Id = board.addArrow('e7-e5', '#aaff22', 'large')
+  console.log('added "large" Arrow 4 with id:', arrow4Id)
+})
+
+$('#moveArrow4Btn').on('click', function () {
+  board.moveArrow(arrow4Id, 'g8-f6')
+  console.log('move Arrow 4 with id:', arrow4Id)
+})
+
+$('#addArrow5Btn').on('click', function () {
+  arrow5Id = board.addArrow({
     color: 'orange',
     end: 'f3',
     opacity: 100,
     size: 'large',
     start: 'g1'
   })
-  console.log('added Arrow 3 with id:', arrow3Id)
+  console.log('added Arrow 5 with id:', arrow5Id)
 })
 
-$('#removeArrow3Btn').on('click', function () {
-  board.removeArrow(arrow3Id)
+$('#removeArrow5Btn').on('click', function () {
+  board.removeArrow(arrow5Id)
+  console.log('remove Arrow 5 with id:', arrow5Id)
 })
 
 $('#logArrowsBtn').on('click', function () {
