@@ -57,8 +57,9 @@
 (defn toggle-orientation [o]
   (if (= o "white") "black" "white"))
 
-(defn- draw-position-instant!
-  "put pieces inside squares"
+;; FIXME: write this
+(defn- draw-items-instant!
+  "Update all Items in the DOM instantly (ie: no animation)"
   [board-state]
   (let [{:keys [board-width items-container-id orientation piece-square-pct position square->piece-id]} @board-state
         html (atom "")]
@@ -374,7 +375,7 @@
     (remove-class! squares-el css/orientation-black)
     (add-class! squares-el css/orientation-white)
     (swap! board assoc :orientation "white")
-    (draw-position-instant! board)))
+    (draw-items-instant! board)))
 
 (defn set-black-orientation!
   [board]
@@ -383,7 +384,7 @@
     (remove-class! squares-el css/orientation-white)
     (add-class! squares-el css/orientation-black)
     (swap! board assoc :orientation "black")
-    (draw-position-instant! board)))
+    (draw-items-instant! board)))
 
 (defn orientation
  ([board]
@@ -414,7 +415,7 @@
 (defn set-position-instant!
   [board-state new-pos]
   (swap! board-state assoc :position new-pos)
-  (draw-position-instant! board-state))
+  (draw-items-instant! board-state))
 
 (defn set-position!
   "Sets a new position on the board"
@@ -517,7 +518,7 @@
          board-state (atom opts3)]
      (init-dom! @board-state)
      (add-events! root-el)
-     (draw-position-instant! board-state)
+     (draw-items-instant! board-state)
      ;; return a JS object that implements the API
      (js-obj
        ;; TODO: do we need to animate arrows from square to square?

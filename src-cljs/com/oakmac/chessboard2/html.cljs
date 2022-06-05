@@ -2,6 +2,7 @@
   (:require
     [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
+    [com.oakmac.chessboard2.util.arrows :as arrow-util]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]
     [com.oakmac.chessboard2.util.template :refer [template]]
@@ -9,32 +10,9 @@
 
 (def use-css-arrow? true)
 
-(defn hypotenuse [a b]
-  (js/Math.sqrt
-    (+ (js/Math.pow a 2)
-       (js/Math.pow b 2))))
-
 (defn ArrowCSS
-  [{:keys [board-width color end id opacity size start]}]
-  (let [square-width (/ board-width 8)
-        start-dims (square->dimensions start board-width)
-        end-dims (square->dimensions end board-width)
-        start-x-css (:center-left start-dims)
-        start-y-css (:center-top start-dims)
-        end-x-css (:center-left end-dims)
-        end-y-css (:center-top end-dims)
-        dx (- end-x-css start-x-css)
-        dy (- end-y-css start-y-css)
-        arrow-width (* square-width size 0.8)
-        arrow-height (* square-width size)
-        top-offset (- (/ arrow-height 2))
-        line-thickness (/ arrow-height 3)
-        border-radius (/ line-thickness 2)
-        line-length (+ (hypotenuse dy dx)
-                       (* -1 arrow-width)
-                       (* 2 border-radius))
-        angle (+ (js/Math.atan (/ dy dx))
-                 (if (< dx 0) js/Math.PI 0))]
+  [{:keys [color id opacity] :as cfg}]
+  (let [position-info (arrow-util/position cfg)]
     (template
       (str
         "<div class='item-18a5b arrow-bc3c7' id='{id}'"
@@ -60,20 +38,11 @@
             "'>"
           "</div>"
         "</div>")
-      {:angle angle
-       :arrow-height arrow-height
-       :arrow-width arrow-width
-       ;; push the arrow so that the center of the rounded edge is in the center of the square
-       :arrow-margin-left (* -1 border-radius)
-       :color color
-       :border-radius border-radius
-       :id id
-       :line-length line-length
-       :line-thickness line-thickness
-       :opacity opacity
-       :start-x-css start-x-css
-       :start-y-css start-y-css
-       :top-offset top-offset})))
+      (merge
+        position-info
+        {:color color
+         :id id
+         :opacity opacity}))))
 
 ;; TODO: deprecate this approach
 (defn ArrowSVG
@@ -129,7 +98,7 @@
 
 ;; FIXME: need alt text here for the image
 (defn Piece
-  [{:keys [board-orientation board-width color id hidden? piece piece-square-pct square width]}]
+  [{:keys [board-orientation board-width _color id hidden? piece piece-square-pct square _width]}]
   (let [{:keys [left top]} (square->dimensions square board-width board-orientation)
         square-width (/ board-width 8)
         piece-pct (* 100 piece-square-pct)]
@@ -166,7 +135,7 @@
 
 ;; TODO: this function is a hot mess; refactor to something more functional / elegant
 (defn BoardContainer
-  [{:keys [board-height container-id num-rows num-cols orientation square-el-ids items-container-id] :as opts}]
+  [{:keys [board-height container-id num-rows num-cols orientation square-el-ids items-container-id] :as _opts}]
   (str
     "<div class=chessboard-21da3 id=" container-id ">"
     "<div class=board-container-41a68 style='height: " board-height "px; width: " board-height "px;'>"

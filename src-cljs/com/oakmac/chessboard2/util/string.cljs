@@ -3,7 +3,8 @@
     [clojure.string :as str]))
 
 (defn safe-lower-case
-  "lower-case s if it is a String"
+  "lower-case s if it is a String
+  returns null if s is not a String"
   [s]
   (when (string? s)
     (str/lower-case s)))
