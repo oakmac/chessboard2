@@ -80,7 +80,10 @@
   [board-state]
   (let [{:keys [board-width items items-container-id orientation piece-square-pct position square->piece-id]} @board-state
         html (atom "")]
-    ;; remove existing pieces from the DOM
+    ;; remove existing Items from the DOM
+    (doseq [item-id (keys items)]
+      (remove-element! item-id))
+    ;; remove existing Pieces from the DOM
     (doseq [el-id (vals square->piece-id)]
       (remove-element! el-id))
     ;; clear the :square->piece-id map
@@ -96,6 +99,13 @@
                                      :square square
                                      :width (/ board-width 8)}))
         (swap! board-state assoc-in [:square->piece-id square] piece-id)))
+    ;; add Items back
+    (doseq [item (vals items)]
+      ;; FIXME: what to do about other Item types here?
+      (swap! html str (html/Arrow (merge
+                                    item
+                                    {:board-width board-width
+                                     :orientation orientation}))))
     (append-html! items-container-id @html)))
 
 (defn- draw-board!
@@ -271,7 +281,7 @@
 (defn add-arrow
   "Adds an analysis arrow to the board. Returns the id of the new arrow."
   [board-state {:keys [color end opacity size start] :as arrow-config}]
-  (let [{:keys [board-width]} @board-state
+  (let [{:keys [board-width orientation]} @board-state
         id (random-id "item")
         size (size-string->number size)
         arrow-item {:id id
@@ -285,8 +295,9 @@
                                 :color color
                                 :end end
                                 :id id
-                                :size size
                                 :opacity opacity
+                                :orientation orientation
+                                :size size
                                 :start start})]
     (apply-dom-ops! board-state [{:new-html arrow-html}])
     (swap! board-state assoc-in [:items id] arrow-item)

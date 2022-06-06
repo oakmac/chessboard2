@@ -5,10 +5,10 @@
 
 (defn position
   "Returns a Map of Arrow positioning information"
-  [{:keys [board-width end size start] :as _arrow-config}]
+  [{:keys [board-width end orientation size start] :as _arrow-config}]
   (let [square-width (/ board-width 8)
-        start-dims (square->dimensions start board-width)
-        end-dims (square->dimensions end board-width)
+        start-dims (square->dimensions start board-width orientation)
+        end-dims (square->dimensions end board-width orientation)
         start-x-css (:center-left start-dims)
         start-y-css (:center-top start-dims)
         end-x-css (:center-left end-dims)
