@@ -9,6 +9,7 @@
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.functions :refer [defer]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
+    [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
     [com.oakmac.chessboard2.util.pieces :refer [random-item-id random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move? valid-square? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
@@ -141,17 +142,18 @@
 ;; - Is it important for item-ids to persist?
 (defmethod animation->dom-op "ANIMATION_MOVE"
   [{:keys [capture? destination piece source] :as animation} board-state]
-  (let [{:keys [animate-speed-ms board-width piece-square-pct square->piece-id]} @board-state
+  (let [{:keys [animate-speed-ms board-width orientation piece-square-pct square->piece-id]} @board-state
         current-piece-id (get square->piece-id source)
         new-piece-id (random-piece-id)
         new-piece-html (html/Piece {:board-width board-width
+                                    :board-orientation orientation
                                     :id new-piece-id
                                     :hidden? false
                                     :piece piece
                                     :piece-square-pct piece-square-pct
                                     :square source
                                     :width (/ board-width 8)})
-        target-square-dimensions (square->dimensions destination board-width)]
+        target-square-dimensions (square->dimensions destination board-width orientation)]
     (merge
       {:new-html new-piece-html
        :defer-fn (fn []
@@ -250,10 +252,18 @@
 
 (defn move->map
   "Converts a move String to a map"
-  [m]
-  (let [arr (.split m "-")]
-    {:start (aget arr 0)
-     :end (aget arr 1)}))
+  ([m]
+   (move->map m "MOVE_FORMAT"))
+  ([m format]
+   (let [arr (.split m "-")]
+     (case format
+       "ARROW_FORMAT"
+       {:start (aget arr 0)
+        :end (aget arr 1)}
+       "MOVE_FORMAT"
+       {:from (aget arr 0)
+        :to (aget arr 1)}
+       nil))))
 
 (def tshirt-sizes
   #{"small" "medium" "large"})
@@ -329,7 +339,7 @@
 (defn js-add-arrow
   [board-state arg1 arg2 arg3]
   (let [cfg (cond-> default-arrow-config
-              (valid-move? arg1) (merge (move->map arg1))
+              (valid-move? arg1) (merge (move->map arg1 "ARROW_FORMAT"))
               (and (valid-color? arg2)
                    (not (valid-arrow-size? arg2)))
               (merge {:color arg2})
@@ -446,6 +456,7 @@
   (if animate?
     (set-position-with-animations! board-state new-pos)
     (set-position-instant! board-state new-pos))
+
   (when warn-on-extra-items?
     (js/setTimeout
       (fn []
@@ -474,6 +485,29 @@
       ;; FIXME: error code here
       (do (js/console.warn "Invalid value passed to the position method:" (clj->js new-pos))
           nil))))
+
+(defn move-piece
+  [board-state {:keys [animate? from to _onComplete] :as move}]
+  (let [new-position (apply-move-to-position (:position @board-state) move)]
+    (position board-state new-position animate?)))
+
+(defn array-of-moves? [arg]
+  (and (array? arg)
+       (every? arg valid-move?)))
+
+(defn looks-like-a-move-object? [js-move]
+  (and (object? js-move)
+       (valid-square? (gobj/get js-move "from"))
+       (valid-square? (gobj/get js-move "to"))))
+
+;; TODO: handle 0-0 and 0-0-0
+(defn js-move-piece
+  [board-state arg1]
+  (cond
+    (valid-move? arg1) (move-piece board-state (move->map arg1 "MOVE_FORMAT"))
+    ;; TODO (array-of-moves? arg1) ()
+    (looks-like-a-move-object? arg1) (move-piece board-state (js->clj arg1 :keywordize-keys true))
+    :else (js/console.warn "FIXME ERROR CODE: Invalid value passed to the .move() method:" arg1)))
 
 ;; -----------------------------------------------------------------------------
 ;; Constructor
@@ -549,7 +583,7 @@
        ;;       I think this might be worth prototyping at least to see the effect
        ;; TODO: do we need to allow a method for setting multiple arrows in one call?
        "addArrow" (partial js-add-arrow board-state)
-       "arrows" #() ;; FIXME: returns an object of the arrows on the board
+       "arrows" (partial js-get-arrows board-state)
        "clearArrows" (partial clear-arrows board-state)
        "getArrows" (partial js-get-arrows board-state)
        "removeArrow" (partial js-remove-arrow board-state)
@@ -572,13 +606,13 @@
        "moveItem" #() ;; FIXME
 
        "addPiece" #()
-       "clearPieces" #() ;; FIXME
+       "clearPieces" #(position board-state {} %1)
        "getPieces" #() ;; FIXME
        "pieces" #() ;; FIXME: returns an object of the pieces on the board
        "removePiece" #()
 
        "clear" #(position board-state {} %1)
-       "move" #() ;; FIXME
+       "move" (partial js-move-piece board-state)
        "movePiece" #() ;; FIXME
        "position" #(position board-state (js->clj %1) %2)
 
