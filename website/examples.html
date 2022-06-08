@@ -605,6 +605,71 @@ $('#clearArrowsBtn').on('click', function () {
   }
 };
 
+CHESSBOARD_EXAMPLES["3009"] = {
+  description: "TODO: write me :)",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"addCircle1Btn\">Default Circle at e3</button>\n<button id=\"addCircle2Btn\">Large, Orange Circle at e4</button>\n<button id=\"addCircle3Btn\">Add Circle with Object</button>\n<button id=\"addCircle5Btn\">Add Circle with Config Object</button>\n<br />\n<button id=\"removeCircle2Btn\">Remove Circle at e4</button>\n<button id=\"logCirclesBtn\">console.log Circles</button>\n<button id=\"clearCirclesBtn\">Clear Circles</button>",
+  name: "Circles",
+  jsStr: "const board = Chessboard2('myBoard', 'start')\nlet circle1Id = null\nlet circle2Id = null\nlet circle3Id = null\n\n$('#addCircle1Btn').on('click', function () {\n  circle1Id = board.addCircle('e3')\n  console.log('added Circle 1 with id:', circle1Id)\n})\n\n$('#addCircle2Btn').on('click', function () {\n  circle2Id = board.addCircle('e4', 'orange', 'large')\n  console.log('added \"small\" Circle 2 with id:', circle2Id)\n})\n\n$('#addCircle3Btn').on('click', function () {\n  circle3Id = board.addCircle('c5', 'medium')\n  console.log('added \"medium\" Circle 3 with id:', circle3Id)\n})\n\n$('#addCircle4Btn').on('click', function () {\n  circle4Id = board.addCircle('e7-e5', '#aaff22', 'large')\n  console.log('added \"large\" Circle 4 with id:', circle4Id)\n})\n\n$('#addCircle5Btn').on('click', function () {\n  circle5Id = board.addCircle({\n    color: 'orange',\n    square: 'h1',\n    opacity: 0.5,\n    size: 1.2\n  })\n  console.log('added Circle 5 with id:', circle5Id)\n})\n\n$('#removeCircle2Btn').on('click', function () {\n  board.removeCircle('e4')\n  console.log('remove Circle 5 with id:', circle5Id)\n})\n\n$('#logCirclesBtn').on('click', function () {\n  console.log('Circles Array:')\n  console.log(board.getCircles())\n\n  console.log('Circles Object:')\n  console.log(board.getCircles('object'))\n\n  console.log('Circles Map:')\n  console.log(board.getCircles('map'))\n\n  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')\n})\n\n$('#clearCirclesBtn').on('click', function () {\n  board.clearCircles()\n})",
+  jsFn: function () {
+const board = Chessboard2('myBoard', 'start')
+let circle1Id = null
+let circle2Id = null
+let circle3Id = null
+
+$('#addCircle1Btn').on('click', function () {
+  circle1Id = board.addCircle('e3')
+  console.log('added Circle 1 with id:', circle1Id)
+})
+
+$('#addCircle2Btn').on('click', function () {
+  circle2Id = board.addCircle('e4', 'orange', 'large')
+  console.log('added "small" Circle 2 with id:', circle2Id)
+})
+
+$('#addCircle3Btn').on('click', function () {
+  circle3Id = board.addCircle('c5', 'medium')
+  console.log('added "medium" Circle 3 with id:', circle3Id)
+})
+
+$('#addCircle4Btn').on('click', function () {
+  circle4Id = board.addCircle('e7-e5', '#aaff22', 'large')
+  console.log('added "large" Circle 4 with id:', circle4Id)
+})
+
+$('#addCircle5Btn').on('click', function () {
+  circle5Id = board.addCircle({
+    color: 'orange',
+    square: 'h1',
+    opacity: 0.5,
+    size: 1.2
+  })
+  console.log('added Circle 5 with id:', circle5Id)
+})
+
+$('#removeCircle2Btn').on('click', function () {
+  board.removeCircle('e4')
+  console.log('remove Circle 5 with id:', circle5Id)
+})
+
+$('#logCirclesBtn').on('click', function () {
+  console.log('Circles Array:')
+  console.log(board.getCircles())
+
+  console.log('Circles Object:')
+  console.log(board.getCircles('object'))
+
+  console.log('Circles Map:')
+  console.log(board.getCircles('map'))
+
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+})
+
+$('#clearCirclesBtn').on('click', function () {
+  board.clearCircles()
+})
+  }
+};
+
 CHESSBOARD_EXAMPLES["3010"] = {
   description: "TODO: write me :)",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"itemsBtn1\">.items()</button>\n<button id=\"itemsBtn2\">.getItems()</button>\n<button id=\"itemsBtn3\">Log Items</button>\n<button id=\"flipBoardBtn\">Flip Board</button>\n<button id=\"clearArrowsBtn\">Clear Arrows</button>\n<button id=\"addArrowsBtn\">Add Arrows</button>",

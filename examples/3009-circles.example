@@ -1,0 +1,77 @@
+===== id
+3009
+
+===== Name
+Circles
+
+===== Description
+TODO: write me :)
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+<button id="addCircle1Btn">Default Circle at e3</button>
+<button id="addCircle2Btn">Large, Orange Circle at e4</button>
+<button id="addCircle3Btn">Add Circle with Object</button>
+<button id="addCircle5Btn">Add Circle with Config Object</button>
+<br />
+<button id="removeCircle2Btn">Remove Circle at e4</button>
+<button id="logCirclesBtn">console.log Circles</button>
+<button id="clearCirclesBtn">Clear Circles</button>
+
+===== JS
+const board = Chessboard2('myBoard', 'start')
+let circle1Id = null
+let circle2Id = null
+let circle3Id = null
+
+$('#addCircle1Btn').on('click', function () {
+  circle1Id = board.addCircle('e3')
+  console.log('added Circle 1 with id:', circle1Id)
+})
+
+$('#addCircle2Btn').on('click', function () {
+  circle2Id = board.addCircle('e4', 'orange', 'large')
+  console.log('added "small" Circle 2 with id:', circle2Id)
+})
+
+$('#addCircle3Btn').on('click', function () {
+  circle3Id = board.addCircle('c5', 'medium')
+  console.log('added "medium" Circle 3 with id:', circle3Id)
+})
+
+$('#addCircle4Btn').on('click', function () {
+  circle4Id = board.addCircle('e7-e5', '#aaff22', 'large')
+  console.log('added "large" Circle 4 with id:', circle4Id)
+})
+
+$('#addCircle5Btn').on('click', function () {
+  circle5Id = board.addCircle({
+    color: 'orange',
+    square: 'h1',
+    opacity: 0.5,
+    size: 1.2
+  })
+  console.log('added Circle 5 with id:', circle5Id)
+})
+
+$('#removeCircle2Btn').on('click', function () {
+  board.removeCircle('e4')
+  console.log('remove Circle 5 with id:', circle5Id)
+})
+
+$('#logCirclesBtn').on('click', function () {
+  console.log('Circles Array:')
+  console.log(board.getCircles())
+
+  console.log('Circles Object:')
+  console.log(board.getCircles('object'))
+
+  console.log('Circles Map:')
+  console.log(board.getCircles('map'))
+
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+})
+
+$('#clearCirclesBtn').on('click', function () {
+  board.clearCircles()
+})

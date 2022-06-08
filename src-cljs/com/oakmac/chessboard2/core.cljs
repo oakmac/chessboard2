@@ -18,6 +18,8 @@
     [goog.dom :as gdom]
     [goog.object :as gobj]))
 
+(declare percent? size-string->number tshirt-sizes)
+
 ;; TODO
 ;; - add showNotation config option
 ;; - .move() should accept an Object
@@ -38,6 +40,9 @@
 ;; TODO: move to predicates ns
 (defn arrow-item? [item]
   (= "CHESSBOARD_ARROW" (:type item)))
+
+(defn circle-item? [item]
+  (= "CHESSBOARD_CIRCLE" (:type item)))
 
 ;; TODO: move to util namespace
 (defn clj->js-map
@@ -240,6 +245,89 @@
 ;; -----------------------------------------------------------------------------
 ;; API Methods
 
+;; FIXME: should be able to remove a circle either via square code or id
+;; FIXME: what to do when they add a circle to a square that already has one?
+;;        I think the answer is to update the config of that circle
+
+(defn remove-circle
+  "Remove a Circle from the board"
+  [board-state item-id]
+  (apply-dom-ops! board-state [{:remove-el item-id}])
+  (swap! board-state update-in [:items] dissoc item-id))
+
+(defn js-remove-circle
+  [board-state item-id]
+  ;; TODO: validation here, warn if item-id is not valid
+  (remove-circle board-state item-id))
+
+;; TODO: this function could be combined with clear-arrows
+(defn clear-circles
+  "Removes all Circles from the board"
+  [board-state]
+  (let [item-ids (->> @board-state
+                      :items
+                      vals
+                      (filter circle-item?)
+                      (map :id))
+        dom-ops (map
+                  (fn [id]
+                    {:remove-el id})
+                  item-ids)]
+    (apply-dom-ops! board-state dom-ops)
+    (swap! board-state update-in [:items]
+           (fn [items]
+             (apply dissoc items item-ids)))
+    nil))
+
+(defn add-circle
+  "Adds a circle to the board. Returns the id of the new circle."
+  [board-state {:keys [color opacity size square] :as circle-config}]
+  (let [{:keys [board-width orientation]} @board-state
+        id (random-id "item")
+        size (size-string->number size)
+        circle-item {:color color
+                     :id id
+                     :opacity opacity
+                     :size size
+                     :square square
+                     :type "CHESSBOARD_CIRCLE"}
+        circle-html (html/Circle {:board-width board-width
+                                  :color color
+                                  :id id
+                                  :opacity opacity
+                                  :orientation orientation
+                                  :size size
+                                  :square square})]
+    (apply-dom-ops! board-state [{:new-html circle-html}])
+    (swap! board-state assoc-in [:items id] circle-item)
+    id))
+
+(def default-circle-config
+  {:color "#777"
+   :opacity 0.8
+   :size "small"})
+
+(defn- looks-like-a-js-circle-config? [js-cfg]
+  (and (object? js-cfg)
+       (valid-square? (gobj/get js-cfg "square"))))
+
+;; TODO: can be combined with valid-arrow-size?
+(defn valid-circle-size? [s]
+  (or (contains? tshirt-sizes s)
+      (percent? s)))
+
+(defn js-add-circle
+  [board-state arg1 arg2 arg3]
+  (let [cfg (cond-> default-circle-config
+              (valid-square? arg1) (merge {:square arg1})
+              (and (valid-color? arg2)
+                   (not (valid-circle-size? arg2)))
+              (merge {:color arg2})
+              (valid-circle-size? arg2) (merge {:size arg2})
+              (valid-circle-size? arg3) (merge {:size arg3})
+              (looks-like-a-js-circle-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
+    (add-circle board-state cfg)))
+
 (def default-arrow-config
   {:color "#777"
    :opacity 0.8
@@ -319,6 +407,7 @@
   (apply-dom-ops! board-state [{:remove-el item-id}])
   (swap! board-state update-in [:items] dissoc item-id))
 
+;; FIXME: you should be able to pass in 'e2-e4' and remove the arrow on those squares
 (defn js-remove-arrow
   [board-state item-id]
   ;; TODO: validation here, warn if item-id is not valid
@@ -589,11 +678,11 @@
        "removeArrow" (partial js-remove-arrow board-state)
        "moveArrow" (partial js-move-arrow board-state)
 
-       "addCircle" #() ;; FIXME: add a circle to the board
+       "addCircle" (partial js-add-circle board-state)
        "circles" #() ;; FIXME: returns an object of the circles on the board
-       "clearCircles" #() ;; FIXME
+       "clearCircles" (partial clear-circles board-state)
        "getCircles" #() ;; FIXME: returns a collection of all the Circles on the board
-       "removeCircle" #() ;; FIXME: remove a circle from the board
+       "removeCircle" (partial js-remove-circle board-state) ;; FIXME: remove a circle from the board
 
        "config" #() ;; FIXME
        "getConfig" #() ;; FIXME

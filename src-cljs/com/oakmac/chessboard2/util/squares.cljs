@@ -86,6 +86,7 @@
 
 ;; FIXME: remove multi-arity here, should always pass in orientation
 (defn square->dimensions
+  "Returns the dimensions of a square on the board, relative to the top left corner."
   ([square board-width]
    (square->dimensions square board-width "white"))
   ([square board-width orientation]

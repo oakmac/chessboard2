@@ -10,6 +10,30 @@
 
 (def use-css-arrow? true)
 
+(defn Circle
+  [{:keys [board-width color id opacity orientation size square] :as cfg}]
+  (let [square-dims (square->dimensions square board-width orientation)
+        square-width (/ board-width 8) ;; FIXME: need to support variable number of squares here
+        circle-width (* size square-width)]
+    (template
+      (str
+        "<div class='item-18a5b circle-a0266' id='{id}'"
+          "style='"
+            "background-color:{color};"
+            "height:{height}px;"
+            "left:{left}px;"
+            "opacity:{opacity};"
+            "top:{top}px;"
+            "width:{width}px;"
+          "'></div>")
+      {:color color
+       :height circle-width
+       :id id
+       :left (- (:center-left square-dims) (/ circle-width 2))
+       :opacity opacity
+       :top (- (:center-top square-dims) (/ circle-width 2))
+       :width circle-width})))
+
 (defn ArrowCSS
   [{:keys [color id opacity] :as cfg}]
   (let [position-info (arrow-util/position cfg)]
