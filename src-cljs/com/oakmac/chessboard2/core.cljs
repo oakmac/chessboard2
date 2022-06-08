@@ -516,16 +516,10 @@
   [board-state]
   (:items @board-state))
 
-;; TODO: make the "return multiple collection formats" code generic
 (defn js-get-items
   "Returns the Items on the board as either a JS Array (default), JS Object, or JS Map"
   [board-state return-fmt]
-  (let [items (get-items board-state)
-        lc-return-fmt (safe-lower-case return-fmt)]
-    (case lc-return-fmt
-      "object" (clj->js items)
-      "map" (clj->js-map items)
-      (clj->js (vec (vals items))))))
+  (map->js-return-format (get-items board-state) (safe-lower-case return-fmt)))
 
 (defn clear-arrows
   "Removes all Analysis Arrows from the board"
