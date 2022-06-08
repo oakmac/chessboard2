@@ -44,6 +44,9 @@
 (defn circle-item? [item]
   (= "CHESSBOARD_CIRCLE" (:type item)))
 
+(defn piece-item? [item]
+  (= "CHESSBOARD_PIECE" (:type item)))
+
 ;; TODO: move to util namespace
 (defn clj->js-map
   "Converts a Clojure Map to a JavaScript Map"
@@ -249,16 +252,61 @@
 ;; FIXME: what to do when they add a circle to a square that already has one?
 ;;        I think the answer is to update the config of that circle
 
-(defn remove-circle
-  "Remove a Circle from the board"
+(defn get-items-by-type
+  "Returns a map of <type> Items on the board"
+  [board-state type-str]
+  (let [items (->> @board-state
+                   :items
+                   vals
+                   (filter #(= type-str (:type %))))]
+    (zipmap (map :id items) items)))
+
+(defn get-circles-by-square
+  "Returns a Map of Circles with their square as the key."
+  [board-state]
+  (let [circles (->> @board-state
+                     :items
+                     vals
+                     (filter circle-item?))]
+    (zipmap (map :square circles) circles)))
+
+(defn map->js-return-format
+  "Returns a Clojure map of items as either a JS Array (default), JS Object, or JS Map"
+  [items return-fmt]
+  (case return-fmt
+    "object" (clj->js items)
+    "map" (clj->js-map items)
+    (clj->js (vec (vals items)))))
+
+(defn js-get-circles
+  "Returns the Circle Items on the board as either a JS Array (default), JS Object, or JS Map"
+  [board-state return-fmt]
+  (map->js-return-format (get-items-by-type board-state "CHESSBOARD_CIRCLE")
+                         (safe-lower-case return-fmt)))
+
+(defn remove-circle-by-id
+  "Removes a Circle from the board using it's item-id"
   [board-state item-id]
   (apply-dom-ops! board-state [{:remove-el item-id}])
   (swap! board-state update-in [:items] dissoc item-id))
 
+(defn remove-circle
+  "Remove a Circle from the board"
+  [board-state item-id-or-square]
+  (if (valid-square? item-id-or-square)
+    (let [square->circles-map (get-circles-by-square board-state)]
+      (when-let [circle (get square->circles-map item-id-or-square)]
+        (remove-circle-by-id board-state (:id circle))))
+    (remove-circle-by-id board-state item-id-or-square)))
+
+;; FIXME: this should be variadic as well as accept an array of circle ids
+; (let [xxx (array)]
+;   (copy-arguments xxx)
+;   (js/console.log xxx))
 (defn js-remove-circle
-  [board-state item-id]
+  [board-state item-id-or-square]
   ;; TODO: validation here, warn if item-id is not valid
-  (remove-circle board-state item-id))
+  (remove-circle board-state item-id-or-square))
 
 ;; TODO: this function could be combined with clear-arrows
 (defn clear-circles
@@ -280,10 +328,10 @@
     nil))
 
 (defn add-circle
-  "Adds a circle to the board. Returns the id of the new circle."
-  [board-state {:keys [color opacity size square] :as circle-config}]
+  "Adds a Circle to the board. Returns the id of the new Circle."
+  [board-state {:keys [color id opacity size square] :as circle-config}]
   (let [{:keys [board-width orientation]} @board-state
-        id (random-id "item")
+        id (or id (random-id "item"))
         size (size-string->number size)
         circle-item {:color color
                      :id id
@@ -301,6 +349,17 @@
     (apply-dom-ops! board-state [{:new-html circle-html}])
     (swap! board-state assoc-in [:items id] circle-item)
     id))
+
+(defn add-or-replace-circle
+  "Adds a Circle to the board. Returns the id of the new Circle.
+  If there is already a Circle on the board on that square, it will be replaced."
+  [board-state {:keys [square] :as circle-config}]
+  (let [square->circles-map (get-circles-by-square board-state)]
+    (if-let [current-circle (get square->circles-map square)]
+      (do
+        (remove-circle-by-id board-state (:id current-circle))
+        (add-circle board-state (assoc circle-config :id (:id current-circle))))
+      (add-circle board-state circle-config))))
 
 (def default-circle-config
   {:color "#777"
@@ -326,7 +385,7 @@
               (valid-circle-size? arg2) (merge {:size arg2})
               (valid-circle-size? arg3) (merge {:size arg3})
               (looks-like-a-js-circle-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
-    (add-circle board-state cfg)))
+    (add-or-replace-circle board-state cfg)))
 
 (def default-arrow-config
   {:color "#777"
@@ -449,12 +508,8 @@
 (defn js-get-arrows
   "Returns the Arrow Items on the board as either a JS Array (default), JS Object, or JS Map"
   [board-state return-fmt]
-  (let [arrows (get-arrows board-state)
-        lc-return-fmt (safe-lower-case return-fmt)]
-    (case lc-return-fmt
-      "object" (clj->js arrows)
-      "map" (clj->js-map arrows)
-      (clj->js (vec (vals arrows))))))
+  (map->js-return-format (get-items-by-type board-state "CHESSBOARD_ARROW")
+                         (safe-lower-case return-fmt)))
 
 (defn get-items
   "Returns a map of the Items on the board."
@@ -679,10 +734,10 @@
        "moveArrow" (partial js-move-arrow board-state)
 
        "addCircle" (partial js-add-circle board-state)
-       "circles" #() ;; FIXME: returns an object of the circles on the board
+       "circles" (partial js-get-circles board-state)
        "clearCircles" (partial clear-circles board-state)
-       "getCircles" #() ;; FIXME: returns a collection of all the Circles on the board
-       "removeCircle" (partial js-remove-circle board-state) ;; FIXME: remove a circle from the board
+       "getCircles" (partial js-get-circles board-state)
+       "removeCircle" (partial js-remove-circle board-state)
 
        "config" #() ;; FIXME
        "getConfig" #() ;; FIXME

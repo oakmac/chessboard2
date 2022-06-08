@@ -16,6 +16,11 @@ npx shadow-cljs release chessboard2
 npx shadow-cljs compile node-tests
 ```
 
+## TODO
+
+- variadic `removeArrow`, `removeCircle`, `removePiece` functions
+-
+
 ## API
 
 - everything that chessboardjs v1 has
