@@ -719,6 +719,28 @@ $('#clearArrowsBtn').on('click', board.clearArrows)
   }
 };
 
+CHESSBOARD_EXAMPLES["3011"] = {
+  description: "You can use the `removePiece()` function to remove pieces from the board. Be aware\nthat removing pieces from the board changes the board's position.",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"btn1\">Start Position</button>\n<button id=\"btn2\">Remove a1</button>\n<button id=\"btn3\">Remove d1, e1, f1</button>\n<br />\n<!--\n<button id=\"removeCircle1Btn\">Remove Circle at e4</button>\n<button id=\"removeCircle2Btn\">Remove Circle 2</button>\n<button id=\"logCirclesBtn\">console.log Circles</button>\n<button id=\"clearCirclesBtn\">Clear Circles</button>\n-->",
+  name: "Pieces",
+  jsStr: "const board = Chessboard2('myBoard', 'start')\n\n$('#btn1').on('click', function () {\n  board.start()\n})\n\n$('#btn2').on('click', function () {\n  board.removePiece('a1')\n})\n\n$('#btn3').on('click', function () {\n  board.removePiece('d1', 'e1', 'f1')\n})",
+  jsFn: function () {
+const board = Chessboard2('myBoard', 'start')
+
+$('#btn1').on('click', function () {
+  board.start()
+})
+
+$('#btn2').on('click', function () {
+  board.removePiece('a1')
+})
+
+$('#btn3').on('click', function () {
+  board.removePiece('d1', 'e1', 'f1')
+})
+  }
+};
+
 CHESSBOARD_EXAMPLES["4000"] = {
   description: "The <a href=\"docs.html#config:onChange\"><code class=\"js plain\">onChange</code></a> event fires when the board position changes.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"ruyLopezBtn\">Ruy Lopez</button>\n<button id=\"startPositionBtn\">Start Position</button>",

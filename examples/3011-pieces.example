@@ -1,0 +1,37 @@
+===== id
+3011
+
+===== Name
+Pieces
+
+===== Description
+You can use the `removePiece()` function to remove pieces from the board. Be aware
+that removing pieces from the board changes the board's position.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+<button id="btn1">Start Position</button>
+<button id="btn2">Remove a1</button>
+<button id="btn3">Remove d1, e1, f1</button>
+<br />
+<!--
+<button id="removeCircle1Btn">Remove Circle at e4</button>
+<button id="removeCircle2Btn">Remove Circle 2</button>
+<button id="logCirclesBtn">console.log Circles</button>
+<button id="clearCirclesBtn">Clear Circles</button>
+-->
+
+===== JS
+const board = Chessboard2('myBoard', 'start')
+
+$('#btn1').on('click', function () {
+  board.start()
+})
+
+$('#btn2').on('click', function () {
+  board.removePiece('a1')
+})
+
+$('#btn3').on('click', function () {
+  board.removePiece('d1', 'e1', 'f1')
+})

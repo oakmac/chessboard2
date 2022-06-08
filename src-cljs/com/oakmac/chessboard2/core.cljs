@@ -647,6 +647,14 @@
     (looks-like-a-move-object? arg1) (move-piece board-state (js->clj arg1 :keywordize-keys true))
     :else (js/console.warn "FIXME ERROR CODE: Invalid value passed to the .move() method:" arg1)))
 
+(defn js-remove-piece
+  [board-state]
+  (let [js-args (array)]
+    (copy-arguments js-args)
+    (.shift js-args)
+    ;; FIXME: write this
+    (js/console.log js-args)))
+
 ;; -----------------------------------------------------------------------------
 ;; Constructor
 
@@ -747,7 +755,7 @@
        "clearPieces" #(position board-state {} %1)
        "getPieces" #() ;; FIXME
        "pieces" #() ;; FIXME: returns an object of the pieces on the board
-       "removePiece" #()
+       "removePiece" (partial js-remove-piece board-state)
 
        "clear" #(position board-state {} %1)
        "move" (partial js-move-piece board-state)
