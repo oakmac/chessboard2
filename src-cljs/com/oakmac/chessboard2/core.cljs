@@ -1,6 +1,5 @@
 (ns com.oakmac.chessboard2.core
   (:require
-    [clojure.string :as str]
     [com.oakmac.chessboard2.animations :refer [calculate-animations]]
     [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.feature-flags :as flags]
@@ -12,7 +11,7 @@
     [com.oakmac.chessboard2.util.functions :refer [defer]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
-    [com.oakmac.chessboard2.util.pieces :refer [random-item-id random-piece-id]]
+    [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move? valid-square? valid-piece? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
@@ -115,8 +114,8 @@
     (:type animation)))
 
 (defmethod animation->dom-op "ANIMATION_ADD"
-  [{:keys [piece square] :as animation} board-state]
-  (let [{:keys [animate-speed-ms board-width items-container-id orientation piece-square-pct position square-el-ids]} @board-state
+  [{:keys [piece square] :as _animation} board-state]
+  (let [{:keys [animate-speed-ms board-width orientation piece-square-pct]} @board-state
         new-piece-id (random-piece-id)
         new-piece-html (html/Piece {:board-width board-width
                                     :board-orientation orientation
@@ -137,7 +136,7 @@
 ;; - Should we re-use the same DOM element here instead of destroying + creating a new one?
 ;; - Is it important for item-ids to persist?
 (defmethod animation->dom-op "ANIMATION_MOVE"
-  [{:keys [capture? destination piece source] :as animation} board-state]
+  [{:keys [capture? destination piece source] :as _animation} board-state]
   (let [{:keys [animate-speed-ms board-width orientation piece-square-pct square->piece-id]} @board-state
         current-piece-id (get square->piece-id source)
         new-piece-id (random-piece-id)
@@ -164,7 +163,7 @@
         {:capture-piece-id (get square->piece-id destination)}))))
 
 (defmethod animation->dom-op "ANIMATION_CLEAR"
-  [{:keys [piece square] :as animation} board-state]
+  [{:keys [square] :as _animation} board-state]
   (let [{:keys [square->piece-id]} @board-state
         piece-id (get square->piece-id square)]
     {:delete-square->piece square
@@ -285,7 +284,7 @@
 
 (defn add-circle
   "Adds a Circle to the board. Returns the id of the new Circle."
-  [board-state {:keys [color id opacity size square] :as circle-config}]
+  [board-state {:keys [color id opacity size square] :as _circle-config}]
   (let [{:keys [board-width orientation]} @board-state
         id (or id (random-id "item"))
         size (size-string->number size)
@@ -393,7 +392,7 @@
 
 (defn add-arrow
   "Adds an analysis arrow to the board. Returns the id of the new arrow."
-  [board-state {:keys [color end opacity size start] :as arrow-config}]
+  [board-state {:keys [color end opacity size start] :as _arrow-config}]
   (let [{:keys [board-width orientation]} @board-state
         id (random-id "item")
         size (size-string->number size)
@@ -517,8 +516,7 @@
  ([board]
   (orientation board nil))
  ([board arg]
-  (let [lc-arg (safe-lower-case arg)
-        squares-selector (str "#" (:container-id @board) " ." css/squares)]
+  (let [lc-arg (safe-lower-case arg)]
     (cond
       (= lc-arg "white") (do (set-white-orientation! board)
                              "white")
@@ -581,7 +579,7 @@
           nil))))
 
 (defn move-piece
-  [board-state {:keys [animate? from to _onComplete] :as move}]
+  [board-state {:keys [animate?] :as move}]
   (let [new-position (apply-move-to-position (:position @board-state) move)]
     (position board-state new-position animate?)))
 
