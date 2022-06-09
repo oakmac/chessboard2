@@ -1,14 +1,13 @@
 (ns com.oakmac.chessboard2.html
   (:require
     [com.oakmac.chessboard2.css :as css]
+    [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
     [com.oakmac.chessboard2.util.arrows :as arrow-util]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]
     [com.oakmac.chessboard2.util.template :refer [template]]
     [goog.crypt.base64 :as base64]))
-
-(def use-css-arrow? true)
 
 (defn Circle
   [{:keys [board-width color id opacity orientation size square] :as cfg}]
@@ -110,7 +109,7 @@
        :width width})))
 
 (defn Arrow [arrow-config]
-  (if use-css-arrow?
+  (if flags/use-css-arrow?
     (ArrowCSS arrow-config)
     (ArrowSVG arrow-config)))
 
@@ -120,16 +119,34 @@
   [piece]
   (base64/encodeString (get wikipedia-theme (name piece))))
 
+(def piece-required-keys
+  #{:board-width
+    :board-orientation
+    :id
+    :hidden?
+    :piece
+    :piece-square-pct
+    :square
+    :width})
+
 ;; FIXME: need alt text here for the image
 (defn Piece
-  [{:keys [board-orientation board-width _color id hidden? piece piece-square-pct square _width]}]
+  [{:keys [board-orientation board-width _color id hidden? piece piece-square-pct square _width] :as piece-config}]
+  (when flags/runtime-checks?
+    (when (or (not= piece-required-keys (set (keys piece-config)))
+              (some nil? (vals piece-config)))
+      (js/console.warn "RUNTIME CHECK: not enough args passed to html/Piece")
+      (js/console.warn (pr-str (keys piece-config)))))
   (let [{:keys [left top]} (square->dimensions square board-width board-orientation)
         square-width (/ board-width 8)
         piece-pct (* 100 piece-square-pct)]
    (str
      "<div class='piece-349f8' id='" id "'"
-       " style='left:" left "px; top:" top "px; width: " square-width "px; height: " square-width "px;"
-       (when hidden? "opacity: 0;")
+       " style='height:" square-width "px;"
+               "left:" left "px;"
+               "top:" top "px;"
+               "width:" square-width "px;"
+       (when hidden? "opacity:0;")
        "'>"
      ;; FIXME: this needs to be customizable for the user
      "<img src='data:image/svg+xml;base64," (piece->imgsrc piece) "' alt='' style='height: " piece-pct "%; width: " piece-pct "%;' />"

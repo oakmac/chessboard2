@@ -103,6 +103,7 @@
         (swap! html str (html/Piece {:board-orientation orientation
                                      :board-width board-width
                                      :id piece-id
+                                     :hidden? false
                                      :piece piece
                                      :piece-square-pct piece-square-pct
                                      :square square
@@ -129,9 +130,10 @@
 
 (defmethod animation->dom-op "ANIMATION_ADD"
   [{:keys [piece square] :as animation} board-state]
-  (let [{:keys [animate-speed-ms board-width items-container-id piece-square-pct position square-el-ids]} @board-state
+  (let [{:keys [animate-speed-ms board-width items-container-id orientation piece-square-pct position square-el-ids]} @board-state
         new-piece-id (random-piece-id)
         new-piece-html (html/Piece {:board-width board-width
+                                    :board-orientation orientation
                                     :id new-piece-id
                                     :hidden? true
                                     :piece piece
@@ -647,13 +649,20 @@
     (looks-like-a-move-object? arg1) (move-piece board-state (js->clj arg1 :keywordize-keys true))
     :else (js/console.warn "FIXME ERROR CODE: Invalid value passed to the .move() method:" arg1)))
 
+;; TODO: this function should accept an Array of squares
+;; TODO: this function should accept an Object with "onFinishAnimation" callback
 (defn js-remove-piece
   [board-state]
   (let [js-args (array)]
     (copy-arguments js-args)
     (.shift js-args)
-    ;; FIXME: write this
-    (js/console.log js-args)))
+    (let [current-pos (:position @board-state)
+          ; current-position (:position @board-state)
+          squares-to-remove (set (js->clj js-args))
+          ;; any argument of 'false' to this function means no animation
+          animate? (not-any? false? squares-to-remove)
+          new-position (apply dissoc current-pos squares-to-remove)]
+      (position board-state new-position animate?))))
 
 ;; -----------------------------------------------------------------------------
 ;; Constructor
