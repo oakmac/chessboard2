@@ -747,7 +747,7 @@
        "getConfig" #() ;; FIXME
        "setConfig" #() ;; FIXME
 
-       "addItem" #() ;; FIXME: add an item to the board
+       "addItem" #() ;; FIXME: add a custom Item to the board
        "clearItems" #() ;; FIXME
        "getItems" (partial js-get-items board-state)
        "items" (partial js-get-items board-state)
@@ -764,13 +764,10 @@
        "movePiece" (partial js-move-piece board-state)
        "position" #(position board-state (js->clj %1) %2)
 
-       "bouncePiece" #() ;; FIXME
-       "clearSquareHighlights" #() ;; FIXME
        "destroy" #() ;; FIXME
        "fen" #(position board-state "fen" false)
-       "flip" #(orientation board-state "flip")
-       "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
 
+       "clearSquareHighlights" #() ;; FIXME - should this just be "clearSquares" ?
        "getSquares" #() ;; FIXME: squares can have colors, ids, properties like "black" and "white"
                         ;;        whether they are highlighted or not
        "setSquare" #() ;; FIXME ;; .setSquare('e2', 'blue')
@@ -782,8 +779,13 @@
        "showNotation" #() ;; FIXME
        "toggleNotation" #() ;; FIXME
 
+       ;; TODO: do we need getOrientation and setOrientation?
+       "flip" #(orientation board-state "flip")
        "orientation" #(orientation board-state %1)
 
+       "animatePiece" #() ;; FIXME:
+       "bouncePiece" #() ;; FIXME
+       "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
        "pulsePiece" #() ;; FIXME
 
        "resize" #() ;; FIXME

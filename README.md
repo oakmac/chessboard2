@@ -19,7 +19,11 @@ npx shadow-cljs compile node-tests
 ## TODO
 
 - variadic `removeArrow`, `removeCircle`, `removePiece` functions
--
+- add "Rings"
+  - are these separate from Circles or just an added config value?
+- custom Items
+  - add Duck to board, add toaster SVG
+- notation should be somewhat configurable
 
 ## API
 
