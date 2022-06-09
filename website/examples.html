@@ -721,9 +721,9 @@ $('#clearArrowsBtn').on('click', board.clearArrows)
 
 CHESSBOARD_EXAMPLES["3011"] = {
   description: "You can use the `removePiece()` function to remove pieces from the board. Be aware\nthat removing pieces from the board changes the board's position.",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"btn1\">Remove a1</button>\n<button id=\"btn2\">Remove d1, e1, f1</button>\n<button id=\"btn3\">Remove c7 Instantly</button>\n<button id=\"btnStart\">Start Position</button>",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"btn1\">Remove a1</button>\n<button id=\"btn2\">Remove d1, e1, f1</button>\n<button id=\"btn3\">Remove c7 Instantly</button>\n<br />\n<button id=\"addBtn1\">Add White Rook to e4</button>\n<button id=\"addBtn2\">Add Black Knight to d5</button>\n<button id=\"addBtn3\">Add White Queen to a5</button>\n<button id=\"btnStart\">Start Position</button>",
   name: "Pieces",
-  jsStr: "const board = Chessboard2('myBoard', 'start')\n\n$('#btn1').on('click', function () {\n  board.removePiece('a1')\n})\n\n$('#btn2').on('click', function () {\n  board.removePiece('d1', 'e1', 'f1')\n})\n\n$('#btn3').on('click', function () {\n  // pass false to disable animations\n  board.removePiece('c7', false)\n})\n\n$('#btnStart').on('click', function () {\n  board.start()\n})",
+  jsStr: "const board = Chessboard2('myBoard', 'start')\n\n$('#btn1').on('click', function () {\n  board.removePiece('a1')\n})\n\n$('#btn2').on('click', function () {\n  board.removePiece('d1', 'e1', 'f1')\n})\n\n$('#btn3').on('click', function () {\n  // pass false to disable animations\n  board.removePiece('c7', false)\n})\n\n$('#addBtn1').on('click', function () {\n  board.addPiece('e4', 'wR')\n})\n\n$('#addBtn2').on('click', function () {\n  // pass false to disable animations\n  board.addPiece('d5', 'bN', false)\n})\n\n$('#addBtn3').on('click', function () {\n  board.addPiece({\n    piece: 'wQ',\n    square: 'a5'\n  })\n})\n\n$('#btnStart').on('click', function () {\n  board.start()\n})",
   jsFn: function () {
 const board = Chessboard2('myBoard', 'start')
 
@@ -738,6 +738,22 @@ $('#btn2').on('click', function () {
 $('#btn3').on('click', function () {
   // pass false to disable animations
   board.removePiece('c7', false)
+})
+
+$('#addBtn1').on('click', function () {
+  board.addPiece('e4', 'wR')
+})
+
+$('#addBtn2').on('click', function () {
+  // pass false to disable animations
+  board.addPiece('d5', 'bN', false)
+})
+
+$('#addBtn3').on('click', function () {
+  board.addPiece({
+    piece: 'wQ',
+    square: 'a5'
+  })
 })
 
 $('#btnStart').on('click', function () {

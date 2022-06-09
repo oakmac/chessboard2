@@ -1,5 +1,6 @@
 (ns com.oakmac.chessboard2.util.dom
   (:require
+    [com.oakmac.chessboard2.util.functions :refer [defer]]
     [goog.dom :as gdom]
     [goog.object :as gobj]))
 
@@ -57,3 +58,21 @@
 (defn remove-element!
   [el]
   (gdom/removeNode (get-element el)))
+
+(defn fade-out-and-remove-el!
+  "fades an element to zero opacity and removes it from the DOM"
+  [el-id animate-speed-ms]
+  (when-let [el (get-element el-id)]
+    ;; remove any existing transitions
+    (set-style-prop! el "transition" "")
+
+    ;; remove the piece from the DOM once the animation finishes
+    (.addEventListener el "transitionend"
+      (fn []
+        (remove-element! el)))
+
+    ;; begin fade out animation on next stack
+    (defer
+      (fn []
+       (set-style-prop! el "transition" (str "all " animate-speed-ms "ms"))
+       (set-style-prop! el "opacity" "0")))))

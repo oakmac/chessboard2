@@ -19,6 +19,10 @@ that removing pieces from the board changes the board's position.</p>
 <button id="btn1">Remove a1</button>
 <button id="btn2">Remove d1, e1, f1</button>
 <button id="btn3">Remove c7 Instantly</button>
+<br />
+<button id="addBtn1">Add White Rook to e4</button>
+<button id="addBtn2">Add Black Knight to d5</button>
+<button id="addBtn3">Add White Queen to a5</button>
 <button id="btnStart">Start Position</button>
 <!--- End Example HTML -------------------------------------------------------->
 
@@ -39,6 +43,22 @@ $('#btn2').on('click', function () {
 $('#btn3').on('click', function () {
   // pass false to disable animations
   board.removePiece('c7', false)
+})
+
+$('#addBtn1').on('click', function () {
+  board.addPiece('e4', 'wR')
+})
+
+$('#addBtn2').on('click', function () {
+  // pass false to disable animations
+  board.addPiece('d5', 'bN', false)
+})
+
+$('#addBtn3').on('click', function () {
+  board.addPiece({
+    piece: 'wQ',
+    square: 'a5'
+  })
 })
 
 $('#btnStart').on('click', function () {

@@ -3,15 +3,17 @@
     [clojure.string :as str]
     [com.oakmac.chessboard2.animations :refer [calculate-animations]]
     [com.oakmac.chessboard2.css :as css]
+    [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.util.board :refer [start-position]]
+    [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element! set-style-prop!]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.functions :refer [defer]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
     [com.oakmac.chessboard2.util.pieces :refer [random-item-id random-piece-id]]
-    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move? valid-square? valid-position?]]
+    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move? valid-square? valid-piece? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
     [goog.array :as garray]
@@ -26,9 +28,6 @@
 ;;   - optional callback function that completes when the move is finished
 ;;   - animate speed option (per move)
 ;; - .move('0-0') and .move('0-0-0') should work as expected
-
-;; dev toggle
-(def warn-on-extra-items? true)
 
 (def initial-state
   {:items {}
@@ -46,15 +45,6 @@
 
 (defn piece-item? [item]
   (= "CHESSBOARD_PIECE" (:type item)))
-
-;; TODO: move to util namespace
-(defn clj->js-map
-  "Converts a Clojure Map to a JavaScript Map"
-  [clj-map]
-  (let [js-map (js/Map.)]
-    (doseq [[k v] clj-map]
-      (.set js-map (clj->js k) (clj->js v)))
-    js-map))
 
 (defn click-root-el [js-evt]
   (.log js/console "clicked root element:" js-evt))
@@ -82,7 +72,7 @@
         (swap! ids conj (gobj/get itm "id"))))
     @ids))
 
-;; TODO: I thnk we need to convert this function to use only dom-ops
+;; TODO: I think we need to convert this function to use only dom-ops
 ;; need to decide if Pieces are considered Items or not
 (defn- draw-items-instant!
   "Update all Items in the DOM instantly (ie: no animation)"
@@ -117,10 +107,6 @@
                                     {:board-width board-width
                                      :orientation orientation}))))
     (append-html! items-container-id @html)))
-
-(defn- draw-board!
-  [{:keys [orientation]}])
-  ;; (gobj/set root-el "innerHTML" (str "<h1>" orientation "</h1>")))
 
 ;; PERF: drop this multimethod, use a vanilla cond
 (defmulti animation->dom-op
@@ -188,25 +174,6 @@
   [animation _board-state]
   (js/console.warn "Unknown animation type:" animation))
 
-;; TODO: move this to DOM util?
-(defn fade-out-el!
-  "fades an element to zero opacity and removes it from the DOM"
-  [el-id animate-speed-ms]
-  (when-let [el (dom-util/get-element el-id)]
-    ;; remove transition
-    (set-style-prop! el "transition" "")
-
-    ;; remove the piece from the DOM once the animation finishes
-    (.addEventListener el "transitionend"
-      (fn []
-        (remove-element! el)))
-
-    ;; begin fade out animation on next stack
-    (defer
-      (fn []
-       (set-style-prop! el "transition" (str "all " animate-speed-ms "ms"))
-       (set-style-prop! el "opacity" "0")))))
-
 (defn apply-dom-ops!
   "Apply DOM operations to the board"
   [board-state ops]
@@ -231,12 +198,12 @@
     (let [fade-outs (map :fade-out-piece ops)]
       (doseq [piece-id fade-outs]
         (when piece-id
-          (fade-out-el! piece-id animate-speed-ms))))
+          (dom-util/fade-out-and-remove-el! piece-id animate-speed-ms))))
 
     ;; captures
     (let [captures (map :capture-piece-id ops)]
       (doseq [el-id captures]
-        (fade-out-el! el-id animate-speed-ms)))
+        (dom-util/fade-out-and-remove-el! el-id animate-speed-ms)))
 
     ;; update the board-state with new piece-ids
     (let [dissocs (map :delete-square->piece ops)
@@ -251,8 +218,6 @@
 ;; API Methods
 
 ;; FIXME: should be able to remove a circle either via square code or id
-;; FIXME: what to do when they add a circle to a square that already has one?
-;;        I think the answer is to update the config of that circle
 
 (defn get-items-by-type
   "Returns a map of <type> Items on the board"
@@ -271,14 +236,6 @@
                      vals
                      (filter circle-item?))]
     (zipmap (map :square circles) circles)))
-
-(defn map->js-return-format
-  "Returns a Clojure map of items as either a JS Array (default), JS Object, or JS Map"
-  [items return-fmt]
-  (case return-fmt
-    "object" (clj->js items)
-    "map" (clj->js-map items)
-    (clj->js (vec (vals items)))))
 
 (defn js-get-circles
   "Returns the Circle Items on the board as either a JS Array (default), JS Object, or JS Map"
@@ -302,9 +259,6 @@
     (remove-circle-by-id board-state item-id-or-square)))
 
 ;; FIXME: this should be variadic as well as accept an array of circle ids
-; (let [xxx (array)]
-;   (copy-arguments xxx)
-;   (js/console.log xxx))
 (defn js-remove-circle
   [board-state item-id-or-square]
   ;; TODO: validation here, warn if item-id is not valid
@@ -444,12 +398,12 @@
         id (random-id "item")
         size (size-string->number size)
         arrow-item {:id id
-                    :type "CHESSBOARD_ARROW"
-                    :start start
-                    :end end
                     :color color
+                    :end end
                     :opacity opacity
-                    :size size}
+                    :size size
+                    :start start
+                    :type "CHESSBOARD_ARROW"}
         arrow-html (html/Arrow {:board-width board-width
                                 :color color
                                 :end end
@@ -597,7 +551,7 @@
     (set-position-with-animations! board-state new-pos)
     (set-position-instant! board-state new-pos))
 
-  (when warn-on-extra-items?
+  (when flags/runtime-checks?
     (js/setTimeout
       (fn []
         (let [items-els (get-all-item-elements-from-dom (:items-container-id @board-state))]
@@ -640,7 +594,8 @@
        (valid-square? (gobj/get js-move "from"))
        (valid-square? (gobj/get js-move "to"))))
 
-;; TODO: handle 0-0 and 0-0-0
+;; FIXME: handle 0-0 and 0-0-0
+;; FIXME: this function should be variadic
 (defn js-move-piece
   [board-state arg1]
   (cond
@@ -657,12 +612,47 @@
     (copy-arguments js-args)
     (.shift js-args)
     (let [current-pos (:position @board-state)
-          ; current-position (:position @board-state)
           squares-to-remove (set (js->clj js-args))
           ;; any argument of 'false' to this function means no animation
           animate? (not-any? false? squares-to-remove)
           new-position (apply dissoc current-pos squares-to-remove)]
       (position board-state new-position animate?))))
+
+(defn js-get-pieces
+  "Returns the Pieces on the board as either a JS Array (default), JS Object, or JS Map"
+  [board-state return-fmt]
+  ;; FIXME: this does not work correctly because pieces are not Items
+  (map->js-return-format (get-items-by-type board-state "CHESSBOARD_PIECE") (safe-lower-case return-fmt)))
+
+(defn valid-add-piece-config? [cfg]
+  (and (valid-piece? (:piece cfg))
+       (valid-square? (:square cfg))))
+
+(defn add-piece
+  [board-state {:keys [animate? piece square] :as add-piece-cfg}]
+  (if-not (valid-add-piece-config? add-piece-cfg)
+    (js/console.warn "FIXME ERROR CODE: Invalid arguments passed to the .addPiece() method")
+    (let [current-pos (:position @board-state)
+          new-pos (assoc current-pos square piece)]
+      (position board-state new-pos animate?))))
+
+(defn- looks-like-a-js-add-piece-config? [js-cfg]
+  (and (object? js-cfg)
+       (valid-piece? (gobj/get js-cfg "piece"))
+       (valid-square? (gobj/get js-cfg "square"))))
+
+(def default-add-piece-config
+  {:animate? true})
+   ;; TODO: onAnimationComplete callback here
+
+(defn js-add-piece
+  [board-state arg1 arg2 arg3]
+  (let [cfg (cond-> default-add-piece-config
+              (valid-square? arg1) (merge {:square arg1})
+              (valid-piece? arg2) (merge {:piece arg2})
+              (false? arg3) (merge {:animate? arg3})
+              (looks-like-a-js-add-piece-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
+    (add-piece board-state cfg)))
 
 ;; -----------------------------------------------------------------------------
 ;; Constructor
@@ -729,9 +719,12 @@
                             :square-el-ids square-el-ids)
          ;; create an atom per instance to track the state of the board
          board-state (atom opts3)]
+
+     ;; Initial DOM Setup
      (init-dom! @board-state)
      (add-events! root-el)
      (draw-items-instant! board-state)
+
      ;; return a JS object that implements the API
      (js-obj
        ;; TODO: do we need to animate arrows from square to square?
@@ -760,15 +753,15 @@
        "items" (partial js-get-items board-state)
        "moveItem" #() ;; FIXME
 
-       "addPiece" #()
+       "addPiece" (partial js-add-piece board-state)
        "clearPieces" #(position board-state {} %1)
-       "getPieces" #() ;; FIXME
-       "pieces" #() ;; FIXME: returns an object of the pieces on the board
+       "getPieces" (partial js-get-pieces board-state)
+       "pieces" (partial js-get-pieces board-state)
        "removePiece" (partial js-remove-piece board-state)
 
        "clear" #(position board-state {} %1)
        "move" (partial js-move-piece board-state)
-       "movePiece" #() ;; FIXME
+       "movePiece" (partial js-move-piece board-state)
        "position" #(position board-state (js->clj %1) %2)
 
        "bouncePiece" #() ;; FIXME
@@ -793,7 +786,7 @@
 
        "pulsePiece" #() ;; FIXME
 
-       "resize" #()
+       "resize" #() ;; FIXME
 
        "start" #(position board-state start-position %1)))))
 
