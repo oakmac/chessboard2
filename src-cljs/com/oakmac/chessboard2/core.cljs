@@ -107,13 +107,7 @@
                                      :orientation orientation}))))
     (append-html! items-container-id @html)))
 
-;; PERF: drop this multimethod, use a vanilla cond
-(defmulti animation->dom-op
-  "Convert an Animation to the DOM operation necessary for it to take place"
-  (fn [animation _board-state]
-    (:type animation)))
-
-(defmethod animation->dom-op "ANIMATION_ADD"
+(defn animation->dom-op-add
   [{:keys [piece square] :as _animation} board-state]
   (let [{:keys [animate-speed-ms board-width orientation piece-square-pct]} @board-state
         new-piece-id (random-piece-id)
@@ -135,7 +129,7 @@
 ;; TODO:
 ;; - Should we re-use the same DOM element here instead of destroying + creating a new one?
 ;; - Is it important for item-ids to persist?
-(defmethod animation->dom-op "ANIMATION_MOVE"
+(defn animation->dom-op-move
   [{:keys [capture? destination piece source] :as _animation} board-state]
   (let [{:keys [animate-speed-ms board-width orientation piece-square-pct square->piece-id]} @board-state
         current-piece-id (get square->piece-id source)
@@ -162,16 +156,23 @@
       (when capture?
         {:capture-piece-id (get square->piece-id destination)}))))
 
-(defmethod animation->dom-op "ANIMATION_CLEAR"
+(defn animation->dom-op-clear
   [{:keys [square] :as _animation} board-state]
   (let [{:keys [square->piece-id]} @board-state
         piece-id (get square->piece-id square)]
     {:delete-square->piece square
      :fade-out-piece piece-id}))
 
-(defmethod animation->dom-op :default
-  [animation _board-state]
-  (js/console.warn "Unknown animation type:" animation))
+;; NOTE: would normally use a defmethod here
+;; the output file size is slightly reduced by not including defmethods in the project
+;; -- C. Oakman, June 2022
+(defn animation->dom-op
+  [animation board-state]
+  (case (:type animation)
+    "ANIMATION_ADD" (animation->dom-op-add animation board-state)
+    "ANIMATION_MOVE" (animation->dom-op-move animation board-state)
+    "ANIMATION_CLEAR" (animation->dom-op-clear animation board-state)
+    (js/console.warn "Unknown animation type:" (:type animation))))
 
 (defn apply-dom-ops!
   "Apply DOM operations to the board"
