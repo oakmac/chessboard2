@@ -196,10 +196,10 @@
     @html))
 
 (defn BoardContainer
-  [{:keys [board-height container-id num-rows num-cols orientation square-el-ids items-container-id] :as opts}]
+  [{:keys [board-height container-id num-rows num-cols orientation show-notation? items-container-id] :as opts}]
   (template
     (str
-      "<div class=chessboard-21da3 id='{container-id}'>"
+      "<div class='chessboard-21da3{show-notation}' id='{container-id}'>"
       "<div class=board-container-41a68 style='height:{board-height}px;width:{board-height}px;'>"
       "<div id='{items-container-id}' class=items-container-c9182 style='height:0'></div>"
       "<div class='" css/squares " "
@@ -218,4 +218,5 @@
      :items-container-id items-container-id
      :NotationFiles (NotationFiles opts)
      :NotationRanks (NotationRanks opts)
-     :Squares (Squares opts)}))
+     :Squares (Squares opts)
+     :show-notation (if show-notation? "" " hide-notation-cbe71")}))
