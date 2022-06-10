@@ -550,7 +550,7 @@
     (set-position-with-animations! board-state new-pos)
     (set-position-instant! board-state new-pos))
 
-  (when flags/runtime-checks?
+  (when false
     (js/setTimeout
       (fn []
         (let [items-els (get-all-item-elements-from-dom (:items-container-id @board-state))]
@@ -653,6 +653,24 @@
               (looks-like-a-js-add-piece-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
     (add-piece board-state cfg)))
 
+(defn hide-notation!
+  [board-state]
+  (let [container-id (:container-id @board-state)]
+    (add-class! (dom-util/get-element container-id) "hide-notation-cbe71")
+    (swap! board-state assoc :show-notation? false)))
+
+(defn show-notation!
+  [board-state]
+  (let [container-id (:container-id @board-state)]
+    (remove-class! (dom-util/get-element container-id) "hide-notation-cbe71")
+    (swap! board-state assoc :show-notation? true)))
+
+(defn toggle-notation!
+  [board-state]
+  (if (:show-notation? @board-state)
+    (hide-notation! board-state)
+    (show-notation! board-state)))
+
 ;; -----------------------------------------------------------------------------
 ;; Constructor
 
@@ -713,6 +731,7 @@
                             :container-id container-id
                             :items {}
                             :items-container-id items-container-id
+                            :show-notation? false
                             :piece-square-pct 0.9
                             :square->piece-id {}
                             :square-el-ids square-el-ids)
@@ -773,10 +792,10 @@
        "squares" #() ;; FIXME
 
        "getNotation" #() ;; FIXME
-       "hideNotation" #() ;; FIXME
+       "hideNotation" (partial hide-notation! board-state)
        "notation" #() ;; FIXME: returns the current state with 0 arg, allows changing with other args
-       "showNotation" #() ;; FIXME
-       "toggleNotation" #() ;; FIXME
+       "showNotation" (partial show-notation! board-state)
+       "toggleNotation" (partial toggle-notation! board-state)
 
        ;; TODO: do we need getOrientation and setOrientation?
        "flip" #(orientation board-state "flip")

@@ -762,6 +762,36 @@ $('#btnStart').on('click', function () {
   }
 };
 
+CHESSBOARD_EXAMPLES["3012"] = {
+  description: "FIXME: write this\n\nThings are not looking great for White here.",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<br />\n<br />\n<br />\n<button id=\"showNotationBtn\">Show Notation</button>\n<button id=\"hideNotationBtn\">Hide Notation</button>\n<button id=\"toggleNotationBtn\">Toggle Notation</button>",
+  name: "Notation",
+  jsStr: "const board = Chessboard2('myBoard', {\n  position: { e3: 'wK', d5: 'bK', c4: 'bR' },\n  showNotation: true\n})\n\n$('#showNotationBtn').on('click', function () {\n  board.showNotation()\n})\n\n$('#hideNotationBtn').on('click', function () {\n  board.hideNotation()\n})\n\n$('#toggleNotationBtn').on('click', function () {\n  board.toggleNotation()\n})\n\n// board.notation()\n// board.notation('toggle')\n// board.notation('hide')\n// board.notation('show')",
+  jsFn: function () {
+const board = Chessboard2('myBoard', {
+  position: { e3: 'wK', d5: 'bK', c4: 'bR' },
+  showNotation: true
+})
+
+$('#showNotationBtn').on('click', function () {
+  board.showNotation()
+})
+
+$('#hideNotationBtn').on('click', function () {
+  board.hideNotation()
+})
+
+$('#toggleNotationBtn').on('click', function () {
+  board.toggleNotation()
+})
+
+// board.notation()
+// board.notation('toggle')
+// board.notation('hide')
+// board.notation('show')
+  }
+};
+
 CHESSBOARD_EXAMPLES["4000"] = {
   description: "The <a href=\"docs.html#config:onChange\"><code class=\"js plain\">onChange</code></a> event fires when the board position changes.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"ruyLopezBtn\">Ruy Lopez</button>\n<button id=\"startPositionBtn\">Start Position</button>",

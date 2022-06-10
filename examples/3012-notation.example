@@ -1,0 +1,42 @@
+===== id
+3012
+
+===== Name
+Notation
+
+===== Description
+FIXME: write this
+
+Things are not looking great for White here.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+<br />
+<br />
+<br />
+<button id="showNotationBtn">Show Notation</button>
+<button id="hideNotationBtn">Hide Notation</button>
+<button id="toggleNotationBtn">Toggle Notation</button>
+
+===== JS
+const board = Chessboard2('myBoard', {
+  position: { e3: 'wK', d5: 'bK', c4: 'bR' },
+  showNotation: true
+})
+
+$('#showNotationBtn').on('click', function () {
+  board.showNotation()
+})
+
+$('#hideNotationBtn').on('click', function () {
+  board.hideNotation()
+})
+
+$('#toggleNotationBtn').on('click', function () {
+  board.toggleNotation()
+})
+
+// board.notation()
+// board.notation('toggle')
+// board.notation('hide')
+// board.notation('show')

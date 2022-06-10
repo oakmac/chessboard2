@@ -9,6 +9,26 @@
     [com.oakmac.chessboard2.util.template :refer [template]]
     [goog.crypt.base64 :as base64]))
 
+(defn NotationFiles
+  [{:keys [board-width color id opacity orientation size square] :as cfg}]
+  (let [num-files 8
+        files (range 0 num-files)]
+    (->> files
+      (map
+        (fn [f]
+          (str "<div class='file-44ae4'>" (idx->alpha f) "</div>")))
+      (apply str))))
+
+(defn NotationRanks
+  [{:keys [board-width color id opacity orientation size square] :as cfg}]
+  (let [num-ranks 8
+        ranks (range 0 num-ranks)]
+    (->> ranks
+      (map
+        (fn [r]
+          (str "<div class='rank-3d54c'>" r "</div>")))
+      (apply str))))
+
 (defn Circle
   [{:keys [board-width color id opacity orientation size square] :as cfg}]
   (let [square-dims (square->dimensions square board-width orientation)
@@ -158,48 +178,44 @@
                   (if (= color "white") "white-3b784" "black-b7cb6"))]
     (str "<div class='" classes "' id='" id "' data-square-coord='" coord "'></div>")))
 
-; (defn Squares
-;   [{:keys [board-height num-rows num-cols square-el-ids items-container-id] :as opts}]
-;   (let [html (atom "")
-;         white? (atom true)]
-;     (doseq [rank-idx (reverse (range 0 num-rows))]
-;       (swap! html str (str "<div class='rank-98fa8' data-rank-idx='" (inc rank-idx) "'>"))
-;       (doseq [col-idx (range 0 num-cols)]
-;         (let [coord (str (idx->alpha col-idx) (inc rank-idx))]
-;           (swap! html str (Square {:coord coord
-;                                    :color (if @white? "white" "black")
-;                                    :id (get square-el-ids coord)}))
-;           (swap! white? not)))
-;       (swap! html str (str "</div>"))
-;       (swap! white? not))
-;     @html))
-
 ;; TODO: this function is a hot mess; refactor to something more functional / elegant
+(defn Squares
+  [{:keys [board-height num-rows num-cols square-el-ids items-container-id] :as opts}]
+  (let [html (atom "")
+        white? (atom true)]
+    (doseq [rank-idx (reverse (range 0 num-rows))]
+      (swap! html str (str "<div class='rank-98fa8' data-rank-idx='" (inc rank-idx) "'>"))
+      (doseq [col-idx (range 0 num-cols)]
+        (let [coord (str (idx->alpha col-idx) (inc rank-idx))]
+          (swap! html str (Square {:coord coord
+                                   :color (if @white? "white" "black")
+                                   :id (get square-el-ids coord)}))
+          (swap! white? not)))
+      (swap! html str (str "</div>"))
+      (swap! white? not))
+    @html))
+
 (defn BoardContainer
-  [{:keys [board-height container-id num-rows num-cols orientation square-el-ids items-container-id] :as _opts}]
-  (str
-    "<div class=chessboard-21da3 id=" container-id ">"
-    "<div class=board-container-41a68 style='height: " board-height "px; width: " board-height "px;'>"
-    "<div id='" items-container-id "' class=items-container-c9182 style='height:0'></div>"
-    "<div class='" css/squares " "
-      (if (= orientation "white")
-        css/orientation-white
-        css/orientation-black)
-      "' style='height:" board-height "px;'>"
-    ; (Squares opts)
-    (let [html (atom "")
-          white? (atom true)]
-      (doseq [rank-idx (reverse (range 0 num-rows))]
-        (swap! html str (str "<div class='rank-98fa8' data-rank-idx='" (inc rank-idx) "'>"))
-        (doseq [col-idx (range 0 num-cols)]
-          (let [coord (str (idx->alpha col-idx) (inc rank-idx))]
-            (swap! html str (Square {:coord coord
-                                     :color (if @white? "white" "black")
-                                     :id (get square-el-ids coord)}))
-            (swap! white? not)))
-        (swap! html str (str "</div>"))
-        (swap! white? not))
-      @html)
-    "</div>"   ;; end .squares-2dea6
-    "</div>"   ;; end .board-container-41a68
-    "</div>")) ;; end .chessboard-21da3
+  [{:keys [board-height container-id num-rows num-cols orientation square-el-ids items-container-id] :as opts}]
+  (template
+    (str
+      "<div class=chessboard-21da3 id='{container-id}'>"
+      "<div class=board-container-41a68 style='height:{board-height}px;width:{board-height}px;'>"
+      "<div id='{items-container-id}' class=items-container-c9182 style='height:0'></div>"
+      "<div class='" css/squares " "
+        (if (= orientation "white")
+          css/orientation-white
+          css/orientation-black)
+        "' style='height:" board-height "px;'>{Squares}"
+      "</div>"   ;; end .squares-2dea6
+      "<div class='notation-files-c3c0a'>{NotationFiles}</div>"
+      "<div class='notation-ranks-d3f97'>{NotationRanks}</div>"
+      "</div>"   ;; end .board-container-41a68
+      "</div>") ;; end .chessboard-21da3
+    {:board-height board-height
+     :board-width board-height
+     :container-id container-id
+     :items-container-id items-container-id
+     :NotationFiles (NotationFiles opts)
+     :NotationRanks (NotationRanks opts)
+     :Squares (Squares opts)}))
