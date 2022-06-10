@@ -763,32 +763,37 @@ $('#btnStart').on('click', function () {
 };
 
 CHESSBOARD_EXAMPLES["3012"] = {
-  description: "FIXME: write this\n\nThings are not looking great for White here.",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<br />\n<br />\n<br />\n<button id=\"showNotationBtn\">Show Notation</button>\n<button id=\"hideNotationBtn\">Hide Notation</button>\n<button id=\"toggleNotationBtn\">Toggle Notation</button>",
-  name: "Notation",
-  jsStr: "const board = Chessboard2('myBoard', {\n  position: { e3: 'wK', d5: 'bK', c4: 'bR' },\n  showNotation: true\n})\n\n$('#showNotationBtn').on('click', function () {\n  board.showNotation()\n})\n\n$('#hideNotationBtn').on('click', function () {\n  board.hideNotation()\n})\n\n$('#toggleNotationBtn').on('click', function () {\n  board.toggleNotation()\n})\n\n// board.notation()\n// board.notation('toggle')\n// board.notation('hide')\n// board.notation('show')",
+  description: "FIXME: write this\n\nThings are not looking great for White here.\n\nNOTE: in chessboard v1, this was called \"notation\"",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<br />\n<br />\n<br />\n<button id=\"showCoordinatesBtn\">Show Coordinates</button>\n<button id=\"hideCoordinatesBtn\">Hide Coordinates</button>\n<button id=\"toggleCoordinatesBtn\">Toggle Coordinates</button>",
+  name: "Coordinates",
+  jsStr: "const board = Chessboard2('myBoard', {\n  coords: {\n    bottom: true,\n    left: true,\n    right: true,\n    top: true\n  },\n  position: { e3: 'wK', d5: 'bK', c4: 'bR' }\n})\n\n$('#showCoordinatesBtn').on('click', function () {\n  board.showCoordinates()\n})\n\n$('#hideCoordinatesBtn').on('click', function () {\n  board.hideCoordinates()\n})\n\n$('#toggleCoordinatesBtn').on('click', function () {\n  board.toggleCoordinates()\n})\n\n// board.coordinates()\n// board.coordinates('toggle')\n// board.coordinates('hide')\n// board.coordinates('show')",
   jsFn: function () {
 const board = Chessboard2('myBoard', {
-  position: { e3: 'wK', d5: 'bK', c4: 'bR' },
-  showNotation: true
+  coords: {
+    bottom: true,
+    left: true,
+    right: true,
+    top: true
+  },
+  position: { e3: 'wK', d5: 'bK', c4: 'bR' }
 })
 
-$('#showNotationBtn').on('click', function () {
-  board.showNotation()
+$('#showCoordinatesBtn').on('click', function () {
+  board.showCoordinates()
 })
 
-$('#hideNotationBtn').on('click', function () {
-  board.hideNotation()
+$('#hideCoordinatesBtn').on('click', function () {
+  board.hideCoordinates()
 })
 
-$('#toggleNotationBtn').on('click', function () {
-  board.toggleNotation()
+$('#toggleCoordinatesBtn').on('click', function () {
+  board.toggleCoordinates()
 })
 
-// board.notation()
-// board.notation('toggle')
-// board.notation('hide')
-// board.notation('show')
+// board.coordinates()
+// board.coordinates('toggle')
+// board.coordinates('hide')
+// board.coordinates('show')
   }
 };
 

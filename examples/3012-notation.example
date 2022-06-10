@@ -2,41 +2,48 @@
 3012
 
 ===== Name
-Notation
+Coordinates
 
 ===== Description
 FIXME: write this
 
 Things are not looking great for White here.
 
+NOTE: in chessboard v1, this was called "notation"
+
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
 <br />
 <br />
 <br />
-<button id="showNotationBtn">Show Notation</button>
-<button id="hideNotationBtn">Hide Notation</button>
-<button id="toggleNotationBtn">Toggle Notation</button>
+<button id="showCoordinatesBtn">Show Coordinates</button>
+<button id="hideCoordinatesBtn">Hide Coordinates</button>
+<button id="toggleCoordinatesBtn">Toggle Coordinates</button>
 
 ===== JS
 const board = Chessboard2('myBoard', {
-  position: { e3: 'wK', d5: 'bK', c4: 'bR' },
-  showNotation: true
+  coords: {
+    bottom: true,
+    left: true,
+    right: true,
+    top: true
+  },
+  position: { e3: 'wK', d5: 'bK', c4: 'bR' }
 })
 
-$('#showNotationBtn').on('click', function () {
-  board.showNotation()
+$('#showCoordinatesBtn').on('click', function () {
+  board.showCoordinates()
 })
 
-$('#hideNotationBtn').on('click', function () {
-  board.hideNotation()
+$('#hideCoordinatesBtn').on('click', function () {
+  board.hideCoordinates()
 })
 
-$('#toggleNotationBtn').on('click', function () {
-  board.toggleNotation()
+$('#toggleCoordinatesBtn').on('click', function () {
+  board.toggleCoordinates()
 })
 
-// board.notation()
-// board.notation('toggle')
-// board.notation('hide')
-// board.notation('show')
+// board.coordinates()
+// board.coordinates('toggle')
+// board.coordinates('hide')
+// board.coordinates('show')

@@ -22,18 +22,10 @@
 (declare percent? size-string->number tshirt-sizes)
 
 ;; TODO
-;; - add showNotation config option
 ;; - .move() should accept an Object
 ;;   - optional callback function that completes when the move is finished
 ;;   - animate speed option (per move)
 ;; - .move('0-0') and .move('0-0-0') should work as expected
-
-(def initial-state
-  {:items {}
-   :num-rows 8
-   :num-cols 8
-   :orientation "white"
-   :position {}})
 
 ;; TODO: move to predicates ns
 (defn arrow-item? [item]
@@ -653,23 +645,26 @@
               (looks-like-a-js-add-piece-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
     (add-piece board-state cfg)))
 
-(defn hide-notation!
+(defn hide-coordinates!
   [board-state]
-  (let [container-id (:container-id @board-state)]
-    (add-class! (dom-util/get-element container-id) "hide-notation-cbe71")
-    (swap! board-state assoc :show-notation? false)))
+  (swap! board-state assoc :show-coords? false))
+  ; (let [container-id (:container-id @board-state)]
+  ;   (add-class! (dom-util/get-element container-id) "hide-notation-cbe71")
+  ;   (swap! board-state assoc :show-notation? false)))
 
-(defn show-notation!
+(defn show-coordinates!
   [board-state]
-  (let [container-id (:container-id @board-state)]
-    (remove-class! (dom-util/get-element container-id) "hide-notation-cbe71")
-    (swap! board-state assoc :show-notation? true)))
+  (swap! board-state assoc :show-coords? true))
+  ; (let [container-id (:container-id @board-state)]
+  ;   (remove-class! (dom-util/get-element container-id) "hide-notation-cbe71")
+  ;   (swap! board-state assoc :show-notation? true)))
 
-(defn toggle-notation!
+(defn toggle-coordinates!
   [board-state]
-  (if (:show-notation? @board-state)
-    (hide-notation! board-state)
-    (show-notation! board-state)))
+  (swap! board-state update :show-coords? not))
+  ; (if (:show-notation? @board-state)
+  ;   (hide-coordinates! board-state)
+  ;   (show-coordinates! board-state)))
 
 ;; -----------------------------------------------------------------------------
 ;; Constructor
@@ -707,8 +702,40 @@
       :else
       {})))
 
+;; :coords true => default
+
+;; recommend they style the coordinate text using CSS
+;; the chessboard API can support the "on/off" and position stuff
+(def default-coords
+  {:bottom {:position "outside", :show? false, :type "letters"}
+   :left   {:position "outside", :show? false, :type "numbers"}
+   :right  {:position "outside", :show? false, :type "numbers"}
+   :top    {:position "outside", :show? false, :type "letters"}})
+
+(def default-board-config
+  {:coords default-coords
+   :items {}
+   :num-cols 8
+   :num-rows 8
+   :orientation "white"
+   :position {}
+   :show-coords? true}) ;; are the Coordinates showing?
+
 (def default-animate-speed-ms 120)
 ; (def default-animate-speed-ms 2500)
+
+(defn board-state-change
+  [_key _atom old-state new-state]
+
+  ;; FIXME: board orientation
+
+  ;; FIXME: coordinate config change
+
+  ;; show / hide coordinates
+  (when-not (= (:show-coords? old-state) (:show-coords? new-state))
+    (if (:show-coords? new-state)
+       (remove-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71")
+       (add-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71"))))
 
 (defn constructor
   "Called to create a new Chessboard2 object."
@@ -720,9 +747,9 @@
          container-id (random-id "container")
          root-width (dom-util/get-width root-el)
          opts1 (expand-second-arg js-opts)
-         square-el-ids (create-square-el-ids (:num-rows initial-state)
-                                             (:num-cols initial-state))
-         opts2 (merge initial-state opts1)
+         square-el-ids (create-square-el-ids (:num-rows default-board-config)
+                                             (:num-cols default-board-config))
+         opts2 (merge default-board-config opts1)
          items-container-id (random-id "items-container")
          opts3 (assoc opts2 :root-el root-el
                             :animate-speed-ms default-animate-speed-ms
@@ -731,12 +758,14 @@
                             :container-id container-id
                             :items {}
                             :items-container-id items-container-id
-                            :show-notation? false
                             :piece-square-pct 0.9
                             :square->piece-id {}
                             :square-el-ids square-el-ids)
-         ;; create an atom per instance to track the state of the board
+         ;; create an atom to track the state of the board
          board-state (atom opts3)]
+
+     ;; add a watch function to the board state
+     (add-watch board-state :on-change board-state-change)
 
      ;; Initial DOM Setup
      (init-dom! @board-state)
@@ -791,11 +820,12 @@
        "setSquare" #() ;; FIXME ;; .setSquare('e2', 'blue')
        "squares" #() ;; FIXME
 
-       "getNotation" #() ;; FIXME
-       "hideNotation" (partial hide-notation! board-state)
-       "notation" #() ;; FIXME: returns the current state with 0 arg, allows changing with other args
-       "showNotation" (partial show-notation! board-state)
-       "toggleNotation" (partial toggle-notation! board-state)
+       "coordinates" #() ;; FIXME: returns the current state with 0 arg, allows changing with other args
+       "getCoordinates" #() ;; FIXME: returns the config object
+       "hideCoordinates" (partial hide-coordinates! board-state)
+       "setCoordinates" #() ;; FIXME: sets the config object (do we need this? just use .setConfig() ?)
+       "showCoordinates" (partial show-coordinates! board-state)
+       "toggleCoordinates" (partial toggle-coordinates! board-state)
 
        ;; TODO: do we need getOrientation and setOrientation?
        "flip" #(orientation board-state "flip")
