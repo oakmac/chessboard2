@@ -11,32 +11,45 @@
           {:from "d2"
            :to "d4"}]))
   (is (= (parse-move-args ["e2-e4" false "d2-d4"])
-         [{:animate? false
+         [{:animate false
            :from "e2"
            :to "e4"}
-          {:animate? false
+          {:animate false
            :from "d2"
            :to "d4"}]))
   (is (= (parse-move-args ["e2-e4" "d2-d4" 5000])
-         [{:animate-speed-ms 5000
+         [{:animateSpeed 5000
            :from "e2"
            :to "e4"}
-          {:animate-speed-ms 5000
+          {:animateSpeed 5000
            :from "d2"
            :to "d4"}]))
   (let [callback-fn1 (fn [] nil)]
     (is (= (parse-move-args ["e2-e4" false callback-fn1])
-           [{:animate? false
+           [{:animate false
              :from "e2"
-             :on-complete callback-fn1
+             :onComplete callback-fn1
              :to "e4"}])))
   (let [callback-fn1 (fn [] nil)]
     (is (= (parse-move-args ["e2-e4" "d2-d4" "superfast" callback-fn1])
-           [{:animate-speed-ms (get animate-speed-strings->times "superfast")
+           [{:animateSpeed (get animate-speed-strings->times "superfast")
              :from "e2"
-             :on-complete callback-fn1
+             :onComplete callback-fn1
              :to "e4"}
-            {:animate-speed-ms (get animate-speed-strings->times "superfast")
-              :from "d2"
-              :on-complete callback-fn1
-              :to "d4"}]))))
+            {:animateSpeed (get animate-speed-strings->times "superfast")
+             :from "d2"
+             :onComplete callback-fn1
+             :to "d4"}])))
+  (let [callback-fn1 (fn [] 1)
+        callback-fn2 (fn [] 2)]
+    (is (= (parse-move-args [(js-obj "from" "e2"
+                                     "to" "e4"
+                                     "onComplete" callback-fn1)
+                             "d2-d4"
+                             callback-fn2])
+           [{:from "e2"
+             :onComplete callback-fn1
+             :to "e4"}
+            {:from "d2"
+             :onComplete callback-fn2
+             :to "d4"}]))))

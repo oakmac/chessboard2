@@ -1,6 +1,7 @@
 {:source-paths ["src-cljs" "resources"]
 
- :dependencies []
+ :dependencies
+ [[camel-snake-kebab "0.4.3"]]
 
  :builds
  {:chessboard2

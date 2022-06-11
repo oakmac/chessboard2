@@ -24,6 +24,7 @@ npx shadow-cljs compile node-tests
 - custom Items
   - add Duck to board, add toaster SVG
 - notation should be somewhat configurable
+- version the position? increment by 1 every time the position changes
 
 ## API
 
