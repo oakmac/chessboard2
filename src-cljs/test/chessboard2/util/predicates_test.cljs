@@ -1,7 +1,7 @@
 (ns test.chessboard2.util.predicates-test
   (:require
    [cljs.test :refer [deftest is]]
-   [com.oakmac.chessboard2.util.predicates :refer [valid-move? valid-piece? valid-square?]]))
+   [com.oakmac.chessboard2.util.predicates :refer [valid-move-string? valid-piece? valid-square?]]))
 
 (deftest valid-piece-test
   (is (true? (valid-piece? "bP")))
@@ -27,14 +27,14 @@
 
 ;; FIXME: add tests for valid-position?
 
-(deftest valid-move-test
-  (is (true? (valid-move? "a1-a4")))
-  (is (true? (valid-move? "e7-e8")))
-  (is (false? (valid-move? "d2_d4")))
-  (is (false? (valid-move? "d2-")))
-  (is (false? (valid-move? "g9")))
-  (is (false? (valid-move? "a")))
-  (is (false? (valid-move? true)))
-  (is (false? (valid-move? nil)))
-  (is (false? (valid-move? {})))
-  (is (false? (valid-move? "a1-a1"))))
+(deftest valid-move-string-test
+  (is (true? (valid-move-string? "a1-a4")))
+  (is (true? (valid-move-string? "e7-e8")))
+  (is (false? (valid-move-string? "d2_d4")))
+  (is (false? (valid-move-string? "d2-")))
+  (is (false? (valid-move-string? "g9")))
+  (is (false? (valid-move-string? "a")))
+  (is (false? (valid-move-string? true)))
+  (is (false? (valid-move-string? nil)))
+  (is (false? (valid-move-string? {})))
+  (is (false? (valid-move-string? "a1-a1"))))

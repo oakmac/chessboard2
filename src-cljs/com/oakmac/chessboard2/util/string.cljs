@@ -8,3 +8,10 @@
   [s]
   (when (string? s)
     (str/lower-case s)))
+
+(defn lower-case-if-string
+  "lower-case s if it is a String, otherwise returns s unmodified"
+  [s]
+  (if (string? s)
+    (str/lower-case s)
+    s))

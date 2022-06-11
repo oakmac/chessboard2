@@ -3,6 +3,7 @@
     [com.oakmac.chessboard2.animations :refer [calculate-animations]]
     [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.feature-flags :as flags]
+    [com.oakmac.chessboard2.js-api :as js-api]
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.util.board :refer [start-position]]
     [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
@@ -10,9 +11,9 @@
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.functions :refer [defer]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
-    [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
+    [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position move->map]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
-    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move? valid-square? valid-piece? valid-position?]]
+    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
     [goog.array :as garray]
@@ -345,21 +346,6 @@
        (valid-square? (gobj/get js-cfg "start"))
        (valid-square? (gobj/get js-cfg "end"))))
 
-(defn move->map
-  "Converts a move String to a map"
-  ([m]
-   (move->map m "MOVE_FORMAT"))
-  ([m format]
-   (let [arr (.split m "-")]
-     (case format
-       "ARROW_FORMAT"
-       {:start (aget arr 0)
-        :end (aget arr 1)}
-       "MOVE_FORMAT"
-       {:from (aget arr 0)
-        :to (aget arr 1)}
-       nil))))
-
 (def tshirt-sizes
   #{"small" "medium" "large"})
 
@@ -428,14 +414,14 @@
 (defn js-move-arrow
   [board-state item-id new-move]
   ;; TODO: validation here, warn if item-id is not valid
-  (valid-move? new-move)
+  (valid-move-string? new-move)
   ;; TODO: (move->map new-move) ??
   (move-arrow board-state item-id new-move))
 
 (defn js-add-arrow
   [board-state arg1 arg2 arg3]
   (let [cfg (cond-> default-arrow-config
-              (valid-move? arg1) (merge (move->map arg1 "ARROW_FORMAT"))
+              (valid-move-string? arg1) (merge (move->map arg1 "ARROW_FORMAT"))
               (and (valid-color? arg2)
                    (not (valid-arrow-size? arg2)))
               (merge {:color arg2})
@@ -578,7 +564,7 @@
 
 (defn array-of-moves? [arg]
   (and (array? arg)
-       (every? arg valid-move?)))
+       (every? arg valid-move-string?)))
 
 (defn looks-like-a-move-object? [js-move]
   (and (object? js-move)
@@ -590,7 +576,7 @@
 (defn js-move-piece
   [board-state arg1]
   (cond
-    (valid-move? arg1) (move-piece board-state (move->map arg1 "MOVE_FORMAT"))
+    (valid-move-string? arg1) (move-piece board-state (move->map arg1 "MOVE_FORMAT"))
     ;; TODO (array-of-moves? arg1) ()
     (looks-like-a-move-object? arg1) (move-piece board-state (js->clj arg1 :keywordize-keys true))
     :else (js/console.warn "FIXME ERROR CODE: Invalid value passed to the .move() method:" arg1)))
@@ -807,7 +793,7 @@
        "removePiece" (partial js-remove-piece board-state)
 
        "clear" #(position board-state {} %1)
-       "move" (partial js-move-piece board-state)
+       "move" (partial js-api/move-piece board-state)
        "movePiece" (partial js-move-piece board-state)
        "position" #(position board-state (js->clj %1) %2)
 

@@ -30,7 +30,7 @@
        (every? valid-square? (keys p))
        (every? valid-piece? (vals p))))
 
-(defn valid-move?
+(defn valid-move-string?
   [m]
   (and (string? m)
     (let [mv-arr (.split m "-")]

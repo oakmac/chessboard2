@@ -18,6 +18,10 @@
 <button id="move1Btn">e2-e4</button>
 <button id="move2Btn">d2-d4, g8-f6</button>
 <button id="move3Btn">Move 3</button>
+<button id="move4Btn">Move 4</button>
+<button id="move5Btn">Move 5</button>
+<button id="move6Btn">Move 6</button>
+<button id="move7Btn">Move 7</button>
 <button id="startPositionBtn">Start Position</button>
 <!--- End Example HTML -------------------------------------------------------->
 
@@ -32,13 +36,41 @@ $('#move1Btn').on('click', function () {
 })
 
 $('#move2Btn').on('click', function () {
+  // pass multiple moves as arguments
   board.move('d2-d4', 'g8-f6')
 })
 
 $('#move3Btn').on('click', function () {
+  board.move('c7-c5', 'slow')
+  board.move('b7-b2', 5000)
+})
+
+$('#move4Btn').on('click', function () {
+  // pass in false to disable animations
+  board.move('d7-d5', false)
+})
+
+$('#move5Btn').on('click', function () {
+  // pass a callback function that will fire when the animation of the move is complete
+  board.move('g1-f3', function (move) {
+    console.log('Animation finished for g1-f3:')
+    console.log(move)
+  })
+})
+
+$('#move6Btn').on('click', function () {
+  // pass a config object
   board.move({
     from: 'd2',
     to: 'd4'
+  })
+})
+
+$('#move7Btn').on('click', function () {
+  // move() returns a Promise object that fires when the animation has completed
+  board.move('h2-h4').then((move) => {
+    console.log('Animation has completed. Here is information about the move:')
+    console.log(move)
   })
 })
 
