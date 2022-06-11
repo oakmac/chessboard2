@@ -12,6 +12,9 @@
     [goog.dom :as gdom]
     [goog.object :as gobj]))
 
+(def valid-move-keys
+  #{:animate :animateSpeed :from :onComplete :to})
+
 (defn valid-animate-speed-number?
   [n]
   (and (int? n) (pos? n)))
@@ -21,7 +24,7 @@
   (or (valid-animate-speed-number? n)
       (contains? animate-speed-strings n)))
 
-(defn looks-like-a-move-object? [js-move]
+(defn looks-like-a-move-js-object? [js-move]
   (and (object? js-move)
        (valid-square? (gobj/get js-move "from"))
        (valid-square? (gobj/get js-move "to"))))
@@ -39,8 +42,13 @@
   [m]
   (cond
     (valid-move-string? m) (move->map m)
-    (looks-like-a-move-object? m) (js->clj m :keywordize-keys true)
+    (looks-like-a-move-js-object? m) (js->clj m :keywordize-keys true)
     :else nil))
+
+(defn remove-extra-move-keys
+  "Remove any extra keys on a Move map"
+  [m]
+  (select-keys m valid-move-keys))
 
 ;; TODO: warn them if they pass an invalid argument to .move()
 ; (js/console.warn "FIXME ERROR CODE: Invalid value passed to the .move() method:" arg1)
@@ -56,6 +64,8 @@
         animate-speed (last (filter valid-animate-speed? lc-args))]
     (->> (map convert-move args)
          (remove nil?)
+         ;; remove any extra keys that a user may have passed in
+         (map remove-extra-move-keys)
          (map (fn [m]
                 (merge {}
                   (when disable-animation?

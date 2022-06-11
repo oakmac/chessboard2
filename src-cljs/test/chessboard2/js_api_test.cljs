@@ -43,6 +43,7 @@
   (let [callback-fn1 (fn [] 1)
         callback-fn2 (fn [] 2)]
     (is (= (parse-move-args [(js-obj "from" "e2"
+                                     "foo" "bar"
                                      "to" "e4"
                                      "onComplete" callback-fn1)
                              "d2-d4"
