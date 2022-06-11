@@ -1,7 +1,6 @@
 (ns com.oakmac.chessboard2.js-api
   "Functions that handle the JS API for Chessboard2"
   (:require
-    [camel-snake-kebab.core :as csk]
     [com.oakmac.chessboard2.api :as api]
     [com.oakmac.chessboard2.constants :refer [animate-speed-strings animate-speed-strings->times]]
     [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
