@@ -22,6 +22,8 @@
 <button id="move5Btn">Move 5</button>
 <button id="move6Btn">Move 6</button>
 <button id="move7Btn">Move 7</button>
+<button id="move8Btn">Move 8</button>
+<button id="move9Btn">Move 9</button>
 <button id="startPositionBtn">Start Position</button>
 <!--- End Example HTML -------------------------------------------------------->
 
@@ -61,7 +63,10 @@ $('#move5Btn').on('click', function () {
 $('#move6Btn').on('click', function () {
   // pass a config object
   board.move({
+    animate: true,
+    animateSpeedMs: 1000,
     from: 'd2',
+    onComplete: (m) => { console.log('Move complete:', m) },
     to: 'd4'
   })
 })
@@ -71,6 +76,25 @@ $('#move7Btn').on('click', function () {
   board.move('h2-h4').then((move) => {
     console.log('Animation has completed. Here is information about the move:')
     console.log(move)
+  })
+})
+
+$('#move7Btn').on('click', function () {
+  // multiple moves will return an Array of Promises
+  Promise.all(board.move('h2-h4', 'h1-h3')).then((moves) => {
+    console.log('Animations are complete:')
+    console.log(moves)
+  })
+})
+
+$('#move9Btn').on('click', function () {
+  // the Promise object will reject if the move is invalid / not possible
+  board.move('g6-f6').then((move) => {
+    console.log('Animation has completed. Here is information about the move:')
+    console.log(move)
+  }).catch((err) => {
+    console.log('Invalid move:')
+    console.log(err)
   })
 })
 

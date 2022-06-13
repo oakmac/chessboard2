@@ -60,19 +60,23 @@
   (gdom/removeNode (get-element el)))
 
 (defn fade-out-and-remove-el!
-  "fades an element to zero opacity and removes it from the DOM"
-  [el-id animate-speed-ms]
-  (when-let [el (get-element el-id)]
-    ;; remove any existing transitions
-    (set-style-prop! el "transition" "")
+  "fades an element to zero opacity and removes it from the DOM
+  optionally calls callback-fn when the animation is finished (if provided)"
+  ([el-id animate-speed-ms]
+   (fade-out-and-remove-el! el-id animate-speed-ms nil))
+  ([el-id animate-speed-ms callback-fn]
+   (when-let [el (get-element el-id)]
+     ;; remove any existing transitions
+     (set-style-prop! el "transition" "")
 
-    ;; remove the piece from the DOM once the animation finishes
-    (.addEventListener el "transitionend"
-      (fn []
-        (remove-element! el)))
+     ;; remove the piece from the DOM once the animation finishes
+     (.addEventListener el "transitionend"
+       (fn []
+         (remove-element! el)
+         (when (fn? callback-fn) (callback-fn))))
 
-    ;; begin fade out animation on next stack
-    (defer
-      (fn []
-       (set-style-prop! el "transition" (str "all " animate-speed-ms "ms"))
-       (set-style-prop! el "opacity" "0")))))
+     ;; begin fade out animation on next stack
+     (defer
+       (fn []
+        (set-style-prop! el "transition" (str "all " animate-speed-ms "ms"))
+        (set-style-prop! el "opacity" "0"))))))

@@ -56,7 +56,7 @@ $('#move6Btn').on('click', function () {
     animate: true,
     animateSpeedMs: 1000,
     from: 'd2',
-    onComplete: (m) => { console.log('Move complete:', m) }
+    onComplete: (m) => { console.log('Move complete:', m) },
     to: 'd4'
   })
 })

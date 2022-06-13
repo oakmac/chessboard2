@@ -460,9 +460,9 @@ $('#clearBoardInstantBtn').on('click', function () {
 
 CHESSBOARD_EXAMPLES["3004"] = {
   description: "Use the <a href=\"docs.html#methods:move\"><code class=\"js plain\">move</code></a> method to make one or more moves on the board.",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"move1Btn\">e2-e4</button>\n<button id=\"move2Btn\">d2-d4, g8-f6</button>\n<button id=\"move3Btn\">Move 3</button>\n<button id=\"move4Btn\">Move 4</button>\n<button id=\"move5Btn\">Move 5</button>\n<button id=\"move6Btn\">Move 6</button>\n<button id=\"move7Btn\">Move 7</button>\n<button id=\"startPositionBtn\">Start Position</button>",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"move1Btn\">e2-e4</button>\n<button id=\"move2Btn\">d2-d4, g8-f6</button>\n<button id=\"move3Btn\">Move 3</button>\n<button id=\"move4Btn\">Move 4</button>\n<button id=\"move5Btn\">Move 5</button>\n<button id=\"move6Btn\">Move 6</button>\n<button id=\"move7Btn\">Move 7</button>\n<button id=\"move8Btn\">Move 8</button>\n<button id=\"move9Btn\">Move 9</button>\n<button id=\"startPositionBtn\">Start Position</button>",
   name: "Move Pieces",
-  jsStr: "var board = Chessboard2('myBoard', 'start')\n\n$('#move1Btn').on('click', function () {\n  board.move('e2-e4')\n})\n\n$('#move2Btn').on('click', function () {\n  // pass multiple moves as arguments\n  board.move('d2-d4', 'g8-f6')\n})\n\n$('#move3Btn').on('click', function () {\n  board.move('c7-c5', 'slow')\n  board.move('b7-b2', 5000)\n})\n\n$('#move4Btn').on('click', function () {\n  // pass in false to disable animations\n  board.move('d7-d5', false)\n})\n\n$('#move5Btn').on('click', function () {\n  // pass a callback function that will fire when the animation of the move is complete\n  board.move('g1-f3', function (move) {\n    console.log('Animation finished for g1-f3:')\n    console.log(move)\n  })\n})\n\n$('#move6Btn').on('click', function () {\n  // pass a config object\n  board.move({\n    from: 'd2',\n    to: 'd4'\n  })\n})\n\n$('#move7Btn').on('click', function () {\n  // move() returns a Promise object that fires when the animation has completed\n  board.move('h2-h4').then((move) => {\n    console.log('Animation has completed. Here is information about the move:')\n    console.log(move)\n  })\n})\n\n$('#startPositionBtn').on('click', board.start)",
+  jsStr: "var board = Chessboard2('myBoard', 'start')\n\n$('#move1Btn').on('click', function () {\n  board.move('e2-e4')\n})\n\n$('#move2Btn').on('click', function () {\n  // pass multiple moves as arguments\n  board.move('d2-d4', 'g8-f6')\n})\n\n$('#move3Btn').on('click', function () {\n  board.move('c7-c5', 'slow')\n  board.move('b7-b2', 5000)\n})\n\n$('#move4Btn').on('click', function () {\n  // pass in false to disable animations\n  board.move('d7-d5', false)\n})\n\n$('#move5Btn').on('click', function () {\n  // pass a callback function that will fire when the animation of the move is complete\n  board.move('g1-f3', function (move) {\n    console.log('Animation finished for g1-f3:')\n    console.log(move)\n  })\n})\n\n$('#move6Btn').on('click', function () {\n  // pass a config object\n  board.move({\n    animate: true,\n    animateSpeedMs: 1000,\n    from: 'd2',\n    onComplete: (m) => { console.log('Move complete:', m) },\n    to: 'd4'\n  })\n})\n\n$('#move7Btn').on('click', function () {\n  // move() returns a Promise object that fires when the animation has completed\n  board.move('h2-h4').then((move) => {\n    console.log('Animation has completed. Here is information about the move:')\n    console.log(move)\n  })\n})\n\n$('#move7Btn').on('click', function () {\n  // multiple moves will return an Array of Promises\n  Promise.all(board.move('h2-h4', 'h1-h3')).then((moves) => {\n    console.log('Animations are complete:')\n    console.log(moves)\n  })\n})\n\n$('#move9Btn').on('click', function () {\n  // the Promise object will reject if the move is invalid / not possible\n  board.move('g6-f6').then((move) => {\n    console.log('Animation has completed. Here is information about the move:')\n    console.log(move)\n  }).catch((err) => {\n    console.log('Invalid move:')\n    console.log(err)\n  })\n})\n\n$('#startPositionBtn').on('click', board.start)",
   jsFn: function () {
 var board = Chessboard2('myBoard', 'start')
 
@@ -496,7 +496,10 @@ $('#move5Btn').on('click', function () {
 $('#move6Btn').on('click', function () {
   // pass a config object
   board.move({
+    animate: true,
+    animateSpeedMs: 1000,
     from: 'd2',
+    onComplete: (m) => { console.log('Move complete:', m) },
     to: 'd4'
   })
 })
@@ -506,6 +509,25 @@ $('#move7Btn').on('click', function () {
   board.move('h2-h4').then((move) => {
     console.log('Animation has completed. Here is information about the move:')
     console.log(move)
+  })
+})
+
+$('#move7Btn').on('click', function () {
+  // multiple moves will return an Array of Promises
+  Promise.all(board.move('h2-h4', 'h1-h3')).then((moves) => {
+    console.log('Animations are complete:')
+    console.log(moves)
+  })
+})
+
+$('#move9Btn').on('click', function () {
+  // the Promise object will reject if the move is invalid / not possible
+  board.move('g6-f6').then((move) => {
+    console.log('Animation has completed. Here is information about the move:')
+    console.log(move)
+  }).catch((err) => {
+    console.log('Invalid move:')
+    console.log(err)
   })
 })
 

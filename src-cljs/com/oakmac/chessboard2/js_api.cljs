@@ -78,9 +78,21 @@
 
 ;; FIXME: handle 0-0 and 0-0-0, user will have to specify white or black
 (defn move-piece
+  "NOTE: returns either a Promise or an Array of Promises"
   [board-state]
   (let [js-args (array)]
     (copy-arguments js-args)
     (.shift js-args)
-    (api/move-pieces board-state (parse-move-args js-args))))
+    (let [move-configs (parse-move-args js-args)
+          moves (api/move-pieces board-state move-configs)]
+      (if (= 1 (count moves))
+        (clj->js (first moves))
+        (clj->js moves)))))
+
+
+    ;     (let [js-return-promise (api/move-pieces moves)]
+    ;       (gobj/set js-return-promise "xxx" "yyy")
+    ;       js-return-promise)
+    ;     (let [])))
+    ; (api/move-pieces board-state (parse-move-args js-args))))
     ;; TODO: return JS object here

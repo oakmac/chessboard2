@@ -21,5 +21,13 @@
 ;     (position board-state new-position animate?)))
 
 (defn move-pieces
-  [board-state moves])
-  ;; FIXME: write this
+  "Executes a collection of Moves on the board. Modifies the position.
+  Returns a collection of Promises."
+  [board-state moves]
+  (let [current-pos (:position @board-state)
+        new-pos (reduce
+                  (fn [pos move]
+                    (apply-move-to-position pos move))
+                  current-pos
+                  moves)]
+    (js/console.log (pr-str new-pos))))
