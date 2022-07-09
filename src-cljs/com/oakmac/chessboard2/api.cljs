@@ -15,6 +15,14 @@
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]))
 
+(defn default-move-cfg
+  "Returns the default move config map."
+  [board-state]
+  (let [{:keys [animate-speed-ms]} @board-state]
+    {:animate true
+     :animateSpeed animate-speed-ms
+     :onComplete nil}))
+
 ; (defn move-piece
 ;   [board-state {:keys [animate?] :as move}]
 ;   (let [new-position (apply-move-to-position (:position @board-state) move)]
@@ -29,5 +37,11 @@
                   (fn [pos move]
                     (apply-move-to-position pos move))
                   current-pos
-                  moves)]
-    (js/console.log (pr-str new-pos))))
+                  moves)
+        default-cfg (default-move-cfg board-state)
+        moves2 (map
+                 (fn [m]
+                   (merge default-cfg m))
+                 moves)]
+    ; (js/console.log (pr-str new-pos))
+    (js/console.log (pr-str moves2))))

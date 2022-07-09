@@ -41,10 +41,15 @@
 (defn click-root-el [js-evt]
   (.log js/console "clicked root element:" js-evt))
 
+(defn on-transition-end [js-evt]
+  (let [target-el (gobj/get js-evt "target")]
+    (js/console.log "transition end (root element):" target-el)))
+
 (defn- add-events!
   "Attach DOM events."
   [root-el]
-  (.addEventListener root-el "click" click-root-el))
+  (.addEventListener root-el "click" click-root-el)
+  (.addEventListener root-el "transitionend" on-transition-end))
 
 (defn toggle-orientation [o]
   (if (= o "white") "black" "white"))

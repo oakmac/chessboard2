@@ -5,6 +5,9 @@
    [com.oakmac.chessboard2.constants :refer [animate-speed-strings->times]]))
 
 (deftest parse-move-args-test
+  (is (= (parse-move-args ["e2-e4"])
+         [{:from "e2"
+           :to "e4"}]))
   (is (= (parse-move-args ["e2-e4" "d2-d4"])
          [{:from "e2"
            :to "e4"}

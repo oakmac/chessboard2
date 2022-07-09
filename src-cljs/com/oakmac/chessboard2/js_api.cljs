@@ -53,7 +53,8 @@
 ;; TODO: warn them if they pass an invalid argument to .move()
 ; (js/console.warn "FIXME ERROR CODE: Invalid value passed to the .move() method:" arg1)
 (defn parse-move-args
-  "Parse variadic arguments to the .move() function into Move config maps"
+  "Parse variadic arguments to the .move() function into Move config maps
+  Returns a Vector of Move config maps."
   [args]
   (let [;; any argument of 'false' to this function means no animation
         disable-animation? (some false? args)
@@ -78,7 +79,8 @@
 
 ;; FIXME: handle 0-0 and 0-0-0, user will have to specify white or black
 (defn move-piece
-  "NOTE: returns either a Promise or an Array of Promises"
+  "Returns a single JS Promise if only one move is made.
+  Otherwise returns an Array of Promises of the moves being made."
   [board-state]
   (let [js-args (array)]
     (copy-arguments js-args)
