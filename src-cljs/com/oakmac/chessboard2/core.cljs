@@ -41,15 +41,25 @@
 (defn click-root-el [js-evt]
   (.log js/console "clicked root element:" js-evt))
 
-(defn on-transition-end [js-evt]
-  (let [target-el (gobj/get js-evt "target")]
-    (js/console.log "transition end (root element):" target-el)))
+;; NOTE: the transitionend event fires for every CSS property that is transitioned
+;; This function fires twice for most (but not all) piece moves (css props 'left' and 'top')
+(defn on-transition-end
+  "This function fires on every 'transitionend' event inside the root container."
+  [board-state js-evt]
+  (let [target-el (gobj/get js-evt "target")
+        el-id (gobj/get target-el "id")]
+    ;; is there an animation-end callback associated with this element?
+    (when-let [callback-fn (get-in @board-state [:animation-end-callbacks el-id])]
+      ;; execute the callback
+      (callback-fn)
+      ;; remove callback from the cache
+      (swap! board-state update-in [:animation-end-callbacks] dissoc el-id))))
 
 (defn- add-events!
   "Attach DOM events."
-  [root-el]
+  [root-el board-state]
   (.addEventListener root-el "click" click-root-el)
-  (.addEventListener root-el "transitionend" on-transition-end))
+  (.addEventListener root-el "transitionend" (partial on-transition-end board-state)))
 
 (defn toggle-orientation [o]
   (if (= o "white") "black" "white"))
@@ -743,6 +753,7 @@
          opts2 (merge default-board-config opts1)
          items-container-id (random-id "items-container")
          opts3 (assoc opts2 :root-el root-el
+                            :animation-end-callbacks {}
                             :animate-speed-ms default-animate-speed-ms
                             :board-height root-width
                             :board-width root-width
@@ -760,7 +771,7 @@
 
      ;; Initial DOM Setup
      (init-dom! @board-state)
-     (add-events! root-el)
+     (add-events! root-el board-state)
      (draw-items-instant! board-state)
 
      ;; return a JS object that implements the API

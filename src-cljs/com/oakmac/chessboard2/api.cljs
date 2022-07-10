@@ -3,6 +3,7 @@
   (:require
     [com.oakmac.chessboard2.animations :refer [calculate-animations]]
     [com.oakmac.chessboard2.css :as css]
+    [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.util.board :refer [start-position]]
@@ -23,11 +24,7 @@
      :animateSpeed animate-speed-ms
      :onComplete nil}))
 
-; (defn move-piece
-;   [board-state {:keys [animate?] :as move}]
-;   (let [new-position (apply-move-to-position (:position @board-state) move)]
-;     (position board-state new-position animate?)))
-
+;; TODO: console.warn if they pass an invalid move, ie: there is no piece on the "from" square
 (defn move-pieces
   "Executes a collection of Moves on the board. Modifies the position.
   Returns a collection of Promises."
@@ -38,10 +35,12 @@
                     (apply-move-to-position pos move))
                   current-pos
                   moves)
+        position-info {:after-pos new-pos, :before-pos current-pos}
         default-cfg (default-move-cfg board-state)
-        moves2 (map
-                 (fn [m]
-                   (merge default-cfg m))
-                 moves)]
-    ; (js/console.log (pr-str new-pos))
-    (js/console.log (pr-str moves2))))
+        moves2 (map #(merge default-cfg %) moves)
+        ;; perform DOM operations to put the board in the new state
+        move-promises (map #(dom-ops/execute-move! board-state position-info %) moves2)]
+    ;; update board position atom
+    (swap! board-state assoc :position new-pos)
+    ;; return the move promises
+    move-promises))

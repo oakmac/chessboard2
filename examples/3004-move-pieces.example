@@ -55,9 +55,9 @@ $('#move6Btn').on('click', function () {
   board.move({
     animate: true,
     animateSpeedMs: 1000,
-    from: 'd2',
+    from: 'g2',
     onComplete: (m) => { console.log('Move complete:', m) },
-    to: 'd4'
+    to: 'g4'
   })
 })
 
@@ -69,7 +69,7 @@ $('#move7Btn').on('click', function () {
   })
 })
 
-$('#move7Btn').on('click', function () {
+$('#move8Btn').on('click', function () {
   // multiple moves will return an Array of Promises
   Promise.all(board.move('h2-h4', 'h1-h3')).then((moves) => {
     console.log('Animations are complete:')
