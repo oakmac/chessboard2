@@ -18,6 +18,7 @@ Use the <a href="docs.html#methods:move"><code class="js plain">move</code></a> 
 <button id="move7Btn">Move 7</button>
 <button id="move8Btn">Move 8</button>
 <button id="move9Btn">Move 9</button>
+<button id="move10Btn">Combine Instant and Animated Moves</button>
 <button id="startPositionBtn">Start Position</button>
 
 ===== JS
@@ -54,7 +55,7 @@ $('#move6Btn').on('click', function () {
   // pass a config object
   board.move({
     animate: true,
-    animateSpeedMs: 1000,
+    animateSpeed: 1000,
     from: 'g2',
     onComplete: (m) => { console.log('Move complete:', m) },
     to: 'g4'
@@ -85,6 +86,21 @@ $('#move9Btn').on('click', function () {
   }).catch((err) => {
     console.log('Invalid move:')
     console.log(err)
+  })
+})
+
+$('#move10Btn').on('click', function () {
+  // you may combine instant and animated moves in the same .move() call
+  board.move({
+    animate: true,
+    animateSpeed: 'slow',
+    from: 'g7',
+    to: 'g4'
+  },
+  {
+    animate: false,
+    from: 'f7',
+    to: 'f4'
   })
 })
 

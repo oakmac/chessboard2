@@ -90,11 +90,3 @@
       (if (= 1 (count moves))
         (clj->js (first moves))
         (clj->js moves)))))
-
-
-    ;     (let [js-return-promise (api/move-pieces moves)]
-    ;       (gobj/set js-return-promise "xxx" "yyy")
-    ;       js-return-promise)
-    ;     (let [])))
-    ; (api/move-pieces board-state (parse-move-args js-args))))
-    ;; TODO: return JS object here

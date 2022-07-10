@@ -23,9 +23,6 @@
 (declare percent? size-string->number tshirt-sizes)
 
 ;; TODO
-;; - .move() should accept an Object
-;;   - optional callback function that completes when the move is finished
-;;   - animate speed option (per move)
 ;; - .move('0-0') and .move('0-0-0') should work as expected
 
 ;; TODO: move to predicates ns
@@ -811,6 +808,7 @@
        "clear" #(position board-state {} %1)
        "move" (partial js-api/move-piece board-state)
        "movePiece" (partial js-move-piece board-state)
+       ;; FIXME: moveInstant ???
        "position" #(position board-state (js->clj %1) %2)
 
        "destroy" #() ;; FIXME
