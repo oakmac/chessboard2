@@ -7,7 +7,7 @@ chessboard2 library
 ```sh
 yarn install
 
-npx shadow-cljs release chessboard2
+npx shadow-cljs release chessboard2 && ./scripts/website.js
 ```
 
 ## Tests
