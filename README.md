@@ -16,15 +16,18 @@ npx shadow-cljs release chessboard2 && ./scripts/website.js
 npx shadow-cljs compile node-tests
 ```
 
-## TODO
+## TODO before go-live
 
-- variadic `removeArrow`, `removeCircle`, `removePiece` functions
-- add "Rings"
+- [ ] variadic `removeArrow`, `removeCircle`, `removePiece` functions
+- [ ] add "Rings"
   - are these separate from Circles or just an added config value?
-- custom Items
+- [ ] custom Items
   - add Duck to board, add toaster SVG
-- notation should be somewhat configurable
-- version the position? increment by 1 every time the position changes
+- [ ] notation should be configurable
+- [ ] version the position? increment by 1 every time the position changes
+- [ ] review the speed shorthand times. ie: what should "slow" and "superslow" feel like?
+- [ ] draggable pieces on the board
+- [ ] tap-to-move should work great
 
 ## API
 

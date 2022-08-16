@@ -93,7 +93,7 @@ $('#move10Btn').on('click', function () {
   // you may combine instant and animated moves in the same .move() call
   board.move({
     animate: true,
-    animateSpeed: 'slow',
+    animateSpeed: 'superslow',
     from: 'g7',
     to: 'g4'
   },

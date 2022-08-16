@@ -4,6 +4,7 @@
     [com.oakmac.chessboard2.util.board :refer [start-position]]
     [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element! set-style-prop!]]
+    [com.oakmac.chessboard2.util.functions :refer [defer]]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]))
 
 (defn execute-move-with-animation!
@@ -65,3 +66,44 @@
         (do
           (execute-move-instant! board-state position-info move)
           (resolve-fn))))))
+
+(defn apply-ops!
+  "Apply DOM operations to the board"
+  [board-state ops]
+  (let [{:keys [animate-speed-ms items-container-id]} @board-state]
+    ;; remove elements
+    (let [removes (map :remove-el ops)]
+      (doseq [el-id removes]
+        (when el-id
+          (remove-element! el-id))))
+
+    ;; append new HTML
+    (let [new-html (->> (map :new-html ops)
+                        (apply str))]
+      (append-html! items-container-id new-html))
+
+    ;; functions to run on the next stack
+    (defer (fn []
+             (doseq [{:keys [defer-fn]} ops]
+               (when (fn? defer-fn) (defer-fn)))))
+
+    ;; piece fade-outs
+    (let [fade-outs (map :fade-out-piece ops)]
+      (doseq [piece-id fade-outs]
+        (when piece-id
+          (dom-util/fade-out-and-remove-el! piece-id animate-speed-ms))))
+
+    ;; captures
+    (let [captures (map :capture-piece-id ops)]
+      (doseq [el-id captures]
+        (dom-util/fade-out-and-remove-el! el-id animate-speed-ms)))))
+
+    ;; FIXME: do not do this here, this should be done elsewhere
+    ;; update the board-state with new piece-ids
+    ; (let [dissocs (map :delete-square->piece ops)
+    ;       updates (map :new-square->piece ops)]
+    ;   (swap! board-state update :square->piece-id
+    ;     (fn [m]
+    ;       (as-> m $
+    ;        (apply dissoc $ dissocs)
+    ;        (apply merge $ updates)))))))

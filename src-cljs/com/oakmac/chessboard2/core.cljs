@@ -2,9 +2,10 @@
   (:require
     [com.oakmac.chessboard2.animations :refer [calculate-animations]]
     [com.oakmac.chessboard2.css :as css]
+    [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
-    [com.oakmac.chessboard2.js-api :as js-api]
     [com.oakmac.chessboard2.html :as html]
+    [com.oakmac.chessboard2.js-api :as js-api]
     [com.oakmac.chessboard2.util.board :refer [start-position]]
     [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element! set-style-prop!]]
@@ -179,46 +180,6 @@
     "ANIMATION_CLEAR" (animation->dom-op-clear animation board-state)
     (js/console.warn "Unknown animation type:" (:type animation))))
 
-(defn apply-dom-ops!
-  "Apply DOM operations to the board"
-  [board-state ops]
-  (let [{:keys [animate-speed-ms items-container-id]} @board-state]
-    ;; remove elements
-    (let [removes (map :remove-el ops)]
-      (doseq [el-id removes]
-        (when el-id
-          (remove-element! el-id))))
-
-    ;; append new HTML
-    (let [new-html (->> (map :new-html ops)
-                        (apply str))]
-      (append-html! items-container-id new-html))
-
-    ;; functions to run on the next stack
-    (defer (fn []
-             (doseq [{:keys [defer-fn]} ops]
-               (when (fn? defer-fn) (defer-fn)))))
-
-    ;; piece fade-outs
-    (let [fade-outs (map :fade-out-piece ops)]
-      (doseq [piece-id fade-outs]
-        (when piece-id
-          (dom-util/fade-out-and-remove-el! piece-id animate-speed-ms))))
-
-    ;; captures
-    (let [captures (map :capture-piece-id ops)]
-      (doseq [el-id captures]
-        (dom-util/fade-out-and-remove-el! el-id animate-speed-ms)))
-
-    ;; update the board-state with new piece-ids
-    (let [dissocs (map :delete-square->piece ops)
-          updates (map :new-square->piece ops)]
-      (swap! board-state update :square->piece-id
-        (fn [m]
-          (as-> m $
-           (apply dissoc $ dissocs)
-           (apply merge $ updates)))))))
-
 ;; -----------------------------------------------------------------------------
 ;; API Methods
 
@@ -251,7 +212,7 @@
 (defn remove-circle-by-id
   "Removes a Circle from the board using it's item-id"
   [board-state item-id]
-  (apply-dom-ops! board-state [{:remove-el item-id}])
+  (dom-ops/apply-ops! board-state [{:remove-el item-id}])
   (swap! board-state update-in [:items] dissoc item-id))
 
 (defn remove-circle
@@ -282,7 +243,7 @@
                   (fn [id]
                     {:remove-el id})
                   item-ids)]
-    (apply-dom-ops! board-state dom-ops)
+    (dom-ops/apply-ops! board-state dom-ops)
     (swap! board-state update-in [:items]
            (fn [items]
              (apply dissoc items item-ids)))
@@ -307,7 +268,7 @@
                                   :orientation orientation
                                   :size size
                                   :square square})]
-    (apply-dom-ops! board-state [{:new-html circle-html}])
+    (dom-ops/apply-ops! board-state [{:new-html circle-html}])
     (swap! board-state assoc-in [:items id] circle-item)
     id))
 
@@ -402,14 +363,14 @@
                                 :orientation orientation
                                 :size size
                                 :start start})]
-    (apply-dom-ops! board-state [{:new-html arrow-html}])
+    (dom-ops/apply-ops! board-state [{:new-html arrow-html}])
     (swap! board-state assoc-in [:items id] arrow-item)
     id))
 
 (defn remove-arrow
   "Remove an Analysis Arrow from the board"
   [board-state item-id]
-  (apply-dom-ops! board-state [{:remove-el item-id}])
+  (dom-ops/apply-ops! board-state [{:remove-el item-id}])
   (swap! board-state update-in [:items] dissoc item-id))
 
 ;; FIXME: you should be able to pass in 'e2-e4' and remove the arrow on those squares
@@ -479,7 +440,7 @@
                   (fn [id]
                     {:remove-el id})
                   arrow-ids)]
-    (apply-dom-ops! board-state dom-ops)
+    (dom-ops/apply-ops! board-state dom-ops)
     (swap! board-state update-in [:items]
            (fn [items]
              (apply dissoc items arrow-ids)))
@@ -525,7 +486,7 @@
   [board-state new-pos]
   (let [animations (calculate-animations (:position @board-state) new-pos)
         dom-ops (map #(animation->dom-op % board-state) animations)]
-    (apply-dom-ops! board-state dom-ops)
+    (dom-ops/apply-ops! board-state dom-ops)
     (swap! board-state assoc :position new-pos)))
 
 (defn set-position-instant!
