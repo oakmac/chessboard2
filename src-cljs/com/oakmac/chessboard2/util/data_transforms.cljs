@@ -1,5 +1,14 @@
 (ns com.oakmac.chessboard2.util.data-transforms)
 
+(defn js-map->clj
+  "Converts a JavaScript Map to a Clojure Map"
+  [js-m]
+  (let [clj-m (transient {})]
+    (.forEach js-m
+      (fn [js-val js-key _js-map]
+        (assoc! clj-m js-key js-val)))
+    (persistent! clj-m)))
+
 (defn clj->js-map
   "Converts a Clojure Map to a JavaScript Map"
   [clj-map]
