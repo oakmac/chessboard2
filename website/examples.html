@@ -303,10 +303,10 @@ var board = Chessboard2('myBoard', config)
 };
 
 CHESSBOARD_EXAMPLES["3000"] = {
-  description: "Use the <a href=\"docs.html#methods:position\"><code class=\"js plain\">position</code></a> and <a href=\"docs.html#methods:fen\"><code class=\"js plain\">fen</code></a> methods to retrieve the current position of the board.",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"showPositionBtn\">Show position in console</button>",
+  description: "Use the <a href=\"docs.html#methods:position\"><code class=\"js plain\">position</code></a> and <a href=\"docs.html#methods:fen\"><code class=\"js plain\">fen</code></a> methods to retrieve the current position of the board.\r\n\r\nUse the [.position()], [.fen()], or [.getPosition()] methods to retrieve the\r\nposition of the board as either a JS Object, FEN String, or JS Map.\r\n\r\n[.position()]:docs.html#methods:position\r\n[.fen()]:docs.html#methods:fen\r\n[.getPosition()]:docs.html#methods:getPosition",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"showPositionBtn\">show .position() in console</button>\r\n<button id=\"showFenBtn\">show .fen() in console</button>\r\n<button id=\"showGetPositionBtn\">show .getPosition() in console</button>",
   name: "Get Position",
-  jsStr: "var config = {\n  draggable: true,\n  position: 'start'\n}\nvar board = Chessboard2('myBoard', config)\n\nfunction clickShowPositionBtn () {\n  console.log('Current position as an Object:')\n  console.log(board.position())\n\n  console.log('Current position as a FEN string:')\n  console.log(board.fen())\n}\n\n$('#showPositionBtn').on('click', clickShowPositionBtn)",
+  jsStr: "var config = {\n  draggable: true,\n  position: 'start'\n}\nvar board = Chessboard2('myBoard', config)\n\nfunction clickPositionBtn () {\n  console.log('Current position as an Object:')\n  console.log(board.position())\n\n  console.log('Current position as a Map:')\n  console.log(board.position('map'))\n\n  console.log('Current position as a FEN string:')\n  console.log(board.position('fen'))\n}\n\nfunction clickFenBtn () {\n  console.log('Current position as a FEN string:')\n  console.log(board.fen())\n}\n\nfunction clickGetPositionBtn () {\n  console.log('Current position as an Object:')\n  console.log(board.getPosition())\n\n  console.log('Current position as a Map:')\n  console.log(board.getPosition('map'))\n\n  console.log('Current position as a FEN string:')\n  console.log(board.getPosition('fen'))\n}\n\n$('#showPositionBtn').on('click', clickPositionBtn)\n$('#showFenBtn').on('click', clickFenBtn)\n$('#showGetPositionBtn').on('click', clickGetPositionBtn)",
   jsFn: function () {
 var config = {
   draggable: true,
@@ -314,15 +314,36 @@ var config = {
 }
 var board = Chessboard2('myBoard', config)
 
-function clickShowPositionBtn () {
+function clickPositionBtn () {
   console.log('Current position as an Object:')
   console.log(board.position())
 
+  console.log('Current position as a Map:')
+  console.log(board.position('map'))
+
+  console.log('Current position as a FEN string:')
+  console.log(board.position('fen'))
+}
+
+function clickFenBtn () {
   console.log('Current position as a FEN string:')
   console.log(board.fen())
 }
 
-$('#showPositionBtn').on('click', clickShowPositionBtn)
+function clickGetPositionBtn () {
+  console.log('Current position as an Object:')
+  console.log(board.getPosition())
+
+  console.log('Current position as a Map:')
+  console.log(board.getPosition('map'))
+
+  console.log('Current position as a FEN string:')
+  console.log(board.getPosition('fen'))
+}
+
+$('#showPositionBtn').on('click', clickPositionBtn)
+$('#showFenBtn').on('click', clickFenBtn)
+$('#showGetPositionBtn').on('click', clickGetPositionBtn)
   }
 };
 

@@ -2,6 +2,11 @@
   (:require
     [clojure.string :as str]))
 
+(defn map-string?
+  [s]
+  (and (string? s)
+       (= "map" (str/lower-case s))))
+
 (defn fen-string?
   [s]
   (and (string? s)

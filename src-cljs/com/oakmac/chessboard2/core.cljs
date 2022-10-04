@@ -24,7 +24,10 @@
 (declare percent? size-string->number tshirt-sizes)
 
 ;; TODO
-;; - .move('0-0') and .move('0-0-0') should work as expected
+;; - [ ] .move('0-0') and .move('0-0-0') should work as expected
+;; - [ ] example3004: captures are not working
+;; - [ ] example3004: start position does not work (pieces not being removed)
+;; - [ ] .position() and .move() should have the same return API / behavior
 
 ;; TODO: move to predicates ns
 (defn arrow-item? [item]
@@ -37,7 +40,8 @@
   (= "CHESSBOARD_PIECE" (:type item)))
 
 (defn click-root-el [js-evt]
-  (.log js/console "clicked root element:" js-evt))
+  nil)
+  ; (.log js/console "clicked root element:" js-evt))
 
 ;; NOTE: the transitionend event fires for every CSS property that is transitioned
 ;; This function fires twice for most (but not all) piece moves (css props 'left' and 'top')
@@ -71,6 +75,7 @@
   "returns a Set of all the Item ids currently in the DOM"
   [items-container-id]
   (let [item-els (get-all-item-elements-from-dom items-container-id)
+        ;; TODO: make this transient for perf reasons?
         ids (atom #{})]
     (garray/forEach item-els
       (fn [itm]
@@ -770,10 +775,12 @@
        "move" (partial js-api/move-piece board-state)
        "movePiece" (partial js-move-piece board-state)
        ;; FIXME: moveInstant ???
-       "position" #(position board-state (js->clj %1) %2)
+       "position" (partial js-api/position board-state)
+       "getPosition" (partial js-api/get-position board-state)
+       "setPosition" #() ;; FIXME: write this
 
        "destroy" #() ;; FIXME
-       "fen" #(position board-state "fen" false)
+       "fen" (partial js-api/get-position board-state "fen")
 
        "clearSquareHighlights" #() ;; FIXME - should this just be "clearSquares" ?
        "getSquares" #() ;; FIXME: squares can have colors, ids, properties like "black" and "white"

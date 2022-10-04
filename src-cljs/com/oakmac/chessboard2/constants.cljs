@@ -1,4 +1,11 @@
-(ns com.oakmac.chessboard2.constants)
+(ns com.oakmac.chessboard2.constants
+  (:require
+    [com.oakmac.chessboard2.util.fen :refer [fen->position]]))
+
+(def start-fen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
+
+(def start-position
+  (fen->position start-fen))
 
 ;; TODO: adjust these times
 (def animate-speed-strings->times

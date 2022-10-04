@@ -37,8 +37,7 @@
   [board-state moves]
   (let [current-pos (:position @board-state)
         new-pos (reduce
-                  (fn [pos move]
-                    (apply-move-to-position pos move))
+                  apply-move-to-position
                   current-pos
                   moves)
         position-info {:after-pos new-pos, :before-pos current-pos}
@@ -52,3 +51,8 @@
     (swap! board-state assoc :position new-pos)
     ;; return the move promises
     move-promises))
+
+(defn get-position
+  "Returns the board position as a Clojure Map"
+  [board-state]
+  (get @board-state :position))

@@ -2,7 +2,7 @@
   (:require
    [cljs.test :refer [deftest is testing]]
    [com.oakmac.chessboard2.constants :refer [start-fen start-position]]
-   [com.oakmac.chessboard2.util.fen :refer [fen->piece-code piece-code->fen fen->position position->fen valid-fen?]]))
+   [com.oakmac.chessboard2.util.fen :refer [fen->piece-code fen->position piece-code->fen position->fen valid-fen?]]))
 
 (deftest piece-code-fen-test
   (testing "fen->piece-code"
