@@ -7,12 +7,17 @@
 // FIXME: add logging to this script
 
 // libraries
+const assert = require('assert')
+const commonmark = require('commonmark')
 const fs = require('fs-plus')
 const kidif = require('kidif')
 const mustache = require('mustache')
 const docs = require('../data/docs.json')
 
 const encoding = {encoding: 'utf8'}
+
+const cmReader = new commonmark.Parser();
+const cmWriter = new commonmark.HtmlRenderer();
 
 // toggle development version
 const useDevFile = true
@@ -39,9 +44,21 @@ const latestChessboardJS = fs.readFileSync('public/js/chessboard2.js', encoding)
 const latestChessboardCSS = fs.readFileSync('public/css/chessboard2.css', encoding)
 
 // grab the examples
-const examplesArr = kidif('examples/*.example')
-console.assert(examplesArr, 'Could not load the Example files')
-console.assert(examplesArr.length > 1, 'Zero examples loaded')
+let examplesArr = kidif('examples/*.example')
+
+// sanity check the examples
+assert(examplesArr, 'Could not load the Example files')
+assert(examplesArr.length > 1, 'Zero examples loaded')
+
+// convert Descriptions in Markdown to HTML
+examplesArr = examplesArr.map(ex => {
+  if (ex.descriptionmd) {
+    const parsed = cmReader.parse(ex.descriptionmd)
+    if (!parsed) assert('Example ' + ex.id + ' has bad Markdown.')
+    ex.description = cmWriter.render(parsed)
+  }
+  return ex
+})
 
 const examplesObj = examplesArr.reduce(function (examplesObj, example, idx) {
   examplesObj[example.id] = example
@@ -405,4 +422,8 @@ function buildErrorRowHTML (error) {
 
 function isString (s) {
   return typeof s === 'string'
+}
+
+function infoLog (msg) {
+  console.log(msg)
 }

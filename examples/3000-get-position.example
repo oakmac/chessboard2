@@ -4,11 +4,7 @@
 ===== Name
 Get Position
 
-===== Description
-
-<!--
-Use the <a href="docs.html#methods:position"><code class="js plain">position</code></a> and <a href="docs.html#methods:fen"><code class="js plain">fen</code></a> methods to retrieve the current position of the board.
--->
+===== DescriptionMD
 
 Use the [.position()], [.fen()], or [.getPosition()] methods to retrieve the
 position of the board as either a JS Object, FEN String, or JS Map.

@@ -11,14 +11,9 @@
 <body>
 <p><a href="examples#3000">&larr; Back to all examples.</a></p>
 
-<p>Use the <a href="docs.html#methods:position"><code class="js plain">position</code></a> and <a href="docs.html#methods:fen"><code class="js plain">fen</code></a> methods to retrieve the current position of the board.
-
-Use the [.position()], [.fen()], or [.getPosition()] methods to retrieve the
-position of the board as either a JS Object, FEN String, or JS Map.
-
-[.position()]:docs.html#methods:position
-[.fen()]:docs.html#methods:fen
-[.getPosition()]:docs.html#methods:getPosition</p>
+<p><p>Use the <a href="docs.html#methods:position">.position()</a>, <a href="docs.html#methods:fen">.fen()</a>, or <a href="docs.html#methods:getPosition">.getPosition()</a> methods to retrieve the
+position of the board as either a JS Object, FEN String, or JS Map.</p>
+</p>
 
 <!--- Begin Example HTML ------------------------------------------------------>
 <div id="myBoard" style="width: 400px"></div>
@@ -31,11 +26,11 @@ position of the board as either a JS Object, FEN String, or JS Map.
 <script src="js/chessboard.js"></script>
 <script>
 // --- Begin Example JS --------------------------------------------------------
-var config = {
+const config = {
   draggable: true,
   position: 'start'
 }
-var board = Chessboard2('myBoard', config)
+const board = Chessboard2('myBoard', config)
 
 function clickPositionBtn () {
   console.log('Current position as an Object:')
