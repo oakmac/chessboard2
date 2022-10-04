@@ -1,6 +1,11 @@
 (ns com.oakmac.chessboard2.util.predicates
   (:require
-    [clojure.string :as str]))
+    [clojure.string :as str]
+    [com.oakmac.chessboard2.util.data-transforms :refer [js-map->clj]]))
+
+(defn js-map?
+  [m]
+  (instance? js/Map m))
 
 (defn map-string?
   [s]
@@ -34,6 +39,22 @@
   (and (map? p)
        (every? valid-square? (keys p))
        (every? valid-piece? (vals p))))
+
+(defn valid-js-position-object?
+  [js-pos]
+  (and
+    (object? js-pos)
+    (let [clj-pos (js->clj js-pos)]
+      (and (every? valid-square? (keys clj-pos))
+           (every? valid-piece? (vals clj-pos))))))
+
+(defn valid-js-position-map?
+  [js-pos]
+  (and
+   (js-map? js-pos)
+   (let [clj-pos (js-map->clj js-pos)]
+     (and (every? valid-square? (keys clj-pos))
+          (every? valid-piece? (vals clj-pos))))))
 
 (defn valid-move-string?
   [m]

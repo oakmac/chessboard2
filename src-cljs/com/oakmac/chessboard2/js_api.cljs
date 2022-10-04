@@ -2,11 +2,20 @@
   "Functions that handle the JS API for Chessboard2"
   (:require
     [com.oakmac.chessboard2.api :as api]
-    [com.oakmac.chessboard2.constants :refer [animate-speed-strings animate-speed-strings->times]]
-    [com.oakmac.chessboard2.util.data-transforms :refer [clj->js-map map->js-return-format]]
+    [com.oakmac.chessboard2.constants :refer [animate-speed-strings animate-speed-strings->times start-position]]
+    [com.oakmac.chessboard2.util.data-transforms :refer [clj->js-map js-map->clj map->js-return-format]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position move->map]]
-    [com.oakmac.chessboard2.util.predicates :refer [fen-string? map-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
+    [com.oakmac.chessboard2.util.predicates :refer [fen-string?
+                                                    map-string?
+                                                    start-string?
+                                                    valid-color?
+                                                    valid-js-position-map?
+                                                    valid-js-position-object?
+                                                    valid-move-string?
+                                                    valid-piece?
+                                                    valid-position?
+                                                    valid-square?]]
     [com.oakmac.chessboard2.util.string :refer [lower-case-if-string safe-lower-case]]
     [goog.array :as garray]
     [goog.dom :as gdom]
@@ -102,9 +111,21 @@
 
 (defn set-position
   "Sets the board position."
-  []
-  ;; FIXME: write this
-  nil)
+  [board-state new-pos]
+  (cond
+    ;; first argument is "start": set the starting position
+    (start-string? new-pos) (api/set-position! board-state start-position)
+    ;; first argument is a FEN string: set the position
+    (valid-fen? new-pos) (api/set-position! board-state (fen->position new-pos))
+    ;; first argument is a Position Object: set the position
+    (valid-js-position-object? new-pos) (api/set-position! board-state (js->clj new-pos))
+    ;; first argument is a Position Map: set the position
+    (valid-js-position-map? new-pos) (api/set-position! board-state (js-map->clj new-pos))
+    ;; ¯\_(ツ)_/¯
+    :else
+    ;; FIXME: error code here
+    (do (js/console.warn "Invalid value passed to .setPosition()")
+        nil)))
 
 (defn position
   "Sets or returns the board position."
@@ -121,30 +142,28 @@
         (fen-string? first-arg) (get-position board-state first-arg)
         ;; first argument is "map": return position as a JS Map
         (map-string? first-arg) (get-position board-state first-arg)
-
-        ;; FIXME: set position methods here
-
+        ;; first argument is "start": set the starting position
+        (start-string? first-arg) (api/set-position! board-state start-position)
+        ;; first argument is a FEN string: set the position
+        (valid-fen? first-arg) (api/set-position! board-state (fen->position first-arg))
+        ;; first argument is a Position Object: set the position
+        (valid-js-position-object? first-arg) (api/set-position! board-state (js->clj first-arg))
+        ;; first argument is a Position Map: set the position
+        (valid-js-position-map? first-arg) (api/set-position! board-state (js-map->clj first-arg))
+        ;; ¯\_(ツ)_/¯
         :else
         ;; FIXME: error code here
         (do (js/console.warn "Invalid value passed to .position()")
             nil)))))
 
+(defn clear
+  "TODO: write me"
+  [board-state animate?]
+  ;; FIXME: handle animate? here
+  (api/set-position! board-state {}))
 
-        ; ;; first argument is "start": set the starting position
-        ; (start-string? first-arg) (set-position! board-state start-position animate?)
-        ; ;; new-pos is a fen string
-        ; (valid-fen? new-pos) (set-position! board-state (fen->position new-pos) animate?)
-        ; ;; new-pos is a valid position
-        ; (valid-position? new-pos) (set-position! board-state new-pos animate?)
-        ; ;; ¯\_(ツ)_/¯
-        ; :else
-        ; ;; FIXME: error code here
-        ; (do (js/console.warn "Invalid value passed to the position method:" (clj->js new-pos))
-        ;     nil)
-        ;
-        ;
-        ; (map-string? first-arg) "return Map of Position"
-        ; :else (js/console.warn "Invalid argument passed to .position()")))))
-
-    ; (js/console.log "ddddddd:")
-    ; (js/console.log js-args)))
+(defn start
+  "TODO: write me"
+  [board-state animate?]
+  ;; FIXME: handle animate? here
+  (api/set-position! board-state start-position))

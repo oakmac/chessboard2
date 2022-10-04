@@ -1,5 +1,5 @@
 (ns com.oakmac.chessboard2.dom-ops
-  "DOM operations"
+  "DOM operations that change the board"
   (:require
     [com.oakmac.chessboard2.util.board :refer [start-position]]
     [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
@@ -96,14 +96,13 @@
     ;; captures
     (let [captures (map :capture-piece-id ops)]
       (doseq [el-id captures]
-        (dom-util/fade-out-and-remove-el! el-id animate-speed-ms)))))
+        (dom-util/fade-out-and-remove-el! el-id animate-speed-ms)))
 
-    ;; FIXME: do not do this here, this should be done elsewhere
     ;; update the board-state with new piece-ids
-    ; (let [dissocs (map :delete-square->piece ops)
-    ;       updates (map :new-square->piece ops)]
-    ;   (swap! board-state update :square->piece-id
-    ;     (fn [m]
-    ;       (as-> m $
-    ;        (apply dissoc $ dissocs)
-    ;        (apply merge $ updates)))))))
+    (let [dissocs (map :delete-square->piece ops)
+          updates (map :new-square->piece ops)]
+      (swap! board-state update :square->piece-id
+        (fn [m]
+          (as-> m $
+           (apply dissoc $ dissocs)
+           (apply merge $ updates)))))))

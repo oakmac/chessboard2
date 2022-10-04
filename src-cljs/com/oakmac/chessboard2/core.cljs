@@ -118,73 +118,6 @@
                                      :orientation orientation}))))
     (append-html! items-container-id @html)))
 
-(defn animation->dom-op-add
-  [{:keys [piece square] :as _animation} board-state]
-  (let [{:keys [animate-speed-ms board-width orientation piece-square-pct]} @board-state
-        new-piece-id (random-piece-id)
-        new-piece-html (html/Piece {:board-width board-width
-                                    :board-orientation orientation
-                                    :id new-piece-id
-                                    :hidden? true
-                                    :piece piece
-                                    :piece-square-pct piece-square-pct
-                                    :square square
-                                    :width (/ board-width 8)})]
-    {:new-html new-piece-html
-     :defer-fn (fn []
-                 ;; start opacity animation after piece has been added to the DOM
-                 (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms"))
-                 (set-style-prop! new-piece-id "opacity" "100%"))
-     :new-square->piece (hash-map square new-piece-id)}))
-
-;; TODO:
-;; - Should we re-use the same DOM element here instead of destroying + creating a new one?
-;; - Is it important for item-ids to persist?
-(defn animation->dom-op-move
-  [{:keys [capture? destination piece source] :as _animation} board-state]
-  (let [{:keys [animate-speed-ms board-width orientation piece-square-pct square->piece-id]} @board-state
-        current-piece-id (get square->piece-id source)
-        new-piece-id (random-piece-id)
-        new-piece-html (html/Piece {:board-width board-width
-                                    :board-orientation orientation
-                                    :id new-piece-id
-                                    :hidden? false
-                                    :piece piece
-                                    :piece-square-pct piece-square-pct
-                                    :square source
-                                    :width (/ board-width 8)})
-        target-square-dimensions (square->dimensions destination board-width orientation)]
-    (merge
-      {:new-html new-piece-html
-       :defer-fn (fn []
-                   ;; start move animation
-                   (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms"))
-                   (set-style-prop! new-piece-id "left" (str (:left target-square-dimensions) "px"))
-                   (set-style-prop! new-piece-id "top" (str (:top target-square-dimensions) "px")))
-       :remove-el current-piece-id
-       :new-square->piece (hash-map destination new-piece-id)
-       :delete-square->piece source}
-      (when capture?
-        {:capture-piece-id (get square->piece-id destination)}))))
-
-(defn animation->dom-op-clear
-  [{:keys [square] :as _animation} board-state]
-  (let [{:keys [square->piece-id]} @board-state
-        piece-id (get square->piece-id square)]
-    {:delete-square->piece square
-     :fade-out-piece piece-id}))
-
-;; NOTE: would normally use a defmethod here
-;; the output file size is slightly reduced by not including defmethods in the project
-;; -- C. Oakman, June 2022
-(defn animation->dom-op
-  [animation board-state]
-  (case (:type animation)
-    "ANIMATION_ADD" (animation->dom-op-add animation board-state)
-    "ANIMATION_MOVE" (animation->dom-op-move animation board-state)
-    "ANIMATION_CLEAR" (animation->dom-op-clear animation board-state)
-    (js/console.warn "Unknown animation type:" (:type animation))))
-
 ;; -----------------------------------------------------------------------------
 ;; API Methods
 
@@ -487,58 +420,58 @@
                               new-orientation))
       :else (:orientation @board)))))
 
-(defn set-position-with-animations!
-  [board-state new-pos]
-  (let [animations (calculate-animations (:position @board-state) new-pos)
-        dom-ops (map #(animation->dom-op % board-state) animations)]
-    (dom-ops/apply-ops! board-state dom-ops)
-    (swap! board-state assoc :position new-pos)))
+; (defn set-position-with-animations!
+;   [board-state new-pos]
+;   (let [animations (calculate-animations (:position @board-state) new-pos)
+;         dom-ops (map #(animation->dom-op % board-state) animations)]
+;     (dom-ops/apply-ops! board-state dom-ops)
+;     (swap! board-state assoc :position new-pos)))
+;
+; (defn set-position-instant!
+;   [board-state new-pos]
+;   (swap! board-state assoc :position new-pos)
+;   (draw-items-instant! board-state))
+;
+; (defn set-position!
+;   "Sets a new position on the board"
+;   [board-state new-pos animate?]
+;   (if animate?
+;     (set-position-with-animations! board-state new-pos)
+;     (set-position-instant! board-state new-pos))
+;
+;   (when false
+;     (js/setTimeout
+;       (fn []
+;         (let [items-els (get-all-item-elements-from-dom (:items-container-id @board-state))]
+;           (js/console.log (gobj/get items-els "length"))))
+;           ;; TODO: compare the internal items collection length here
+;       (+ 50 (:animate-speed-ms @board-state)))))
+;
+; (defn position
+;   "returns or sets the current board position"
+;   [board-state new-pos animate?]
+;   (let [animate? (not (false? animate?))] ;; the default value for animate? is true
+;     (cond
+;       ;; no first argument: return the position as a JS Object
+;       (not new-pos) (-> @board-state :position clj->js)
+;       ;; first argument is "fen": return position as a FEN string
+;       (fen-string? new-pos) (-> @board-state :position position->fen)
+;       ;; first argument is "start": set the starting position
+;       (start-string? new-pos) (set-position! board-state start-position animate?)
+;       ;; new-pos is a fen string
+;       (valid-fen? new-pos) (set-position! board-state (fen->position new-pos) animate?)
+;       ;; new-pos is a valid position
+;       (valid-position? new-pos) (set-position! board-state new-pos animate?)
+;       ;; ¯\_(ツ)_/¯
+;       :else
+;       ;; FIXME: error code here
+;       (do (js/console.warn "Invalid value passed to the position method:" (clj->js new-pos))
+;           nil))))
 
-(defn set-position-instant!
-  [board-state new-pos]
-  (swap! board-state assoc :position new-pos)
-  (draw-items-instant! board-state))
-
-(defn set-position!
-  "Sets a new position on the board"
-  [board-state new-pos animate?]
-  (if animate?
-    (set-position-with-animations! board-state new-pos)
-    (set-position-instant! board-state new-pos))
-
-  (when false
-    (js/setTimeout
-      (fn []
-        (let [items-els (get-all-item-elements-from-dom (:items-container-id @board-state))]
-          (js/console.log (gobj/get items-els "length"))))
-          ;; TODO: compare the internal items collection length here
-      (+ 50 (:animate-speed-ms @board-state)))))
-
-(defn position
-  "returns or sets the current board position"
-  [board-state new-pos animate?]
-  (let [animate? (not (false? animate?))] ;; the default value for animate? is true
-    (cond
-      ;; no first argument: return the position as a JS Object
-      (not new-pos) (-> @board-state :position clj->js)
-      ;; first argument is "fen": return position as a FEN string
-      (fen-string? new-pos) (-> @board-state :position position->fen)
-      ;; first argument is "start": set the starting position
-      (start-string? new-pos) (set-position! board-state start-position animate?)
-      ;; new-pos is a fen string
-      (valid-fen? new-pos) (set-position! board-state (fen->position new-pos) animate?)
-      ;; new-pos is a valid position
-      (valid-position? new-pos) (set-position! board-state new-pos animate?)
-      ;; ¯\_(ツ)_/¯
-      :else
-      ;; FIXME: error code here
-      (do (js/console.warn "Invalid value passed to the position method:" (clj->js new-pos))
-          nil))))
-
-(defn move-piece
-  [board-state {:keys [animate?] :as move}]
-  (let [new-position (apply-move-to-position (:position @board-state) move)]
-    (position board-state new-position animate?)))
+; (defn move-piece
+;   [board-state {:keys [animate?] :as move}]
+;   (let [new-position (apply-move-to-position (:position @board-state) move)]
+;     (position board-state new-position animate?)))
 
 (defn array-of-moves? [arg]
   (and (array? arg)
@@ -551,27 +484,27 @@
 
 ;; FIXME: handle 0-0 and 0-0-0
 ;; FIXME: this function should be variadic
-(defn js-move-piece
-  [board-state arg1]
-  (cond
-    (valid-move-string? arg1) (move-piece board-state (move->map arg1 "MOVE_FORMAT"))
-    ;; TODO (array-of-moves? arg1) ()
-    (looks-like-a-move-object? arg1) (move-piece board-state (js->clj arg1 :keywordize-keys true))
-    :else (js/console.warn "FIXME ERROR CODE: Invalid value passed to the .move() method:" arg1)))
+; (defn js-move-piece
+;   [board-state arg1]
+;   (cond
+;     (valid-move-string? arg1) (move-piece board-state (move->map arg1 "MOVE_FORMAT"))
+;     ;; TODO (array-of-moves? arg1) ()
+;     (looks-like-a-move-object? arg1) (move-piece board-state (js->clj arg1 :keywordize-keys true))
+;     :else (js/console.warn "FIXME ERROR CODE: Invalid value passed to the .move() method:" arg1)))
 
 ;; TODO: this function should accept an Array of squares
 ;; TODO: this function should accept an Object with "onFinishAnimation" callback
-(defn js-remove-piece
-  [board-state]
-  (let [js-args (array)]
-    (copy-arguments js-args)
-    (.shift js-args)
-    (let [current-pos (:position @board-state)
-          squares-to-remove (set (js->clj js-args))
-          ;; any argument of 'false' to this function means no animation
-          animate? (not-any? false? squares-to-remove)
-          new-position (apply dissoc current-pos squares-to-remove)]
-      (position board-state new-position animate?))))
+; (defn js-remove-piece
+;   [board-state]
+;   (let [js-args (array)]
+;     (copy-arguments js-args)
+;     (.shift js-args)
+;     (let [current-pos (:position @board-state)
+;           squares-to-remove (set (js->clj js-args))
+;           ;; any argument of 'false' to this function means no animation
+;           animate? (not-any? false? squares-to-remove)
+;           new-position (apply dissoc current-pos squares-to-remove)]
+;       (position board-state new-position animate?))))
 
 (defn js-get-pieces
   "Returns the Pieces on the board as either a JS Array (default), JS Object, or JS Map"
@@ -583,13 +516,13 @@
   (and (valid-piece? (:piece cfg))
        (valid-square? (:square cfg))))
 
-(defn add-piece
-  [board-state {:keys [animate? piece square] :as add-piece-cfg}]
-  (if-not (valid-add-piece-config? add-piece-cfg)
-    (js/console.warn "FIXME ERROR CODE: Invalid arguments passed to the .addPiece() method")
-    (let [current-pos (:position @board-state)
-          new-pos (assoc current-pos square piece)]
-      (position board-state new-pos animate?))))
+; (defn add-piece
+;   [board-state {:keys [animate? piece square] :as add-piece-cfg}]
+;   (if-not (valid-add-piece-config? add-piece-cfg)
+;     (js/console.warn "FIXME ERROR CODE: Invalid arguments passed to the .addPiece() method")
+;     (let [current-pos (:position @board-state)
+;           new-pos (assoc current-pos square piece)]
+;       (position board-state new-pos animate?))))
 
 (defn- looks-like-a-js-add-piece-config? [js-cfg]
   (and (object? js-cfg)
@@ -600,14 +533,14 @@
   {:animate? true})
    ;; TODO: onAnimationComplete callback here
 
-(defn js-add-piece
-  [board-state arg1 arg2 arg3]
-  (let [cfg (cond-> default-add-piece-config
-              (valid-square? arg1) (merge {:square arg1})
-              (valid-piece? arg2) (merge {:piece arg2})
-              (false? arg3) (merge {:animate? arg3})
-              (looks-like-a-js-add-piece-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
-    (add-piece board-state cfg)))
+; (defn js-add-piece
+;   [board-state arg1 arg2 arg3]
+;   (let [cfg (cond-> default-add-piece-config
+;               (valid-square? arg1) (merge {:square arg1})
+;               (valid-piece? arg2) (merge {:piece arg2})
+;               (false? arg3) (merge {:animate? arg3})
+;               (looks-like-a-js-add-piece-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
+;     (add-piece board-state cfg)))
 
 (defn hide-coordinates!
   [board-state]
@@ -765,21 +698,22 @@
        "items" (partial js-get-items board-state)
        "moveItem" #() ;; FIXME
 
-       "addPiece" (partial js-add-piece board-state)
-       "clearPieces" #(position board-state {} %1)
+       ; "addPiece" (partial js-add-piece board-state) ;; FIXME: write this
+       "clearPieces" (partial js-api/clear board-state)
        "getPieces" (partial js-get-pieces board-state)
        "pieces" (partial js-get-pieces board-state)
-       "removePiece" (partial js-remove-piece board-state)
+       ; "removePiece" (partial js-remove-piece board-state) ;; FIXME: write this
 
-       "clear" #(position board-state {} %1)
+       "clear" (partial js-api/clear board-state)
        "move" (partial js-api/move-piece board-state)
-       "movePiece" (partial js-move-piece board-state)
+       ; "movePiece" (partial js-move-piece board-state) ;; FIXME: write this
        ;; FIXME: moveInstant ???
        "position" (partial js-api/position board-state)
        "getPosition" (partial js-api/get-position board-state)
-       "setPosition" #() ;; FIXME: write this
+       "setPosition" (partial js-api/set-position board-state)
 
        "destroy" #() ;; FIXME
+       ;; FIXME: should be able to SET or GET position with .fen()
        "fen" (partial js-api/get-position board-state "fen")
 
        "clearSquareHighlights" #() ;; FIXME - should this just be "clearSquares" ?
@@ -806,7 +740,7 @@
 
        "resize" #() ;; FIXME
 
-       "start" #(position board-state start-position %1)))))
+       "start" (partial js-api/start board-state)))))
 
 ;; TODO: support other module exports / formats here
 (when (and js/window (not (fn? (gobj/get js/window "Chessboard2"))))

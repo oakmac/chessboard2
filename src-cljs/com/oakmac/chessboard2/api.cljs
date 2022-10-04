@@ -15,6 +15,18 @@
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
+
+
+
+
+
+    ;; FIXME: figure out the name for where this belongs
+    [com.oakmac.chessboard2.homeless :as homeless]
+
+
+
+
+
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]))
 
 (defn default-move-cfg
@@ -36,10 +48,7 @@
   Returns a collection of Promises."
   [board-state moves]
   (let [current-pos (:position @board-state)
-        new-pos (reduce
-                  apply-move-to-position
-                  current-pos
-                  moves)
+        new-pos (reduce apply-move-to-position current-pos moves)
         position-info {:after-pos new-pos, :before-pos current-pos}
         default-cfg (default-move-cfg board-state)
         moves2 (->> moves
@@ -56,3 +65,43 @@
   "Returns the board position as a Clojure Map"
   [board-state]
   (get @board-state :position))
+
+;; TODO: need to determine whether to set with animation or instantly
+(defn set-position!
+  "Sets the board position using animation.
+  Returns a Promise."
+  [board-state new-pos]
+  (when flags/runtime-checks?
+    (assert (valid-position? new-pos) "Invalid Position Map passed to set-position"))
+  (let [current-pos (get-position board-state)
+        animations (calculate-animations current-pos new-pos)
+
+        ; _ (js/console.log (pr-str animations))
+        ; _ (js/console.log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+        dom-ops (map
+                  (fn [anim]
+                    (homeless/animation->dom-op anim board-state))
+                  animations)]
+
+    ; (js/console.log (pr-str dom-ops))
+    ; (js/console.log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+    (dom-ops/apply-ops! board-state dom-ops)
+    (swap! board-state assoc :position new-pos)
+    nil))
+
+    ; (js/Promise.
+    ;   (fn [resolve-fn _reject-fn]
+    ;     (if animate
+    ;       (execute-move-with-animation! board-state position-info move resolve-fn)
+    ;       (do
+    ;         (execute-move-instant! board-state position-info move)
+    ;         (resolve-fn)))))))
+
+    ; (js/console.log (pr-str animations)))
+
+(defn set-position-instant!
+  "Sets the board position instantly. Returns a Clojure map of the new position."
+  [board-state new-pos])
+  ;; FIXME: write me
