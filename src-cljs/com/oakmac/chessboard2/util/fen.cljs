@@ -9,12 +9,20 @@
     (str "b" (str/upper-case piece))
     (str "w" (str/upper-case piece))))
 
+(defn piece-code->fen
+  "convert piece code to its FEN value"
+  [piece]
+  (let [chunks (str/split piece "")]
+    (if (= (first chunks) "w")
+      (str/upper-case (second chunks))
+      (str/lower-case (second chunks)))))
+
 (def fen-pieces
   (set (.split "rnbqkpRNBQKP" "")))
 
 (def file->alpha (vec (.split "abcdefgh" "")))
 
-(defn- explode-fen-spaces
+(defn- explode-empty-squares
   "converts FEN empty space numbers to single characters
   makes parsing easier"
   [fen]
@@ -27,13 +35,25 @@
     (str/replace "3" "111")
     (str/replace "2" "11")))
 
+(defn- squeeze-empty-squares
+  "converts sequential FEN empty space numbers to their shorter version"
+  [fen]
+  (-> fen
+    (str/replace "11111111" "8")
+    (str/replace "1111111" "7")
+    (str/replace "111111" "6")
+    (str/replace "11111" "5")
+    (str/replace "1111" "4")
+    (str/replace "111" "3")
+    (str/replace "11" "3")))
+
 (defn simplify-fen-string
   "1) cut off any move, casting, etc info from the end of a FEN string (we are only interested in board position)
    2) replace all consecutive pawns with 1's"
   [f]
   (-> f
       (str/replace #" .+$" "")
-      explode-fen-spaces))
+      explode-empty-squares))
 
 ;; TODO: candidate for optimization
 (defn fen->position
@@ -60,9 +80,28 @@
       {}
       every-square)))
 
+;; TODO: candidate for optimization
 (defn position->fen
-  [p]
-  "FIXME: write me :-)")
+  "Converts a position Map to a FEN string"
+  [position]
+  (let [alphas (range 0 8)
+        cols (range 1 9)
+        all-squares (for [c (reverse cols)
+                          a (map file->alpha alphas)]
+                      (str a c))
+        long-hand-fen (reduce
+                        (fn [fen square]
+                          (str
+                            fen
+                            (if-let [piece (get position square)]
+                              (piece-code->fen piece)
+                              "1")
+                            (when (and (str/includes? square "h")
+                                       (not= square "h1"))
+                              "/")))
+                        ""
+                        all-squares)]
+    (squeeze-empty-squares long-hand-fen)))
 
 (defn- fen-chunk? [f]
   (and (= 8 (count f))
