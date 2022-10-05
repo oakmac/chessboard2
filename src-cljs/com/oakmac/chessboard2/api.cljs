@@ -149,7 +149,7 @@
                            (gobj/set js-resolve-fns "$" resolve-fn)))
 
 
-        ;; FIXME: add default-animation-speed here somehow
+        ;; FIXME: add default-animation-speed here
 
 
         js-before-position (clj->js current-pos)

@@ -68,3 +68,12 @@
 ;; FIXME: write me
 (defn valid-color? [c]
   (and (string? c)))
+
+(defn arrow-item? [item]
+  (= "CHESSBOARD_ARROW" (:type item)))
+
+(defn circle-item? [item]
+  (= "CHESSBOARD_CIRCLE" (:type item)))
+
+(defn piece-item? [item]
+  (= "CHESSBOARD_PIECE" (:type item)))

@@ -14,7 +14,7 @@
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position move->map]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
-    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
+    [com.oakmac.chessboard2.util.predicates :refer [arrow-item? circle-item? piece-item? fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
     [goog.array :as garray]
@@ -25,19 +25,6 @@
 
 ;; TODO
 ;; - [ ] .move('0-0') and .move('0-0-0') should work as expected
-;; - [ ] example3004: captures are not working
-;; - [ ] example3004: start position does not work (pieces not being removed)
-;; - [ ] .position() and .move() should have similar return API / behavior
-
-;; TODO: move to predicates ns
-(defn arrow-item? [item]
-  (= "CHESSBOARD_ARROW" (:type item)))
-
-(defn circle-item? [item]
-  (= "CHESSBOARD_CIRCLE" (:type item)))
-
-(defn piece-item? [item]
-  (= "CHESSBOARD_PIECE" (:type item)))
 
 (defn click-root-el [js-evt]
   nil)
@@ -60,7 +47,7 @@
 (defn- add-events!
   "Attach DOM events."
   [root-el board-state]
-  (.addEventListener root-el "click" click-root-el)
+  ; (.addEventListener root-el "click" click-root-el)
   (.addEventListener root-el "transitionend" (partial on-transition-end board-state)))
 
 (defn toggle-orientation [o]
@@ -419,59 +406,6 @@
                                 (set-black-orientation! board))
                               new-orientation))
       :else (:orientation @board)))))
-
-; (defn set-position-with-animations!
-;   [board-state new-pos]
-;   (let [animations (calculate-animations (:position @board-state) new-pos)
-;         dom-ops (map #(animation->dom-op % board-state) animations)]
-;     (dom-ops/apply-ops! board-state dom-ops)
-;     (swap! board-state assoc :position new-pos)))
-;
-; (defn set-position-instant!
-;   [board-state new-pos]
-;   (swap! board-state assoc :position new-pos)
-;   (draw-items-instant! board-state))
-;
-; (defn set-position!
-;   "Sets a new position on the board"
-;   [board-state new-pos animate?]
-;   (if animate?
-;     (set-position-with-animations! board-state new-pos)
-;     (set-position-instant! board-state new-pos))
-;
-;   (when false
-;     (js/setTimeout
-;       (fn []
-;         (let [items-els (get-all-item-elements-from-dom (:items-container-id @board-state))]
-;           (js/console.log (gobj/get items-els "length"))))
-;           ;; TODO: compare the internal items collection length here
-;       (+ 50 (:animate-speed-ms @board-state)))))
-;
-; (defn position
-;   "returns or sets the current board position"
-;   [board-state new-pos animate?]
-;   (let [animate? (not (false? animate?))] ;; the default value for animate? is true
-;     (cond
-;       ;; no first argument: return the position as a JS Object
-;       (not new-pos) (-> @board-state :position clj->js)
-;       ;; first argument is "fen": return position as a FEN string
-;       (fen-string? new-pos) (-> @board-state :position position->fen)
-;       ;; first argument is "start": set the starting position
-;       (start-string? new-pos) (set-position! board-state start-position animate?)
-;       ;; new-pos is a fen string
-;       (valid-fen? new-pos) (set-position! board-state (fen->position new-pos) animate?)
-;       ;; new-pos is a valid position
-;       (valid-position? new-pos) (set-position! board-state new-pos animate?)
-;       ;; ¯\_(ツ)_/¯
-;       :else
-;       ;; FIXME: error code here
-;       (do (js/console.warn "Invalid value passed to the position method:" (clj->js new-pos))
-;           nil))))
-
-; (defn move-piece
-;   [board-state {:keys [animate?] :as move}]
-;   (let [new-position (apply-move-to-position (:position @board-state) move)]
-;     (position board-state new-position animate?)))
 
 (defn array-of-moves? [arg]
   (and (array? arg)
