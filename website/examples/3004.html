@@ -22,9 +22,9 @@
 <button id="disableAnimationsBtn">Disable animations with 'false'</button>
 <button id="moveWithCallbackBtn">.move() with callback function</button>
 <button id="move6Btn">.move() with config object</button>
-<button id="move7Btn">Move 7</button>
-<button id="move8Btn">Move 8</button>
-<button id="move9Btn">Move 9</button>
+<button id="move7Btn">Single Move returns a Promise Object</button>
+<button id="move8Btn">Multiple Moves returns an Array of Promises</button>
+<!-- <button id="move9Btn">Move 9</button> -->
 <button id="move10Btn">Combine Instant and Animated Moves</button>
 <button id="startPositionBtn">Start Position</button>
 <!--- End Example HTML -------------------------------------------------------->
@@ -51,8 +51,8 @@ $('#move3Btn').on('click', function () {
   // "fast" - 80ms
   // "slow" - 300ms
   // "super slow" - 800ms
-  board.move('c7-c5', 'slow')
-  board.move('b7-b2', 5000)
+  board.move('a2-a7', 'slow')
+  board.move('b2-b7', 5000)
 })
 
 $('#disableAnimationsBtn').on('click', function () {
@@ -81,7 +81,7 @@ $('#move6Btn').on('click', function () {
 
 $('#move7Btn').on('click', function () {
   // move() returns a Promise object that fires when the animation has completed
-  board.move('h2-h4').then((move) => {
+  board.move('c7-c5').then((move) => {
     console.log('Animation has completed. Here is information about the move:')
     console.log(move)
   })
@@ -95,6 +95,8 @@ $('#move8Btn').on('click', function () {
   })
 })
 
+/*
+FIXME FIXME FIXME - this does not work. Consider changing the API?
 $('#move9Btn').on('click', function () {
   // the Promise object will reject if the move is invalid / not possible
   board.move('g6-f6').then((move) => {
@@ -105,6 +107,7 @@ $('#move9Btn').on('click', function () {
     console.log(err)
   })
 })
+*/
 
 $('#move10Btn').on('click', function () {
   // you may combine instant and animated moves in the same .move() call

@@ -19,22 +19,13 @@ This file exists for Cypress testing
 
 <hr />
 
+<section>
+  <h1>test2: multiple moves</h1>
+  <button id="test2move1Btn">step1</button>
+  <div id="test2results"></div>
+</section>
 
-
-
-
-
-
-<button id="move2Btn">d2-d4, g8-f6</button>
-<button id="move3Btn">Move 3</button>
-<button id="disableAnimationsBtn">Disable animations with 'false'</button>
-<button id="moveWithCallbackBtn">.move() with callback function</button>
-<button id="move6Btn">.move() with config object</button>
-<button id="move7Btn">Move 7</button>
-<button id="move8Btn">Move 8</button>
-<button id="move9Btn">Move 9</button>
-<button id="move10Btn">Combine Instant and Animated Moves</button>
-<button id="startPositionBtn">Start Position</button>
+<hr />
 
 ===== JS
 const board1 = Chessboard2('myBoard', 'start')
@@ -54,95 +45,14 @@ $('#test1move1Btn').on('click', function () {
   })
 })
 
+// -----------------------------------------------------------------------------
+// Test 2
 
-
-
-
-
-
-
-
-
-
-
-$('#move1Btn').on('click', function () {
-  window.board1.move('e2-e4')
-})
-
-$('#move2Btn').on('click', function () {
-  // pass multiple moves as arguments
-  window.board1.move('d2-d4', 'g8-f6')
-})
-
-$('#move3Btn').on('click', function () {
-  window.board1.move('c7-c5', 'slow')
-  window.board1.move('b7-b2', 5000)
-})
-
-$('#disableAnimationsBtn').on('click', function () {
-  // pass in false to disable animations
-  window.board1.move('d7-d5', false)
-})
-
-$('#moveWithCallbackBtn').on('click', function () {
-  // pass a callback function that will fire when the animation of the move is complete
-  window.board1.move('g1-f3', function (move) {
-    console.log('Animation finished for g1-f3:')
-    console.log(move)
+$('#test2move1Btn').on('click', function () {
+  window.test2move1 = board1.move('a2-a4', 500, () => {
+    appendHtml('test2results', '<div id=test2move1finished>test2move1finished</div>')
+  })
+  window.test2move2 = board1.move('b2-b4', 1000, () => {
+    appendHtml('test2results', '<div id=test2move2finished>test2move2finished</div>')
   })
 })
-
-$('#move6Btn').on('click', function () {
-  // pass a config object
-  window.board1.move({
-    animate: true,
-    animateSpeed: 1000,
-    from: 'g2',
-    onComplete: (m) => { console.log('Move complete:', m) },
-    to: 'g4'
-  })
-})
-
-$('#move7Btn').on('click', function () {
-  // move() returns a Promise object that fires when the animation has completed
-  window.board1.move('h2-h4').then((move) => {
-    console.log('Animation has completed. Here is information about the move:')
-    console.log(move)
-  })
-})
-
-$('#move8Btn').on('click', function () {
-  // multiple moves will return an Array of Promises
-  Promise.all(window.board1.move('h2-h4', 'h1-h3')).then((moves) => {
-    console.log('Animations are complete:')
-    console.log(moves)
-  })
-})
-
-$('#move9Btn').on('click', function () {
-  // the Promise object will reject if the move is invalid / not possible
-  window.board1.move('g6-f6').then((move) => {
-    console.log('Animation has completed. Here is information about the move:')
-    console.log(move)
-  }).catch((err) => {
-    console.log('Invalid move:')
-    console.log(err)
-  })
-})
-
-$('#move10Btn').on('click', function () {
-  // you may combine instant and animated moves in the same .move() call
-  window.board1.move({
-    animate: true,
-    animateSpeed: 'superslow',
-    from: 'g7',
-    to: 'g4'
-  },
-  {
-    animate: false,
-    from: 'f7',
-    to: 'f4'
-  })
-})
-
-$('#startPositionBtn').on('click', window.board1.start)
