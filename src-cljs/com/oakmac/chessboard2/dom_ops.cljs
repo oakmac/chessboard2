@@ -8,21 +8,6 @@
     [com.oakmac.chessboard2.util.functions :refer [defer]]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]))
 
-; (defn execute-move-with-animation!
-;   "Executes a move on the board using animation."
-;   [board-state position-info {:keys [animate animateSpeed capture? from onComplete to]} resolve-fn reject-fn]
-;   (let [{:keys [board-width orientation square->piece-id]} @board-state
-;         from-piece-id (get square->piece-id from)
-;         {:keys [left top]} (square->dimensions to board-width orientation)
-;         piece-el (dom-util/get-element from-piece-id)
-;         piece-code (get (:before-pos position-info) from)
-;         js-move-info (js-obj "afterPosition" (-> position-info :after-pos clj->js)
-;                              "beforePosition" (-> position-info :before-pos clj->js)
-;                              "duration" animateSpeed
-;                              "from" from
-;                              "piece" piece-code
-;                              "to" to)]))
-
 (defn valid-op? [op]
   (and
     (map? op)

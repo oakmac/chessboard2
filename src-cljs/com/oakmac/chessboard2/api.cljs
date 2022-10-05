@@ -30,11 +30,12 @@
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]))
 
 (defn convert-animate-speed
-  [animateSpeed]
+  [{:keys [animate animateSpeed] :as move} default-speed-ms]
   (cond
+    (false? animate) 0
     (number? animateSpeed) animateSpeed
-    (string? animateSpeed) (get animate-speed-strings->times animateSpeed)
-    :else nil))
+    (get animate-speed-strings->times animateSpeed) (get animate-speed-strings->times animateSpeed)
+    :else default-speed-ms))
 
 (defn valid-move? [m]
   (and
@@ -50,74 +51,75 @@
   [board-state moves]
   (when flags/runtime-checks?
     (assert (every? valid-move? moves) "Invalid moves passed to move-pieces"))
-  (let [current-pos (:position @board-state)
+  (let [current-board-state @board-state
+        current-pos (:position current-board-state)
+        default-speed-ms (:animate-speed-ms current-board-state)
         new-pos (reduce apply-move-to-position current-pos moves)
         js-before-position (clj->js current-pos)
         js-after-position (clj->js new-pos)
         animations (calculate-animations current-pos new-pos)
         moves-map (zipmap (map :from moves) moves)
 
-        ; _ (js/console.log "moves:" (pr-str moves))
+        ; _ (js/console.log "moves-map:" (pr-str moves-map))
+
+        ;; add move duration times to the animations
+        animations2 (map
+                      (fn [{:keys [source] :as anim}]
+                        (let [{:keys [animate animateSpeed] :as move} (get moves-map source)]
+                          (cond-> anim
+                            true (assoc :duration-ms (convert-animate-speed move default-speed-ms))
+                            (false? animate) (assoc :instant? true))))
+                      animations)
 
         ;; create an empty JS object to store Promise resolve-fns
         js-resolve-fns (reduce
-                         (fn [js-resolves {:keys [source destination piece] :as anim}]
+                         (fn [js-resolves {:keys [source] :as _anim}]
                            (gobj/set js-resolves source nil)
                            js-resolves)
                          (js-obj)
-                         animations)
+                         animations2)
 
-        ;; create a collection of Promises
+        ;; create a collection of Promises: one for each animation
         move-promises (reduce
-                        (fn [promises {:keys [source destination piece] :as anim}]
-                          (conj promises (js/Promise.
-                                           (fn [resolve-fn reject-fn]
-                                             ;; store the resolve-fn on our object
-                                             (gobj/set js-resolve-fns source resolve-fn)))))
-                                             ;; TODO: do we need to store the reject-fn here?
-                                             ;; can we ensure that will never be called?
+                        (fn [promises {:keys [source] :as _anim}]
+                          (conj promises
+                                (js/Promise.
+                                  (fn [resolve-fn reject-fn]
+                                    ;; store the resolve-fn on our object
+                                    (gobj/set js-resolve-fns source resolve-fn)))))
+                                    ;; TODO: do we need to store the reject-fn here?
+                                    ;; can we ensure that will never be called?
                         []
-                        animations)
+                        animations2)
 
-        ;; create a map of callback functions
-        callback-fns (reduce
-                       (fn [callbacks {:keys [source destination piece] :as anim}]
-                         (assoc callbacks source
-                                          (fn []
-                                            (let [js-move-info (js-obj "afterPosition" js-after-position
-                                                                       "beforePosition" js-before-position
-                                                                       ;; FIXME: duration here
-                                                                       "from" source
-                                                                       "to" destination
-                                                                       "piece" piece)]
-                                              ;; was a callback function provided for this move?
-                                              (when-let [callback-fn (get-in moves-map [source :onComplete])]
-                                                (when (fn? callback-fn)
-                                                  (callback-fn js-move-info)))
-                                              ;; call the resolve-fn for the Promise
-                                              (when-let [resolve-fn (gobj/get js-resolve-fns source)]
-                                                (when (fn? resolve-fn)
-                                                  (resolve-fn js-move-info)))))))
-                       {}
-                       animations)
+        ;; attach callbacks to the animations
+        animations3 (map
+                      (fn [{:keys [duration-ms source destination piece] :as anim}]
+                        (assoc anim :on-finish
+                                    (fn []
+                                      (let [js-move-info (js-obj "afterPosition" js-after-position
+                                                                 "beforePosition" js-before-position
+                                                                 "duration" duration-ms
+                                                                 "from" source
+                                                                 "to" destination
+                                                                 "piece" piece)]
+                                        ;; was a callback function provided for this move?
+                                        (when-let [callback-fn (get-in moves-map [source :onComplete])]
+                                          (when (fn? callback-fn)
+                                            (callback-fn js-move-info)))
+                                        ;; call the resolve-fn for the Promise
+                                        (when-let [resolve-fn (gobj/get js-resolve-fns source)]
+                                          (when (fn? resolve-fn)
+                                            (resolve-fn js-move-info)))))))
+                      animations2)
 
-        ;; add the callback functions and duration times to the animations
-        animations2 (map
-                      (fn [{:keys [source] :as animation}]
-                        (let [{:keys [animate animateSpeed] :as _move} (get moves-map source)]
-                          (cond-> animation
-                            true (assoc :on-finish (get callback-fns source))
-                            (false? animate) (assoc :instant? true)
-                            animateSpeed (assoc :duration-ms (convert-animate-speed animateSpeed)))))
-                      animations)
-
-        ; _ (js/console.log "animations:" (pr-str animations2))
+        ; _ (js/console.log "animations:" (pr-str animations3))
 
         ;; convert animations to DOM operations
         dom-ops (map
                   (fn [anim]
                     (homeless/animation->dom-op anim board-state))
-                  animations2)]
+                  animations3)]
     ;; apply the DOM operations
     (dom-ops/apply-ops! board-state dom-ops)
 
