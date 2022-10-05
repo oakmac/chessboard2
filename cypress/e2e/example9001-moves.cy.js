@@ -1,36 +1,35 @@
-const assert = require('assert')
+function isPromise (p) {
+  return !!p && typeof p.then === 'function'
+}
 
 describe('Example 9001: moves', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3232/examples/9001.html')
+      .get('#myBoard .piece-349f8').should('have.length', 32)
+      .window().then((win) => {
+        assert.exists(win.board1)
+        // test that a few of the API method exist
+        assert.isFunction(win.board1.position)
+        assert.isFunction(win.board1.move)
+        assert.isFunction(win.board1.addArrow)
 
-    cy.get('#myBoard .piece-349f8').should(($pieces) => {
-      expect($pieces).to.have.length(32)
-    })
-
-    cy.window().then((win) => {
-      expect(win.board1).to.exist
-      expect(win.board1.position('map').size === 32).to.be.true
-    })
+        // we should be in the start position
+        assert.equal(win.board1.position('map').size, 32)
+        assert.equal(win.board1.fen(), 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR')
+      })
   })
 
-  it('Start Position', () => {
-    cy.get('#myBoard .piece-349f8').should('have.length', 32)
-  })
-
-  it('e2 - e4', () => {
-    cy.get('#move1Btn').click()
-    cy.get('#myBoard .piece-349f8').should('have.length', 32)
-
-    cy.window().then(win => {
-      expect(win.board1).to.exist
-      const pos1 = win.board1.position()
-      expect(pos1['e4'] === 'wP').to.be.true
-    })
-
-    // expect(3 === 3).to.be.true
-
-    // cy.get('#setRookCheckmateBtn').click()
-    // cy.get('#myBoard .piece-349f8').should('have.length', 3)
+  it('test1: e2 - e4', () => {
+    cy.get('#test1move1Btn').click()
+      .window().then(win => {
+        assert.exists(win.test1move)
+        assert.isTrue(isPromise(win.test1move))
+      })
+      .get('#test1move1finished').should('be.visible')
+      .window().then(win => {
+        assert.exists(win.board1)
+        const pos1 = win.board1.position()
+        assert.equal(pos1['e4'], 'wP')
+      })
   })
 })

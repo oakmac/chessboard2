@@ -167,3 +167,12 @@
   [board-state animate?]
   ;; FIXME: handle animate? here
   (api/set-position! board-state start-position))
+
+;; FIXME: need to be able to pass animate? argument here
+;; also pass animate-speed options?
+(defn fen
+  "Return or set the board position using a FEN String"
+  [board-state new-pos]
+  (cond
+    (valid-fen? new-pos) (api/set-position! board-state (fen->position new-pos))
+    :else (get-position board-state "fen")))

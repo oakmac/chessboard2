@@ -27,7 +27,7 @@
 ;; - [ ] .move('0-0') and .move('0-0-0') should work as expected
 ;; - [ ] example3004: captures are not working
 ;; - [ ] example3004: start position does not work (pieces not being removed)
-;; - [ ] .position() and .move() should have the same return API / behavior
+;; - [ ] .position() and .move() should have similar return API / behavior
 
 ;; TODO: move to predicates ns
 (defn arrow-item? [item]
@@ -713,8 +713,7 @@
        "setPosition" (partial js-api/set-position board-state)
 
        "destroy" #() ;; FIXME
-       ;; FIXME: should be able to SET or GET position with .fen()
-       "fen" (partial js-api/get-position board-state "fen")
+       "fen" (partial js-api/fen board-state)
 
        "clearSquareHighlights" #() ;; FIXME - should this just be "clearSquares" ?
        "getSquares" #() ;; FIXME: squares can have colors, ids, properties like "black" and "white"

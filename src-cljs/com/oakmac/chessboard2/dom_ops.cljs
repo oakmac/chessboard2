@@ -9,7 +9,7 @@
 
 (defn execute-move-with-animation!
   "Executes a move on the board using animation."
-  [board-state position-info {:keys [animate animateSpeed from onComplete to]} resolve-fn]
+  [board-state position-info {:keys [animate animateSpeed capture? from onComplete to]} resolve-fn reject-fn]
   (let [{:keys [board-width orientation square->piece-id]} @board-state
         from-piece-id (get square->piece-id from)
         {:keys [left top]} (square->dimensions to board-width orientation)
@@ -21,13 +21,22 @@
                              "from" from
                              "piece" piece-code
                              "to" to)]
-    ;; FIXME: move this to a runtime check?
     (if-not piece-el
-      (js/console.warn "execute-move! error, could not find 'from' piece-id:" from-piece-id)
+      (reject-fn (js-obj "msg" (str "No piece found on 'from' square " from)))
       (do
-        (set-style-prop! piece-el "transition" (str "all " animateSpeed "ms"))
-        (set-style-prop! piece-el "left" (str left "px"))
-        (set-style-prop! piece-el "top" (str top "px"))
+
+        ; (set-style-prop! piece-el "transition" (str "all " animateSpeed "ms"))
+        ; (set-style-prop! piece-el "left" (str left "px"))
+        ; (set-style-prop! piece-el "top" (str top "px"))
+
+
+        ;; update square->piece-id information
+        ; (swap! board-state update :square->piece-id
+        ;        (fn [m]
+        ;          (-> m
+        ;            (dissoc from)
+        ;            (assoc to from-piece-id))))
+
         ;; add a callback for the transitionend event
         (swap! board-state assoc-in [:animation-end-callbacks from-piece-id]
                (fn []
@@ -45,10 +54,22 @@
     ;; FIXME: move this to a runtime check?
     (if-not piece-el
       (js/console.warn "execute-move-instant! error, could not find 'from' piece-id:" from-piece-id)
-      (do
-        (set-style-prop! piece-el "transition" "")
-        (set-style-prop! piece-el "left" (str left "px"))
-        (set-style-prop! piece-el "top" (str top "px"))))))
+      (do))))
+
+
+
+        ; (set-style-prop! piece-el "transition" "")
+        ; (set-style-prop! piece-el "left" (str left "px"))
+        ; (set-style-prop! piece-el "top" (str top "px"))
+
+
+
+        ;; update square->piece-id information
+        ; (swap! board-state update :square->piece-id
+        ;        (fn [m]
+        ;          (-> m
+        ;            (dissoc from)
+        ;            (assoc to from-piece-id))))))))
 
 ;; FIXME:
 ;; - instant animation return values
@@ -60,9 +81,9 @@
   "Executes a move on the board. Returns a Promise."
   [board-state position-info {:keys [animate animateSpeed from onComplete to] :as move}]
   (js/Promise.
-    (fn [resolve-fn _reject-fn]
+    (fn [resolve-fn reject-fn]
       (if animate
-        (execute-move-with-animation! board-state position-info move resolve-fn)
+        (execute-move-with-animation! board-state position-info move resolve-fn reject-fn)
         (do
           (execute-move-instant! board-state position-info move)
           (resolve-fn))))))
@@ -102,7 +123,7 @@
     (let [dissocs (map :delete-square->piece ops)
           updates (map :new-square->piece ops)]
       (swap! board-state update :square->piece-id
-        (fn [m]
-          (as-> m $
-           (apply dissoc $ dissocs)
-           (apply merge $ updates)))))))
+             (fn [m]
+               (as-> m $
+                (apply dissoc $ dissocs)
+                (apply merge $ updates)))))))

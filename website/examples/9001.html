@@ -16,7 +16,21 @@
 
 <!--- Begin Example HTML ------------------------------------------------------>
 <div id="myBoard" style="width: 400px"></div>
-<button id="move1Btn">e2-e4</button>
+
+<section>
+  <h1>test1: e2 - e4</h1>
+  <button id="test1move1Btn">e2-e4</button>
+  <div id="test1results"></div>
+</section>
+
+<hr />
+
+
+
+
+
+
+
 <button id="move2Btn">d2-d4, g8-f6</button>
 <button id="move3Btn">Move 3</button>
 <button id="disableAnimationsBtn">Disable animations with 'false'</button>
@@ -33,7 +47,33 @@
 <script src="js/chessboard.js"></script>
 <script>
 // --- Begin Example JS --------------------------------------------------------
-window.board1 = Chessboard2('myBoard', 'start')
+const board1 = Chessboard2('myBoard', 'start')
+window.board1 = board1
+
+function appendHtml (id, html) {
+  const el = document.getElementById(id)
+  el.innerHTML = el.innerHTML + html
+}
+
+// -----------------------------------------------------------------------------
+// Test 1
+
+$('#test1move1Btn').on('click', function () {
+  window.test1move = board1.move('e2-e4', () => {
+    appendHtml('test1results', '<div id=test1move1finished>test1move1finished</div>')
+  })
+})
+
+
+
+
+
+
+
+
+
+
+
 
 $('#move1Btn').on('click', function () {
   window.board1.move('e2-e4')

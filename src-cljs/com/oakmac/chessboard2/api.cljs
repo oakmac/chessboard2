@@ -15,7 +15,7 @@
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
-
+    [goog.object :as gobj]
 
 
 
@@ -49,15 +49,80 @@
   [board-state moves]
   (let [current-pos (:position @board-state)
         new-pos (reduce apply-move-to-position current-pos moves)
+        js-before-position (clj->js current-pos)
+        js-after-position (clj->js new-pos)
+        animations (calculate-animations current-pos new-pos)
+        moves-map (zipmap (map :from moves) moves)
+        animations-map (zipmap (map :source animations) animations)
+
+        ;; create an empty JS object to store Promise resolve-fns
+        js-resolve-fns (reduce
+                         (fn [js-resolves {:keys [source destination piece] :as anim}]
+                           (gobj/set js-resolves source nil)
+                           js-resolves)
+                         (js-obj)
+                         animations)
+
+        ;; create a collection of Promises
+        move-promises (reduce
+                        (fn [promises {:keys [source destination piece] :as anim}]
+                          (conj promises (js/Promise.
+                                           (fn [resolve-fn reject-fn]
+                                             ;; store the resolve-fn on our object from earlier
+                                             (gobj/set js-resolve-fns source resolve-fn)))))
+                        []
+                        animations)
+
+        ;; create a map of callback functions
+        callback-fns (reduce
+                       (fn [callbacks {:keys [source destination piece] :as anim}]
+                         (assoc callbacks source
+                                          (fn []
+                                            (let [js-move-info (js-obj "afterPosition" js-after-position
+                                                                       "beforePosition" js-before-position
+                                                                       ;; FIXME: duration here
+                                                                       "from" source
+                                                                       "to" destination
+                                                                       "piece" piece)]
+                                              ;; was a callback function provided for this move?
+                                              (when-let [callback-fn (get-in moves-map [source :onComplete])]
+                                                (when (fn? callback-fn)
+                                                  (callback-fn js-move-info)))
+                                              ;; call the resolve-fn for the Promise
+                                              (when-let [resolve-fn (gobj/get js-resolve-fns source)]
+                                                (when (fn? resolve-fn)
+                                                  (resolve-fn js-move-info)))))))
+                       {}
+                       animations)
+
+        ;; add the callback functions to the animations
+        animations-with-callbacks (map
+                                    (fn [{:keys [source] :as anim}]
+                                      (assoc anim :on-finish (get callback-fns source)))
+                                    animations)
+
+        ;; convert animations to DOM operations
+        dom-ops (map
+                  (fn [anim]
+                    (homeless/animation->dom-op anim board-state))
+                  animations-with-callbacks)
+
+        ;; FIXME: need to put duration and other config on each DOM op
         position-info {:after-pos new-pos, :before-pos current-pos}
         default-cfg (default-move-cfg board-state)
         moves2 (->> moves
                     (map #(merge default-cfg %))
-                    (map convert-animate-speed))
-        ;; perform DOM operations to put the board in the new state
-        move-promises (map #(dom-ops/execute-move! board-state position-info %) moves2)]
+                    (map convert-animate-speed)
+                    (map (fn [{:keys [from to] :as m}]
+                           (assoc m :capture? (and (contains? current-pos to)
+                                                   (contains? new-pos to))))))]
+
+    ;; apply the DOM operations
+    (dom-ops/apply-ops! board-state dom-ops)
+
     ;; update board position atom
     (swap! board-state assoc :position new-pos)
+
     ;; return the move promises
     move-promises))
 
@@ -66,7 +131,10 @@
   [board-state]
   (get @board-state :position))
 
-;; TODO: need to determine whether to set with animation or instantly
+;; FIXME:
+;; - need to determine the return value here, probably a single Promise
+;; - need to be able to pass config object here for controlling animation speed,
+;;   callback-fn, etc
 (defn set-position!
   "Sets the board position using animation.
   Returns a Promise."

@@ -6,23 +6,6 @@
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]))
 
-    ; [com.oakmac.chessboard2.animations :refer [calculate-animations]]
-    ; [com.oakmac.chessboard2.css :as css]
-    ; [com.oakmac.chessboard2.dom-ops :as dom-ops]
-    ; [com.oakmac.chessboard2.feature-flags :as flags]
-    ; [com.oakmac.chessboard2.js-api :as js-api]
-    ; [com.oakmac.chessboard2.util.board :refer [start-position]]
-    ; [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
-    ; [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
-    ; [com.oakmac.chessboard2.util.functions :refer [defer]]
-    ; [com.oakmac.chessboard2.util.ids :refer [random-id]]
-    ; [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position move->map]]
-    ; [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
-    ; [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
-    ; [goog.array :as garray]
-    ; [goog.dom :as gdom]
-    ; [goog.object :as gobj]))
-
 (defn animation->dom-op-add
   [{:keys [piece square] :as _animation} board-state]
   (let [{:keys [animate-speed-ms board-width orientation piece-square-pct]} @board-state
@@ -45,8 +28,9 @@
 ;; TODO:
 ;; - Should we re-use the same DOM element here instead of destroying + creating a new one?
 ;; - Is it important for item-ids to persist?
+;; - The answer is "yes"
 (defn animation->dom-op-move
-  [{:keys [capture? destination piece source] :as _animation} board-state]
+  [{:keys [capture? destination on-finish piece source] :as _animation} board-state]
   (let [{:keys [animate-speed-ms board-width orientation piece-square-pct square->piece-id]} @board-state
         current-piece-id (get square->piece-id source)
         new-piece-id (random-piece-id)
@@ -65,7 +49,12 @@
                    ;; start move animation
                    (set-style-prop! new-piece-id "transition" (str "all " animate-speed-ms "ms"))
                    (set-style-prop! new-piece-id "left" (str (:left target-square-dimensions) "px"))
-                   (set-style-prop! new-piece-id "top" (str (:top target-square-dimensions) "px")))
+                   (set-style-prop! new-piece-id "top" (str (:top target-square-dimensions) "px"))
+                   ;; add the callback if provided
+                   (when (fn? on-finish)
+                     (swap! board-state assoc-in [:animation-end-callbacks new-piece-id]
+                            (fn []
+                              (on-finish)))))
        :remove-el current-piece-id
        :new-square->piece (hash-map destination new-piece-id)
        :delete-square->piece source}
@@ -89,10 +78,3 @@
     "ANIMATION_MOVE" (animation->dom-op-move animation board-state)
     "ANIMATION_CLEAR" (animation->dom-op-clear animation board-state)
     (js/console.warn "Unknown animation type:" (:type animation))))
-
-; (defn set-position-with-animations!
-;   [board-state new-pos]
-;   (let [animations (calculate-animations (:position @board-state) new-pos)
-;         dom-ops (map #(animation->dom-op % board-state) animations)]
-;     (dom-ops/apply-ops! board-state dom-ops)
-;     (swap! board-state assoc :position new-pos)))
