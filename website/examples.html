@@ -1556,9 +1556,9 @@ board = Chessboard2('myBoard', config)
 
 CHESSBOARD_EXAMPLES["9001"] = {
   description: "<p>This file exists for Cypress testing</p>\n",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n\r\n<section>\r\n  <h1>test1: e2 - e4</h1>\r\n  <button id=\"test1move1Btn\">e2-e4</button>\n  <div id=\"test1results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test2: multiple moves</h1>\n  <button id=\"test2move1Btn\">step1</button>\n  <div id=\"test2results\"></div>\n</section>\n\n<hr />",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n\r\n<section>\r\n  <h1>test1: e2 - e4</h1>\r\n  <button id=\"test1move1Btn\">e2-e4</button>\n  <div id=\"test1results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test2: multiple moves</h1>\n  <button id=\"test2move1Btn\">step1</button>\n  <div id=\"test2results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test3: set position callback</h1>\n  <button id=\"test3step1Btn\">step1</button>\n  <div id=\"test3results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test4: set position promise</h1>\n  <button id=\"test4step1Btn\">step1</button>\n  <div id=\"test4results\"></div>\n</section>\n\n<hr />",
   name: "Move Pieces Test",
-  jsStr: "const board1 = Chessboard2('myBoard', 'start')\r\nwindow.board1 = board1\n\nfunction appendHtml (id, html) {\n  const el = document.getElementById(id)\n  el.innerHTML = el.innerHTML + html\n}\n\n// -----------------------------------------------------------------------------\n// Test 1\n\n$('#test1move1Btn').on('click', function () {\n  window.test1move = board1.move('e2-e4', () => {\n    appendHtml('test1results', '<div id=test1move1finished>test1move1finished</div>')\n  })\n})\n\n// -----------------------------------------------------------------------------\n// Test 2\n\n$('#test2move1Btn').on('click', function () {\n  window.test2move1 = board1.move('a2-a4', 500, () => {\n    appendHtml('test2results', '<div id=test2move1finished>test2move1finished</div>')\n  })\n  window.test2move2 = board1.move('b2-b4', 1000, () => {\n    appendHtml('test2results', '<div id=test2move2finished>test2move2finished</div>')\n  })\n})",
+  jsStr: "const board1 = Chessboard2('myBoard', 'start')\r\nwindow.board1 = board1\n\nfunction appendHtml (id, html) {\n  const el = document.getElementById(id)\n  el.innerHTML = el.innerHTML + html\n}\n\n// -----------------------------------------------------------------------------\n// Test 1\n\n$('#test1move1Btn').on('click', function () {\n  window.test1move = board1.move('e2-e4', () => {\n    appendHtml('test1results', '<div id=test1move1finished>test1move1finished</div>')\n  })\n})\n\n// -----------------------------------------------------------------------------\n// Test 2\n\n$('#test2move1Btn').on('click', function () {\n  window.test2move1 = board1.move('a2-a4', 500, () => {\n    appendHtml('test2results', '<div id=test2move1finished>test2move1finished</div>')\n  })\n  window.test2move2 = board1.move('b2-b4', 1000, () => {\n    appendHtml('test2results', '<div id=test2move2finished>test2move2finished</div>')\n  })\n})\n\n// -----------------------------------------------------------------------------\n// Test 3\n\n$('#test3step1Btn').on('click', function () {\n  window.test3step1 = board1.position('8/8/rnbqkbnr/pppppppp/PPPPPPPP/1NBQKBNR/8/8', 500, () => {\n    appendHtml('test3results', '<div id=test3step1finished>test3step1finished</div>')\n  })\n})\n\n// -----------------------------------------------------------------------------\n// Test 4\n\n$('#test4step1Btn').on('click', async function () {\n  const result = await board1.position('8/8/8/3pk3/8/4K3/8/8')\n  appendHtml('test4results', '<pre id=test4step1finished>' + JSON.stringify(result) + '</pre>')\n})",
   jsFn: function () {
 const board1 = Chessboard2('myBoard', 'start')
 window.board1 = board1
@@ -1587,6 +1587,23 @@ $('#test2move1Btn').on('click', function () {
   window.test2move2 = board1.move('b2-b4', 1000, () => {
     appendHtml('test2results', '<div id=test2move2finished>test2move2finished</div>')
   })
+})
+
+// -----------------------------------------------------------------------------
+// Test 3
+
+$('#test3step1Btn').on('click', function () {
+  window.test3step1 = board1.position('8/8/rnbqkbnr/pppppppp/PPPPPPPP/1NBQKBNR/8/8', 500, () => {
+    appendHtml('test3results', '<div id=test3step1finished>test3step1finished</div>')
+  })
+})
+
+// -----------------------------------------------------------------------------
+// Test 4
+
+$('#test4step1Btn').on('click', async function () {
+  const result = await board1.position('8/8/8/3pk3/8/4K3/8/8')
+  appendHtml('test4results', '<pre id=test4step1finished>' + JSON.stringify(result) + '</pre>')
 })
   }
 };

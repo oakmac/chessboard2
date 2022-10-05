@@ -32,6 +32,22 @@
 </section>
 
 <hr />
+
+<section>
+  <h1>test3: set position callback</h1>
+  <button id="test3step1Btn">step1</button>
+  <div id="test3results"></div>
+</section>
+
+<hr />
+
+<section>
+  <h1>test4: set position promise</h1>
+  <button id="test4step1Btn">step1</button>
+  <div id="test4results"></div>
+</section>
+
+<hr />
 <!--- End Example HTML -------------------------------------------------------->
 
 <script src="js/jquery-3.4.1.min.js"></script>
@@ -65,6 +81,23 @@ $('#test2move1Btn').on('click', function () {
   window.test2move2 = board1.move('b2-b4', 1000, () => {
     appendHtml('test2results', '<div id=test2move2finished>test2move2finished</div>')
   })
+})
+
+// -----------------------------------------------------------------------------
+// Test 3
+
+$('#test3step1Btn').on('click', function () {
+  window.test3step1 = board1.position('8/8/rnbqkbnr/pppppppp/PPPPPPPP/1NBQKBNR/8/8', 500, () => {
+    appendHtml('test3results', '<div id=test3step1finished>test3step1finished</div>')
+  })
+})
+
+// -----------------------------------------------------------------------------
+// Test 4
+
+$('#test4step1Btn').on('click', async function () {
+  const result = await board1.position('8/8/8/3pk3/8/4K3/8/8')
+  appendHtml('test4results', '<pre id=test4step1finished>' + JSON.stringify(result) + '</pre>')
 })
 // --- End Example JS ----------------------------------------------------------
 </script>

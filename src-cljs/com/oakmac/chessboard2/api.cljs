@@ -134,43 +134,59 @@
   [board-state]
   (get @board-state :position))
 
-;; FIXME:
-;; - need to determine the return value here, probably a single Promise
-;; - need to be able to pass config object here for controlling animation speed,
-;;   callback-fn, etc
 (defn set-position!
   "Sets the board position using animation.
   Returns a Promise."
-  [board-state new-pos]
+  [board-state new-pos opts]
   (when flags/runtime-checks?
     (assert (valid-position? new-pos) "Invalid Position Map passed to set-position"))
   (let [current-pos (get-position board-state)
         animations (calculate-animations current-pos new-pos)
+        ;; create an Object that will store our Promise callback function
+        js-resolve-fns (js-obj)
+        return-promise (js/Promise.
+                         (fn [resolve-fn reject-fn]
+                           (gobj/set js-resolve-fns "$" resolve-fn)))
+
+
+        ;; FIXME: add default-animation-speed here somehow
+
+
+        js-before-position (clj->js current-pos)
+        js-after-position (clj->js new-pos)
+        js-position-info (js-obj "afterPosition" js-after-position
+                                 "beforePosition" js-before-position
+                                 "duration" (:animateSpeed opts))
 
         ; _ (js/console.log (pr-str animations))
         ; _ (js/console.log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-        dom-ops (map
-                  (fn [anim]
-                    (homeless/animation->dom-op anim board-state))
+        animation-finished-callback (fn []
+                                      ;; call their callback if provided
+                                      (when-let [f (:onComplete opts)]
+                                        (when (fn? f)
+                                          (f js-position-info)))
+                                      ;; call the resolve-fn for the return Promise
+                                      (when-let [f (gobj/get js-resolve-fns "$")]
+                                        (f js-position-info)))
+
+        ;; create the DOM operations we need in order to get to the new position
+        dom-ops (map-indexed
+                  (fn [idx anim]
+                    ;; attach a callback-fn to the first operation
+                    (if (zero? idx)
+                      (-> anim
+                        (assoc :on-finish animation-finished-callback)
+                        (homeless/animation->dom-op board-state))
+                      (homeless/animation->dom-op anim board-state)))
                   animations)]
 
-    ; (js/console.log (pr-str dom-ops))
-    ; (js/console.log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        ; _ (js/console.log "first dom-ops:" (pr-str (first dom-ops)))
+        ; _ (js/console.log "second dom-ops:" (pr-str (second dom-ops)))]
 
     (dom-ops/apply-ops! board-state dom-ops)
     (swap! board-state assoc :position new-pos)
-    nil))
-
-    ; (js/Promise.
-    ;   (fn [resolve-fn _reject-fn]
-    ;     (if animate
-    ;       (execute-move-with-animation! board-state position-info move resolve-fn)
-    ;       (do
-    ;         (execute-move-instant! board-state position-info move)
-    ;         (resolve-fn)))))))
-
-    ; (js/console.log (pr-str animations)))
+    return-promise))
 
 (defn set-position-instant!
   "Sets the board position instantly. Returns a Clojure map of the new position."

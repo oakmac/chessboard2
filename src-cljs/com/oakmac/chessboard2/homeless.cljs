@@ -7,7 +7,7 @@
     [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]))
 
 (defn animation->dom-op-add
-  [{:keys [duration-ms instant? piece square] :as _animation} board-state]
+  [{:keys [duration-ms instant? on-finish piece square] :as _animation} board-state]
   (let [{:keys [animate-speed-ms board-width orientation piece-square-pct]} @board-state
         new-piece-id (random-piece-id)
         new-piece-html (html/Piece {:board-width board-width
@@ -23,7 +23,12 @@
      :defer-fn (fn []
                  ;; start opacity animation after piece has been added to the DOM
                  (set-style-prop! new-piece-id "transition" (str "all " animate-speed2 "ms"))
-                 (set-style-prop! new-piece-id "opacity" "100%"))
+                 (set-style-prop! new-piece-id "opacity" "100%")
+                 ;; add the callback if provided
+                 (when (fn? on-finish)
+                   (swap! board-state assoc-in [:animation-end-callbacks new-piece-id]
+                          (fn []
+                            (on-finish)))))
      :new-square->piece (hash-map square new-piece-id)}))
 
 ;; TODO:
@@ -65,13 +70,19 @@
         {:capture-piece-id (get square->piece-id destination)}))))
 
 (defn animation->dom-op-clear
-  [{:keys [duration-ms instant? square] :as _animation} board-state]
+  [{:keys [duration-ms instant? on-finish square] :as _animation} board-state]
   (let [{:keys [animate-speed-ms square->piece-id]} @board-state
         piece-id (get square->piece-id square)
         animate-speed2 (if (true? instant?) 0 (or duration-ms animate-speed-ms))]
-    {:delete-square->piece square
-     :duration-ms animate-speed2
-     :fade-out-piece piece-id}))
+    (merge
+     {:delete-square->piece square
+      :duration-ms animate-speed2
+      :fade-out-piece piece-id}
+     (when (fn? on-finish)
+       {:defer-fn (fn []
+                    (swap! board-state assoc-in [:animation-end-callbacks piece-id]
+                           (fn []
+                             (on-finish))))}))))
 
 ;; NOTE: would normally use a defmethod here
 ;; the output file size is slightly reduced by not including defmethods in the project

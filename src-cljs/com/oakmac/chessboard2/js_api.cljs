@@ -86,6 +86,23 @@
                     {:onComplete callback-fn})
                   m))))))
 
+;; TODO: should we allow them to pass a JS object here with the position?
+(defn parse-position-args
+  "Parse variadic arguments to the .position() and .setPosition() functions into a config map
+  Returns the config map"
+  [args]
+  (let [;; any argument of 'false' means no animation
+        disable-animation? (some false? args)
+        ;; take the last function as the onComplete callback
+        callback-fn (last (filter fn? args))
+        lc-args (map lower-case-if-string args)
+        ;; take the last timing value as the animate-speed
+        animate-speed (last (filter valid-animate-speed? lc-args))]
+    (merge {}
+      (when disable-animation? {:animate false})
+      (when callback-fn {:onComplete callback-fn})
+      (when animate-speed {:animateSpeed animate-speed}))))
+
 ;; FIXME: handle 0-0 and 0-0-0, user will have to specify white or black
 (defn move-piece
   "Returns a single JS Promise if only one move is made.
@@ -109,23 +126,31 @@
       (fen-string? format) (position->fen position)
       :else (clj->js position))))
 
+(defn default-set-position-opts
+  [board-state]
+  (let [{:keys [animate-speed-ms]} @board-state]
+    {:animateSpeed animate-speed-ms
+     :onFinish nil}))
+
 (defn set-position
   "Sets the board position."
-  [board-state new-pos]
-  (cond
-    ;; first argument is "start": set the starting position
-    (start-string? new-pos) (api/set-position! board-state start-position)
-    ;; first argument is a FEN string: set the position
-    (valid-fen? new-pos) (api/set-position! board-state (fen->position new-pos))
-    ;; first argument is a Position Object: set the position
-    (valid-js-position-object? new-pos) (api/set-position! board-state (js->clj new-pos))
-    ;; first argument is a Position Map: set the position
-    (valid-js-position-map? new-pos) (api/set-position! board-state (js-map->clj new-pos))
-    ;; ¯\_(ツ)_/¯
-    :else
-    ;; FIXME: error code here
-    (do (js/console.warn "Invalid value passed to .setPosition()")
-        nil)))
+  ([board-state new-pos]
+   (set-position board-state new-pos (default-set-position-opts board-state)))
+  ([board-state new-pos opts]
+   (cond
+     ;; first argument is "start": set the starting position
+     (start-string? new-pos) (api/set-position! board-state start-position opts)
+     ;; first argument is a FEN string: set the position
+     (valid-fen? new-pos) (api/set-position! board-state (fen->position new-pos) opts)
+     ;; first argument is a Position Object: set the position
+     (valid-js-position-object? new-pos) (api/set-position! board-state (js->clj new-pos) opts)
+     ;; first argument is a Position Map: set the position
+     (valid-js-position-map? new-pos) (api/set-position! board-state (js-map->clj new-pos) opts)
+     ;; ¯\_(ツ)_/¯
+     :else
+     ;; FIXME: error code here
+     (do (js/console.warn "Invalid value passed to .setPosition()")
+         nil))))
 
 (defn position
   "Sets or returns the board position."
@@ -134,7 +159,8 @@
     (copy-arguments js-args)
     (.shift js-args)
     (let [first-arg (aget js-args 0)
-          args-len (count js-args)]
+          args-len (count js-args)
+          opts (parse-position-args js-args)]
       (cond
         ;; no first argument: return the position as a JS Object
         (zero? args-len) (get-position board-state nil)
@@ -143,13 +169,13 @@
         ;; first argument is "map": return position as a JS Map
         (map-string? first-arg) (get-position board-state first-arg)
         ;; first argument is "start": set the starting position
-        (start-string? first-arg) (api/set-position! board-state start-position)
+        (start-string? first-arg) (api/set-position! board-state start-position opts)
         ;; first argument is a FEN string: set the position
-        (valid-fen? first-arg) (api/set-position! board-state (fen->position first-arg))
+        (valid-fen? first-arg) (api/set-position! board-state (fen->position first-arg) opts)
         ;; first argument is a Position Object: set the position
-        (valid-js-position-object? first-arg) (api/set-position! board-state (js->clj first-arg))
+        (valid-js-position-object? first-arg) (api/set-position! board-state (js->clj first-arg) opts)
         ;; first argument is a Position Map: set the position
-        (valid-js-position-map? first-arg) (api/set-position! board-state (js-map->clj first-arg))
+        (valid-js-position-map? first-arg) (api/set-position! board-state (js-map->clj first-arg) opts)
         ;; ¯\_(ツ)_/¯
         :else
         ;; FIXME: error code here
@@ -160,13 +186,13 @@
   "TODO: write me"
   [board-state animate?]
   ;; FIXME: handle animate? here
-  (api/set-position! board-state {}))
+  (api/set-position! board-state {} {}))
 
 (defn start
   "TODO: write me"
   [board-state animate?]
   ;; FIXME: handle animate? here
-  (api/set-position! board-state start-position))
+  (api/set-position! board-state start-position {}))
 
 ;; FIXME: need to be able to pass animate? argument here
 ;; also pass animate-speed options?
@@ -174,5 +200,5 @@
   "Return or set the board position using a FEN String"
   [board-state new-pos]
   (cond
-    (valid-fen? new-pos) (api/set-position! board-state (fen->position new-pos))
+    (valid-fen? new-pos) (api/set-position! board-state (fen->position new-pos) {})
     :else (get-position board-state "fen")))
