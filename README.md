@@ -5,15 +5,24 @@ chessboard2 library
 ## Development Setup
 
 ```sh
+## initial setup: install node_modules/ folder
 yarn install
 
+## produce website/chessboard2.js and build the local website
 npx shadow-cljs release chessboard2 && ./scripts/website.js
+
+## run a local web server on port 3232
+npm run local-dev
 ```
 
 ## Tests
 
 ```sh
+## Unit Tests
 npx shadow-cljs compile node-tests
+
+## Cypress
+npm run cypress
 ```
 
 ## TODO before go-live

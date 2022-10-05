@@ -3,11 +3,17 @@
   "description": "chessboard JavaScript component",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "cypress": "cypress open",
+    "local-dev": "serve website/ -p 3232"
+  },
   "devDependencies": {
     "commonmark": "0.30.0",
+    "cypress": "10.9.0",
     "fs-plus": "3.1.1",
     "kidif": "1.1.0",
     "mustache": "4.2.0",
+    "serve": "14.0.1",
     "shadow-cljs": "2.11.20"
   }
 }

@@ -4,17 +4,20 @@
 ===== Name
 Move Pieces
 
-===== Description
-Use the <a href="docs.html#methods:move"><code class="js plain">move</code></a> method to make one or more moves on the board.
+===== DescriptionMD
+
+Use the [.move()] method to make one or more moves on the board.
+
+[.move()]:docs.html#methods:move
 
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
 <button id="move1Btn">e2-e4</button>
 <button id="move2Btn">d2-d4, g8-f6</button>
 <button id="move3Btn">Move 3</button>
-<button id="move4Btn">Move 4</button>
-<button id="move5Btn">Move 5</button>
-<button id="move6Btn">Move 6</button>
+<button id="disableAnimationsBtn">Disable animations with 'false'</button>
+<button id="moveWithCallbackBtn">.move() with callback function</button>
+<button id="move6Btn">.move() with config object</button>
 <button id="move7Btn">Move 7</button>
 <button id="move8Btn">Move 8</button>
 <button id="move9Btn">Move 9</button>
@@ -22,7 +25,7 @@ Use the <a href="docs.html#methods:move"><code class="js plain">move</code></a> 
 <button id="startPositionBtn">Start Position</button>
 
 ===== JS
-var board = Chessboard2('myBoard', 'start')
+const board = Chessboard2('myBoard', 'start')
 
 $('#move1Btn').on('click', function () {
   board.move('e2-e4')
@@ -38,12 +41,12 @@ $('#move3Btn').on('click', function () {
   board.move('b7-b2', 5000)
 })
 
-$('#move4Btn').on('click', function () {
+$('#disableAnimationsBtn').on('click', function () {
   // pass in false to disable animations
   board.move('d7-d5', false)
 })
 
-$('#move5Btn').on('click', function () {
+$('#moveWithCallbackBtn').on('click', function () {
   // pass a callback function that will fire when the animation of the move is complete
   board.move('g1-f3', function (move) {
     console.log('Animation finished for g1-f3:')

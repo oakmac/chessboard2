@@ -1,20 +1,14 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <title>chessboardjs Example #3004 - Move Pieces</title>
-  <base href="../" />
-  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/chessboard2.css">
-</head>
-<body>
-<p><a href="examples#3004">&larr; Back to all examples.</a></p>
+===== id
+9001
 
-<p><p>Use the <a href="docs.html#methods:move">.move()</a> method to make one or more moves on the board.</p>
-</p>
+===== Name
+Move Pieces Test
 
-<!--- Begin Example HTML ------------------------------------------------------>
+===== DescriptionMD
+
+This file exists for Cypress testing
+
+===== HTML
 <div id="myBoard" style="width: 400px"></div>
 <button id="move1Btn">e2-e4</button>
 <button id="move2Btn">d2-d4, g8-f6</button>
@@ -27,36 +21,32 @@
 <button id="move9Btn">Move 9</button>
 <button id="move10Btn">Combine Instant and Animated Moves</button>
 <button id="startPositionBtn">Start Position</button>
-<!--- End Example HTML -------------------------------------------------------->
 
-<script src="js/jquery-3.4.1.min.js"></script>
-<script src="js/chessboard.js"></script>
-<script>
-// --- Begin Example JS --------------------------------------------------------
-const board = Chessboard2('myBoard', 'start')
+===== JS
+window.board1 = Chessboard2('myBoard', 'start')
 
 $('#move1Btn').on('click', function () {
-  board.move('e2-e4')
+  window.board1.move('e2-e4')
 })
 
 $('#move2Btn').on('click', function () {
   // pass multiple moves as arguments
-  board.move('d2-d4', 'g8-f6')
+  window.board1.move('d2-d4', 'g8-f6')
 })
 
 $('#move3Btn').on('click', function () {
-  board.move('c7-c5', 'slow')
-  board.move('b7-b2', 5000)
+  window.board1.move('c7-c5', 'slow')
+  window.board1.move('b7-b2', 5000)
 })
 
 $('#disableAnimationsBtn').on('click', function () {
   // pass in false to disable animations
-  board.move('d7-d5', false)
+  window.board1.move('d7-d5', false)
 })
 
 $('#moveWithCallbackBtn').on('click', function () {
   // pass a callback function that will fire when the animation of the move is complete
-  board.move('g1-f3', function (move) {
+  window.board1.move('g1-f3', function (move) {
     console.log('Animation finished for g1-f3:')
     console.log(move)
   })
@@ -64,7 +54,7 @@ $('#moveWithCallbackBtn').on('click', function () {
 
 $('#move6Btn').on('click', function () {
   // pass a config object
-  board.move({
+  window.board1.move({
     animate: true,
     animateSpeed: 1000,
     from: 'g2',
@@ -75,7 +65,7 @@ $('#move6Btn').on('click', function () {
 
 $('#move7Btn').on('click', function () {
   // move() returns a Promise object that fires when the animation has completed
-  board.move('h2-h4').then((move) => {
+  window.board1.move('h2-h4').then((move) => {
     console.log('Animation has completed. Here is information about the move:')
     console.log(move)
   })
@@ -83,7 +73,7 @@ $('#move7Btn').on('click', function () {
 
 $('#move8Btn').on('click', function () {
   // multiple moves will return an Array of Promises
-  Promise.all(board.move('h2-h4', 'h1-h3')).then((moves) => {
+  Promise.all(window.board1.move('h2-h4', 'h1-h3')).then((moves) => {
     console.log('Animations are complete:')
     console.log(moves)
   })
@@ -91,7 +81,7 @@ $('#move8Btn').on('click', function () {
 
 $('#move9Btn').on('click', function () {
   // the Promise object will reject if the move is invalid / not possible
-  board.move('g6-f6').then((move) => {
+  window.board1.move('g6-f6').then((move) => {
     console.log('Animation has completed. Here is information about the move:')
     console.log(move)
   }).catch((err) => {
@@ -102,7 +92,7 @@ $('#move9Btn').on('click', function () {
 
 $('#move10Btn').on('click', function () {
   // you may combine instant and animated moves in the same .move() call
-  board.move({
+  window.board1.move({
     animate: true,
     animateSpeed: 'superslow',
     from: 'g7',
@@ -115,8 +105,4 @@ $('#move10Btn').on('click', function () {
   })
 })
 
-$('#startPositionBtn').on('click', board.start)
-// --- End Example JS ----------------------------------------------------------
-</script>
-</body>
-</html>
+$('#startPositionBtn').on('click', window.board1.start)
