@@ -14,7 +14,7 @@ Use the [.move()] method to make one or more moves on the board.
 <div id="myBoard" style="width: 400px"></div>
 <button id="move1Btn">e2-e4</button>
 <button id="move2Btn">d2-d4, g8-f6</button>
-<button id="move3Btn">Move 3</button>
+<button id="move3Btn">Animation Speed</button>
 <button id="disableAnimationsBtn">Disable animations with 'false'</button>
 <button id="moveWithCallbackBtn">.move() with callback function</button>
 <button id="move6Btn">.move() with config object</button>
@@ -37,6 +37,12 @@ $('#move2Btn').on('click', function () {
 })
 
 $('#move3Btn').on('click', function () {
+  // you can pass a duration time to the .move() function
+  // duration times are either in milliseconds or the following strings:
+  // "super fast" - 40ms
+  // "fast" - 80ms
+  // "slow" - 300ms
+  // "super slow" - 800ms
   board.move('c7-c5', 'slow')
   board.move('b7-b2', 5000)
 })

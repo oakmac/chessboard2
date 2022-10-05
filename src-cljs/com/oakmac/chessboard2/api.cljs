@@ -29,31 +29,35 @@
 
     [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]))
 
-(defn default-move-cfg
-  "Returns the default move config map."
-  [board-state]
-  (let [{:keys [animate-speed-ms]} @board-state]
-    {:animate true
-     :animateSpeed animate-speed-ms
-     :onComplete nil}))
-
 (defn convert-animate-speed
-  [{:keys [animateSpeed] :as m}]
-  (if-let [speed-ms (get animate-speed-strings->times animateSpeed)]
-    (assoc m :animateSpeed speed-ms)
-    m))
+  [animateSpeed]
+  (cond
+    (number? animateSpeed) animateSpeed
+    (string? animateSpeed) (get animate-speed-strings->times animateSpeed)
+    :else nil))
+
+(defn valid-move? [m]
+  (and
+    (map? m)
+    (valid-square? (:from m))
+    (valid-square? (:to m))
+    (when-let [f (:onComplete m)]
+      (fn? f))))
 
 (defn move-pieces
   "Executes a collection of Moves on the board. Modifies the position.
   Returns a collection of Promises."
   [board-state moves]
+  (when flags/runtime-checks?
+    (assert (every? valid-move? moves) "Invalid moves passed to move-pieces"))
   (let [current-pos (:position @board-state)
         new-pos (reduce apply-move-to-position current-pos moves)
         js-before-position (clj->js current-pos)
         js-after-position (clj->js new-pos)
         animations (calculate-animations current-pos new-pos)
         moves-map (zipmap (map :from moves) moves)
-        animations-map (zipmap (map :source animations) animations)
+
+        ; _ (js/console.log "moves:" (pr-str moves))
 
         ;; create an empty JS object to store Promise resolve-fns
         js-resolve-fns (reduce
@@ -68,8 +72,10 @@
                         (fn [promises {:keys [source destination piece] :as anim}]
                           (conj promises (js/Promise.
                                            (fn [resolve-fn reject-fn]
-                                             ;; store the resolve-fn on our object from earlier
+                                             ;; store the resolve-fn on our object
                                              (gobj/set js-resolve-fns source resolve-fn)))))
+                                             ;; TODO: do we need to store the reject-fn here?
+                                             ;; can we ensure that will never be called?
                         []
                         animations)
 
@@ -95,28 +101,23 @@
                        {}
                        animations)
 
-        ;; add the callback functions to the animations
-        animations-with-callbacks (map
-                                    (fn [{:keys [source] :as anim}]
-                                      (assoc anim :on-finish (get callback-fns source)))
-                                    animations)
+        ;; add the callback functions and duration times to the animations
+        animations2 (map
+                      (fn [{:keys [source] :as animation}]
+                        (let [{:keys [animate animateSpeed] :as _move} (get moves-map source)]
+                          (cond-> animation
+                            true (assoc :on-finish (get callback-fns source))
+                            (false? animate) (assoc :instant? true)
+                            animateSpeed (assoc :duration-ms (convert-animate-speed animateSpeed)))))
+                      animations)
+
+        ; _ (js/console.log "animations:" (pr-str animations2))
 
         ;; convert animations to DOM operations
         dom-ops (map
                   (fn [anim]
                     (homeless/animation->dom-op anim board-state))
-                  animations-with-callbacks)
-
-        ;; FIXME: need to put duration and other config on each DOM op
-        position-info {:after-pos new-pos, :before-pos current-pos}
-        default-cfg (default-move-cfg board-state)
-        moves2 (->> moves
-                    (map #(merge default-cfg %))
-                    (map convert-animate-speed)
-                    (map (fn [{:keys [from to] :as m}]
-                           (assoc m :capture? (and (contains? current-pos to)
-                                                   (contains? new-pos to))))))]
-
+                  animations2)]
     ;; apply the DOM operations
     (dom-ops/apply-ops! board-state dom-ops)
 
