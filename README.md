@@ -1,4 +1,4 @@
-# chessboard2 javascript library
+# chessboardjs2 javascript library
 
 An updated version of [chessboard.js]. Written in [ClojureScript], no dependencies, better API.
 
@@ -8,12 +8,12 @@ An updated version of [chessboard.js]. Written in [ClojureScript], no dependenci
 
 ## Naming and Versioning
 
-chessboard2 is a completely distinct project from [chessboard.js]. The project
-name is "chessboard2" and the version of the library will be independent of the
+chessboardjs2 is a completely distinct project from [chessboard.js]. The project
+name is "chessboardjs2" and the version of the library will be independent of the
 version of original [chessboard.js].
 
-To remove any confusion for users, I will release chessboard2 at v2.0.0 for it's
-"initial release". There will not be a v1.0.0 major release of chessboard2.
+To remove any confusion for users, I will release chessboardjs2 at v2.0.0 for it's
+"initial release". There will not be a v1.0.0 major release of chessboardjs2.
 
 It is possible (although unlikely) that chessboard.js will have a v2.0.0 branch.
 

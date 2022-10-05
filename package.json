@@ -1,16 +1,16 @@
 {
   "author": "Chris Oakman <chris@oakmac.com> (https://chrisoakman.com)",
-  "description": "chessboard2 JavaScript component",
+  "description": "JavaScript Chess Board Component v2",
   "license": "ISC",
-  "name": "@chrisoakman/chessboard2",
+  "name": "@chrisoakman/chessboardjs2",
   "version": "0.1.0",
   "homepage": "https://chessboardjs.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/oakmac/chessboard2.git"
+    "url": "https://github.com/oakmac/chessboardjs2.git"
   },
   "bugs": {
-    "url": "https://github.com/oakmac/chessboard2/issues"
+    "url": "https://github.com/oakmac/chessboardjs2/issues"
   },
   "scripts": {
     "cypress": "cypress open",
