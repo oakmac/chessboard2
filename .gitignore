@@ -7,6 +7,7 @@ target/
 website/css/chessboard2.css
 website/examples/
 website/js/chessboard2.js
+website/build-report.html
 
 *.diff
 tests.js

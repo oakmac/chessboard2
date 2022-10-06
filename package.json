@@ -14,6 +14,7 @@
   },
   "scripts": {
     "build": "shadow-cljs release chessboard2 && ./scripts/website.js",
+    "build-report": "shadow-cljs run shadow.cljs.build-report chessboard2 website/build-report.html",
     "cypress": "cypress open",
     "local-dev": "serve website/ -p 3232",
     "test": "shadow-cljs compile node-tests"
