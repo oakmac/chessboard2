@@ -1,6 +1,6 @@
 # chessboardjs2 javascript library
 
-An updated version of [chessboard.js]. Written in [ClojureScript], no dependencies, better API.
+An updated version of [chessboard.js]. Written in [ClojureScript], no dependencies, improved API.
 
 ## Development Status
 
@@ -88,9 +88,6 @@ npm run cypress
 
 ## Notes
 
-- maybe use the "squares as background image" technique like Wikipedia?
-  - would reduce the number of DOM elements
-  - but less customizable for consumers
 - [duck chess](https://duckchess.com/) should be implementable
 
 ## License
