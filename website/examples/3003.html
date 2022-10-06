@@ -11,27 +11,45 @@
 <body>
 <p><a href="examples#3003">&larr; Back to all examples.</a></p>
 
-<p>Use the <a href="docs.html#methods:clear"><code class="js plain">clear</code></a> method to remove all the pieces from the board.</p>
+<p><p>Use the <a href="docs.html#methods:clear">clear()</a> method to remove all pieces from the board.</p>
+</p>
 
 <!--- Begin Example HTML ------------------------------------------------------>
 <div id="myBoard" style="width: 400px"></div>
 <button id="clearBoardBtn">Clear Board</button>
 <button id="startPositionBtn">Start Position</button>
 <button id="clearBoardInstantBtn">Clear Board Instant</button>
+<button id="clearBoardCallbackBtn">Clear Board with Callback</button>
+<button id="clearBoardAnimateSpeedBtn">Clear Board with Animate Speed</button>
 <!--- End Example HTML -------------------------------------------------------->
 
 <script src="js/jquery-3.4.1.min.js"></script>
 <script src="js/chessboard.js"></script>
 <script>
 // --- Begin Example JS --------------------------------------------------------
-var board = Chessboard2('myBoard', 'start')
+const board = Chessboard2('myBoard', 'start')
 
 $('#clearBoardBtn').on('click', board.clear)
 
 $('#startPositionBtn').on('click', board.start)
 
 $('#clearBoardInstantBtn').on('click', function () {
+  // pass false to disable animations (ie: instant moves)
   board.clear(false)
+})
+
+$('#clearBoardCallbackBtn').on('click', function () {
+  // pass a function that will fire once the pieces have been removed
+  board.clear((positionInfo) => {
+    console.log('Board has been cleared:', positionInfo)
+  })
+})
+
+$('#clearBoardAnimateSpeedBtn').on('click', async function () {
+  // pass a string or number to control animation speed
+  // board.clear() also returns a Promise that resolves when the animations finish
+  const positionInfo = await board.clear(2500)
+  console.log('Board is clear:', positionInfo)
 })
 // --- End Example JS ----------------------------------------------------------
 </script>

@@ -23,7 +23,7 @@ set the board position.
 <button id="pawnAttackBtn">Pawn Attack!</button>
 
 <button id="clearBoardBtn">Clear Board</button>
-<button id="setPawns3">Pawns 3</button>
+<button id="setPawns3">Pawn Attack 2!</button>
 <button id="setPawns4">Pawns 4</button>
 
 ===== JS
@@ -57,20 +57,17 @@ $('#pawnAttackBtn').on('click', function () {
 
 $('#clearBoardBtn').on('click', board.clear)
 
+let pawnToggle2 = true
 $('#setPawns3').on('click', function () {
-  board.position({
-    a5: 'wP', b5: 'wP', c5: 'wP', d5: 'wP', e5: 'wP', d5: 'wP', f5: 'wP', g5: 'wP', h5: 'wP',
-    a6: 'wP', b6: 'wP', c6: 'wP', d6: 'wP', e6: 'wP', d6: 'wP', f6: 'wP', g6: 'wP', h6: 'wP',
-    a7: 'wP', b7: 'wP', c7: 'wP', d7: 'wP', e7: 'wP', d7: 'wP', f7: 'wP', g7: 'wP', h7: 'wP',
-    a8: 'wP', b8: 'wP', c8: 'wP', d8: 'wP', e8: 'wP', d8: 'wP', f8: 'wP', g8: 'wP', h8: 'wP'
-  })
+  if (pawnToggle2) {
+    board.fen('pPpPpPpP/PpPpPpPp/pPpPpPpP/PpPpPpPp/pPpPpPpP/PpPpPpPp/pPpPpPpP/PpPpPpPp')
+    pawnToggle2 = false
+  } else {
+    board.fen('PpPpPpPp/pPpPpPpP/PpPpPpPp/pPpPpPpP/PpPpPpPp/pPpPpPpP/PpPpPpPp/pPpPpPpP')
+    pawnToggle2 = true
+  }
 })
 
 $('#setPawns4').on('click', function () {
-  board.position({
-    a1: 'bP', b1: 'bP', c1: 'bP', d1: 'bP', e1: 'bP', d1: 'bP', f1: 'bP', g1: 'bP', h1: 'bP',
-    a2: 'bP', b2: 'bP', c2: 'bP', d2: 'bP', e2: 'bP', d2: 'bP', f2: 'bP', g2: 'bP', h2: 'bP',
-    a3: 'bP', b3: 'bP', c3: 'bP', d3: 'bP', e3: 'bP', d3: 'bP', f3: 'bP', g3: 'bP', h3: 'bP',
-    a4: 'bP', b4: 'bP', c4: 'bP', d4: 'bP', e4: 'bP', d4: 'bP', f4: 'bP', g4: 'bP', h4: 'bP'
-  })
+
 })

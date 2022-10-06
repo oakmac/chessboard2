@@ -174,10 +174,14 @@
         :else (warn-log "Invalid value passed to position():" first-arg)))))
 
 (defn clear
-  "TODO: write me"
-  [board-state animate?]
-  ;; FIXME: handle animate? here
-  (api/set-position! board-state {} {}))
+  "Remove all of the pieces from the board. Accepts the same arguments / options as setPosition()
+  Returns a Promise"
+  [board-state]
+  (let [js-args (array)]
+    (copy-arguments js-args)
+    (.shift js-args)
+    (let [opts (parse-set-position-args js-args)]
+      (api/set-position! board-state {} opts))))
 
 (defn start
   "TODO: write me"
