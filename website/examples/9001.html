@@ -48,6 +48,17 @@
 </section>
 
 <hr />
+
+<section>
+  <h1>test5: orientation</h1>
+  <button id="test5step1Btn">step1: add arrows</button>
+  <button id="test5step2Btn">step2: add circles</button>
+  <button id="test5step3Btn">step3: flip board</button>
+  <button id="test5step4Btn">step4: remove some items</button>
+  <div id="test5results"></div>
+</section>
+
+<hr />
 <!--- End Example HTML -------------------------------------------------------->
 
 <script src="js/jquery-3.4.1.min.js"></script>
@@ -98,6 +109,30 @@ $('#test3step1Btn').on('click', function () {
 $('#test4step1Btn').on('click', async function () {
   const result = await board1.position('8/8/8/3pk3/8/4K3/8/8')
   appendHtml('test4results', '<pre id=test4step1finished>' + JSON.stringify(result) + '</pre>')
+})
+
+// -----------------------------------------------------------------------------
+// Test 5
+
+$('#test5step1Btn').on('click', function () {
+  board1.addArrow('a2-a3', '#ffee66', 'small')
+  board1.addArrow('b2-b4', '#66eeff', 'medium')
+  board1.addArrow('c2-c5')
+})
+
+$('#test5step2Btn').on('click', function () {
+  board1.addCircle('e4', 'purple', 'small')
+  board1.addCircle('f4', 'red', 'medium')
+  board1.addCircle('g4', 'orange', 'large')
+})
+
+$('#test5step3Btn').on('click', function () {
+  board1.flip()
+})
+
+$('#test5step4Btn').on('click', function () {
+  board1.removeArrow('b2-b4')
+  board1.removeCircle('g4')
 })
 // --- End Example JS ----------------------------------------------------------
 </script>

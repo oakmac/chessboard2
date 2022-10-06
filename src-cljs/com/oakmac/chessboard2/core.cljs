@@ -12,6 +12,7 @@
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
     [com.oakmac.chessboard2.util.functions :refer [defer]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
+    [com.oakmac.chessboard2.util.logging :refer [warn-log]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position move->map]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [arrow-item? circle-item? piece-item? fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
@@ -69,8 +70,10 @@
         (swap! ids conj (gobj/get itm "id"))))
     @ids))
 
-;; TODO: I think we need to convert this function to use only dom-ops
-;; need to decide if Pieces are considered Items or not
+;; TODO:
+;; - [ ] move this to dom-ops
+;; - [ ] need to decide if Pieces are considered Items or not
+;; - [ ] refactor this function to not use an atom
 (defn- draw-items-instant!
   "Update all Items in the DOM instantly (ie: no animation)"
   [board-state]
@@ -98,11 +101,22 @@
         (swap! board-state assoc-in [:square->piece-id square] piece-id)))
     ;; add Items back
     (doseq [item (vals items)]
-      ;; FIXME: what to do about other Item types here?
-      (swap! html str (html/Arrow (merge
-                                    item
-                                    {:board-width board-width
-                                     :orientation orientation}))))
+      (cond
+        (arrow-item? item)
+        (swap! html str (html/Arrow (merge
+                                      item
+                                      {:board-width board-width
+                                       :orientation orientation})))
+
+        (circle-item? item)
+        (swap! html str (html/Circle (merge
+                                       item
+                                       {:board-width board-width
+                                        :orientation orientation})))
+
+        ;; FIXME: we will need to support Custom Items here
+
+        :else (js/console.warn "draw-items-instant! Unrecognized Item type:" (pr-str item))))
     (append-html! items-container-id @html)))
 
 ;; -----------------------------------------------------------------------------
@@ -298,11 +312,32 @@
   (dom-ops/apply-ops! board-state [{:remove-el item-id}])
   (swap! board-state update-in [:items] dissoc item-id))
 
-;; FIXME: you should be able to pass in 'e2-e4' and remove the arrow on those squares
+(defn get-arrows-on-squares
+  "Returns a map of the Arrows on the given squares"
+  [board-state {:keys [start end]}]
+  (reduce
+    (fn [arrows [item-id itm]]
+      (if (and (= (:type itm) "CHESSBOARD_ARROW")
+               (= (:start itm) start)
+               (= (:end itm) end))
+        (assoc arrows item-id itm)
+        arrows))
+    {}
+    (:items @board-state)))
+
 (defn js-remove-arrow
-  [board-state item-id]
-  ;; TODO: validation here, warn if item-id is not valid
-  (remove-arrow board-state item-id))
+  [board-state item-id-or-squares]
+  (cond
+    (valid-move-string? item-id-or-squares)
+    (let [arrows (get-arrows-on-squares board-state (move->map item-id-or-squares "ARROW_FORMAT"))]
+      (doseq [item-id (keys arrows)]
+        (remove-arrow board-state item-id)))
+
+    :else
+    (if-let [arrow (get-in @board-state [:items item-id-or-squares])]
+      (remove-arrow board-state item-id-or-squares)
+      ;; TODO: error code here?
+      (warn-log "Invalid argument passed to removeArrow():" item-id-or-squares))))
 
 (defn move-arrow
   "Move an Analysis Arrow on the board"

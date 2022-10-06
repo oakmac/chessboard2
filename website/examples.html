@@ -582,26 +582,31 @@ $('#startPositionBtn').on('click', board.start)
 
 CHESSBOARD_EXAMPLES["3005"] = {
   description: "Use the <a href=\"docs.html#methods:orientation\"><code class=\"js plain\">orientation</code></a> method to retrieve and set the orientation. Use the <a href=\"docs.html#methods:flip\"><code class=\"js plain\">flip</code></a> method to flip orientation.",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"showOrientationBtn\">Show orientation in console</button>\n<button id=\"whiteOrientationBtn\">White orientation</button>\n<button id=\"blackOrientationBtn\">Black orientation</button>\n<button id=\"flipOrientationBtn\">Flip orientation</button>",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n\n<button id=\"flipOrientationBtn\">Flip orientation</button>\n<button id=\"whiteOrientationBtn\">White orientation</button>\n<button id=\"blackOrientationBtn\">Black orientation</button>\n<button id=\"showOrientationBtn\">Show orientation in console</button>",
   name: "Orientation",
-  jsStr: "const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'\nconst board = Chessboard2('myBoard', ruyLopez)\n\n$('#showOrientationBtn').on('click', function () {\n  console.log('Board orientation is: ' + board.orientation())\n})\n\n$('#whiteOrientationBtn').on('click', function () {\n  board.orientation('white')\n})\n\n$('#blackOrientationBtn').on('click', function () {\n  board.orientation('black')\n})\n\n$('#flipOrientationBtn').on('click', board.flip)",
+  jsStr: "const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'\nconst board = Chessboard2('myBoard', ruyLopez)\n\n$('#flipOrientationBtn').on('click', function () {\n  const newOrientation = board.flip()\n  console.log('New board orientation is:', newOrientation)\n})\n\n$('#whiteOrientationBtn').on('click', function () {\n  const newOrientation = board.orientation('white')\n  console.log('New board orientation is:', newOrientation)\n})\n\n$('#blackOrientationBtn').on('click', function () {\n  const newOrientation = board.orientation('black')\n  console.log('New board orientation is:', newOrientation)\n})\n\n$('#showOrientationBtn').on('click', function () {\n  console.log('Current board orientation is:', board.orientation())\n})",
   jsFn: function () {
 const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
 const board = Chessboard2('myBoard', ruyLopez)
 
-$('#showOrientationBtn').on('click', function () {
-  console.log('Board orientation is: ' + board.orientation())
+$('#flipOrientationBtn').on('click', function () {
+  const newOrientation = board.flip()
+  console.log('New board orientation is:', newOrientation)
 })
 
 $('#whiteOrientationBtn').on('click', function () {
-  board.orientation('white')
+  const newOrientation = board.orientation('white')
+  console.log('New board orientation is:', newOrientation)
 })
 
 $('#blackOrientationBtn').on('click', function () {
-  board.orientation('black')
+  const newOrientation = board.orientation('black')
+  console.log('New board orientation is:', newOrientation)
 })
 
-$('#flipOrientationBtn').on('click', board.flip)
+$('#showOrientationBtn').on('click', function () {
+  console.log('Current board orientation is:', board.orientation())
+})
   }
 };
 
@@ -1556,9 +1561,9 @@ board = Chessboard2('myBoard', config)
 
 CHESSBOARD_EXAMPLES["9001"] = {
   description: "<p>This file exists for Cypress testing</p>\n",
-  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n\r\n<section>\r\n  <h1>test1: e2 - e4</h1>\r\n  <button id=\"test1move1Btn\">e2-e4</button>\n  <div id=\"test1results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test2: multiple moves</h1>\n  <button id=\"test2move1Btn\">step1</button>\n  <div id=\"test2results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test3: set position callback</h1>\n  <button id=\"test3step1Btn\">step1</button>\n  <div id=\"test3results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test4: set position promise</h1>\n  <button id=\"test4step1Btn\">step1</button>\n  <div id=\"test4results\"></div>\n</section>\n\n<hr />",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n\r\n<section>\r\n  <h1>test1: e2 - e4</h1>\r\n  <button id=\"test1move1Btn\">e2-e4</button>\n  <div id=\"test1results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test2: multiple moves</h1>\n  <button id=\"test2move1Btn\">step1</button>\n  <div id=\"test2results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test3: set position callback</h1>\n  <button id=\"test3step1Btn\">step1</button>\n  <div id=\"test3results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test4: set position promise</h1>\n  <button id=\"test4step1Btn\">step1</button>\n  <div id=\"test4results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test5: orientation</h1>\n  <button id=\"test5step1Btn\">step1: add arrows</button>\n  <button id=\"test5step2Btn\">step2: add circles</button>\n  <button id=\"test5step3Btn\">step3: flip board</button>\n  <button id=\"test5step4Btn\">step4: remove some items</button>\n  <div id=\"test5results\"></div>\n</section>\n\n<hr />",
   name: "Move Pieces Test",
-  jsStr: "const board1 = Chessboard2('myBoard', 'start')\r\nwindow.board1 = board1\n\nfunction appendHtml (id, html) {\n  const el = document.getElementById(id)\n  el.innerHTML = el.innerHTML + html\n}\n\n// -----------------------------------------------------------------------------\n// Test 1\n\n$('#test1move1Btn').on('click', function () {\n  window.test1move = board1.move('e2-e4', () => {\n    appendHtml('test1results', '<div id=test1move1finished>test1move1finished</div>')\n  })\n})\n\n// -----------------------------------------------------------------------------\n// Test 2\n\n$('#test2move1Btn').on('click', function () {\n  window.test2move1 = board1.move('a2-a4', 500, () => {\n    appendHtml('test2results', '<div id=test2move1finished>test2move1finished</div>')\n  })\n  window.test2move2 = board1.move('b2-b4', 1000, () => {\n    appendHtml('test2results', '<div id=test2move2finished>test2move2finished</div>')\n  })\n})\n\n// -----------------------------------------------------------------------------\n// Test 3\n\n$('#test3step1Btn').on('click', function () {\n  window.test3step1 = board1.position('8/8/rnbqkbnr/pppppppp/PPPPPPPP/1NBQKBNR/8/8', 500, () => {\n    appendHtml('test3results', '<div id=test3step1finished>test3step1finished</div>')\n  })\n})\n\n// -----------------------------------------------------------------------------\n// Test 4\n\n$('#test4step1Btn').on('click', async function () {\n  const result = await board1.position('8/8/8/3pk3/8/4K3/8/8')\n  appendHtml('test4results', '<pre id=test4step1finished>' + JSON.stringify(result) + '</pre>')\n})",
+  jsStr: "const board1 = Chessboard2('myBoard', 'start')\r\nwindow.board1 = board1\n\nfunction appendHtml (id, html) {\n  const el = document.getElementById(id)\n  el.innerHTML = el.innerHTML + html\n}\n\n// -----------------------------------------------------------------------------\n// Test 1\n\n$('#test1move1Btn').on('click', function () {\n  window.test1move = board1.move('e2-e4', () => {\n    appendHtml('test1results', '<div id=test1move1finished>test1move1finished</div>')\n  })\n})\n\n// -----------------------------------------------------------------------------\n// Test 2\n\n$('#test2move1Btn').on('click', function () {\n  window.test2move1 = board1.move('a2-a4', 500, () => {\n    appendHtml('test2results', '<div id=test2move1finished>test2move1finished</div>')\n  })\n  window.test2move2 = board1.move('b2-b4', 1000, () => {\n    appendHtml('test2results', '<div id=test2move2finished>test2move2finished</div>')\n  })\n})\n\n// -----------------------------------------------------------------------------\n// Test 3\n\n$('#test3step1Btn').on('click', function () {\n  window.test3step1 = board1.position('8/8/rnbqkbnr/pppppppp/PPPPPPPP/1NBQKBNR/8/8', 500, () => {\n    appendHtml('test3results', '<div id=test3step1finished>test3step1finished</div>')\n  })\n})\n\n// -----------------------------------------------------------------------------\n// Test 4\n\n$('#test4step1Btn').on('click', async function () {\n  const result = await board1.position('8/8/8/3pk3/8/4K3/8/8')\n  appendHtml('test4results', '<pre id=test4step1finished>' + JSON.stringify(result) + '</pre>')\n})\n\n// -----------------------------------------------------------------------------\n// Test 5\n\n$('#test5step1Btn').on('click', function () {\n  board1.addArrow('a2-a3', '#ffee66', 'small')\n  board1.addArrow('b2-b4', '#66eeff', 'medium')\n  board1.addArrow('c2-c5')\n})\n\n$('#test5step2Btn').on('click', function () {\n  board1.addCircle('e4', 'purple', 'small')\n  board1.addCircle('f4', 'red', 'medium')\n  board1.addCircle('g4', 'orange', 'large')\n})\n\n$('#test5step3Btn').on('click', function () {\n  board1.flip()\n})\n\n$('#test5step4Btn').on('click', function () {\n  board1.removeArrow('b2-b4')\n  board1.removeCircle('g4')\n})",
   jsFn: function () {
 const board1 = Chessboard2('myBoard', 'start')
 window.board1 = board1
@@ -1604,6 +1609,30 @@ $('#test3step1Btn').on('click', function () {
 $('#test4step1Btn').on('click', async function () {
   const result = await board1.position('8/8/8/3pk3/8/4K3/8/8')
   appendHtml('test4results', '<pre id=test4step1finished>' + JSON.stringify(result) + '</pre>')
+})
+
+// -----------------------------------------------------------------------------
+// Test 5
+
+$('#test5step1Btn').on('click', function () {
+  board1.addArrow('a2-a3', '#ffee66', 'small')
+  board1.addArrow('b2-b4', '#66eeff', 'medium')
+  board1.addArrow('c2-c5')
+})
+
+$('#test5step2Btn').on('click', function () {
+  board1.addCircle('e4', 'purple', 'small')
+  board1.addCircle('f4', 'red', 'medium')
+  board1.addCircle('g4', 'orange', 'large')
+})
+
+$('#test5step3Btn').on('click', function () {
+  board1.flip()
+})
+
+$('#test5step4Btn').on('click', function () {
+  board1.removeArrow('b2-b4')
+  board1.removeCircle('g4')
 })
   }
 };

@@ -73,4 +73,107 @@ describe('Example 9001: moves', () => {
         assert.isObject(result.afterPosition)
       })
   })
+
+  it('test5: orientation', () => {
+    // step1: add Arrows
+    cy.get('#test5step1Btn').click()
+      .get('#myBoard .arrow-bc3c7').should('have.length', 3)
+      .get('#myBoard .circle-a0266').should('have.length', 0)
+      .get('#myBoard .item-18a5b').should('have.length', 3)
+      .window().then(win => {
+        const arrows1 = win.board1.arrows('map')
+        assert.exists(arrows1)
+        assert.equal(arrows1.size, 3, 'there should be 3 Arrows after step1')
+
+        const circles1 = win.board1.circles('map')
+        assert.exists(circles1)
+        assert.equal(circles1.size, 0, 'there should be 0 Circles after step1')
+
+        assert.equal(win.board1.orientation(), 'white', 'Orientation should be white after step1')
+      })
+
+      // step2: add Circles
+      .get('#test5step2Btn').click()
+      .get('#myBoard .arrow-bc3c7').should('have.length', 3)
+      .get('#myBoard .circle-a0266').should('have.length', 3)
+      .get('#myBoard .item-18a5b').should('have.length', 6)
+      .window().then(win => {
+        const arrows1 = win.board1.getArrows()
+        assert.exists(arrows1)
+        assert.equal(arrows1.length, 3, 'there should be 3 Arrows after step2')
+
+        const circles1 = win.board1.getCircles()
+        assert.exists(circles1)
+        assert.equal(circles1.length, 3, 'there should be 3 Circles after step2')
+
+        const items1 = win.board1.items()
+        assert.exists(items1)
+        assert.equal(items1.length, 6, 'there should be 6 total Items after step2')
+
+        assert.equal(win.board1.orientation(), 'white', 'Orientation should be white after step2')
+      })
+
+      // step3: flip the board
+      .get('#test5step3Btn').click()
+      .get('#myBoard .arrow-bc3c7').should('have.length', 3)
+      .get('#myBoard .circle-a0266').should('have.length', 3)
+      .get('#myBoard .item-18a5b').should('have.length', 6)
+      .window().then(win => {
+        const arrows1 = win.board1.getArrows()
+        assert.exists(arrows1)
+        assert.equal(arrows1.length, 3, 'there should be 3 Arrows after step3')
+
+        const circles1 = win.board1.getCircles()
+        assert.exists(circles1)
+        assert.equal(circles1.length, 3, 'there should be 3 Circles after step3')
+
+        const items1 = win.board1.items()
+        assert.exists(items1)
+        assert.equal(items1.length, 6, 'there should be 6 total Items after step3')
+
+        assert.equal(win.board1.orientation(), 'black', 'Orientation should be black after step3')
+      })
+
+      // step4: remove some items
+      .get('#test5step4Btn').click()
+      .get('#myBoard .arrow-bc3c7').should('have.length', 2)
+      .get('#myBoard .circle-a0266').should('have.length', 2)
+      .get('#myBoard .item-18a5b').should('have.length', 4)
+      .window().then(win => {
+        const arrows1 = win.board1.getArrows()
+        assert.exists(arrows1)
+        assert.equal(arrows1.length, 2, 'there should be 2 Arrows after step4')
+
+        const circles1 = win.board1.getCircles()
+        assert.exists(circles1)
+        assert.equal(circles1.length, 2, 'there should be 2 Circles after step4')
+
+        const items1 = win.board1.items()
+        assert.exists(items1)
+        assert.equal(items1.length, 4, 'there should be 4 Items after step4')
+
+        assert.equal(win.board1.orientation(), 'black', 'Orientation should be black after step4')
+      })
+
+      // step5: flip again
+      .get('#test5step3Btn').click()
+      .get('#myBoard .arrow-bc3c7').should('have.length', 2)
+      .get('#myBoard .circle-a0266').should('have.length', 2)
+      .get('#myBoard .item-18a5b').should('have.length', 4)
+      .window().then(win => {
+        const arrows1 = win.board1.getArrows()
+        assert.exists(arrows1)
+        assert.equal(arrows1.length, 2, 'there should be 2 Arrows after step5')
+
+        const circles1 = win.board1.getCircles()
+        assert.exists(circles1)
+        assert.equal(circles1.length, 2, 'there should be 2 Circles after step5')
+
+        const items1 = win.board1.items()
+        assert.exists(items1)
+        assert.equal(items1.length, 4, 'there should be 4 Items after step5')
+
+        assert.equal(win.board1.orientation(), 'white', 'Orientation should be white after step5')
+      })
+  })
 })

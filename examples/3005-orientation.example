@@ -9,25 +9,31 @@ Use the <a href="docs.html#methods:orientation"><code class="js plain">orientati
 
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
-<button id="showOrientationBtn">Show orientation in console</button>
+
+<button id="flipOrientationBtn">Flip orientation</button>
 <button id="whiteOrientationBtn">White orientation</button>
 <button id="blackOrientationBtn">Black orientation</button>
-<button id="flipOrientationBtn">Flip orientation</button>
+<button id="showOrientationBtn">Show orientation in console</button>
 
 ===== JS
 const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
 const board = Chessboard2('myBoard', ruyLopez)
 
-$('#showOrientationBtn').on('click', function () {
-  console.log('Board orientation is: ' + board.orientation())
+$('#flipOrientationBtn').on('click', function () {
+  const newOrientation = board.flip()
+  console.log('New board orientation is:', newOrientation)
 })
 
 $('#whiteOrientationBtn').on('click', function () {
-  board.orientation('white')
+  const newOrientation = board.orientation('white')
+  console.log('New board orientation is:', newOrientation)
 })
 
 $('#blackOrientationBtn').on('click', function () {
-  board.orientation('black')
+  const newOrientation = board.orientation('black')
+  console.log('New board orientation is:', newOrientation)
 })
 
-$('#flipOrientationBtn').on('click', board.flip)
+$('#showOrientationBtn').on('click', function () {
+  console.log('Current board orientation is:', board.orientation())
+})
