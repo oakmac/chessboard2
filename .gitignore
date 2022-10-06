@@ -6,4 +6,5 @@
 node_modules/
 public/js/
 tests.js
+website/examples/
 website/js/chessboard.js
