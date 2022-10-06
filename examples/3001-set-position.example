@@ -26,10 +26,20 @@ set the board position.
 <button id="setPawns3">Pawn Attack 2!</button>
 <button id="setPawns4">Pawns 4</button>
 
+<button id="setWithCallback">Set Position with Callback</button>
+<button id="setWithAnimateSpeed">Queen's Gambit (Set Position with Animate Speed)</button>
+<button id="setWithPromise">Queen's Gambit Accepted (Set Position returns a Promise)</button>
+<button id="setWithObject">Queen's Gambit Declined (Set Position with an Object)</button>
+
 ===== JS
 var board = Chessboard2('myBoard')
 
 $('#setStartBtn').on('click', board.start)
+
+const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
+const queensGambit = 'rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR'
+const queensGambitAccepted = 'rnbqkbnr/ppp2ppp/8/8/2pP4/8/PP2PPPP/RNBQKBNR'
+const queensGambitDeclined = 'rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR'
 
 $('#setRuyLopezBtn').on('click', function () {
   board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')
@@ -68,6 +78,27 @@ $('#setPawns3').on('click', function () {
   }
 })
 
-$('#setPawns4').on('click', function () {
+$('#setWithCallback').on('click', function () {
+  board.position(ruyLopez, (positionInfo) => {
+    console.log('Animations have finished:', positionInfo)
+  })
+})
 
+$('#setWithAnimateSpeed').on('click', function () {
+  board.position(queensGambit, 'super slow')
+})
+
+$('#setWithPromise').on('click', function () {
+  board.position(queensGambitAccepted).then(info => {
+    console.log('Animations have finished:', info)
+  })
+})
+
+$('#setWithObject').on('click', function () {
+  board.fen(queensGambitDeclined, {
+    animateSpeed: 800,
+    onComplete: function (posInfo) {
+      console.log('Animations have finished:', posInfo)
+    }
+  })
 })

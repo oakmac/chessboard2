@@ -59,21 +59,31 @@
              :to "d4"}]))))
 
 (deftest parse-set-position-args-test
+  (is (= (parse-set-position-args (array))
+         {}))
   (is (= (parse-set-position-args [false])
          {:animate false}))
   (is (= (parse-set-position-args ["fen-string-here" false])
          {:animate false}))
-  (is (= (parse-set-position-args [false "fen-string-here"])
+  (is (= (parse-set-position-args (array false "fen-string-here"))
          {:animate false}))
-  (is (= (parse-set-position-args [(js-obj) false 2000])
+  (is (= (parse-set-position-args (array (js-obj "foo" "bar") false 2000))
          {:animate false
           :animateSpeed 2000}))
   (is (= (parse-set-position-args [2000 "fen-string-here"])
          {:animateSpeed 2000}))
+  (is (= (parse-set-position-args [2000 "super slow" 678])
+         {:animateSpeed 678})
+      "last argument wins")
   (let [callback-fn1 (fn [] 1)]
-    (is (= (parse-set-position-args [2000 "fen-string-here" callback-fn1])
-           {:animateSpeed 2000
+    (is (= (parse-set-position-args ["fast" "fen-string-here" callback-fn1])
+           {:animateSpeed "fast"
             :onComplete callback-fn1})))
   (let [callback-fn1 (fn [] 1)]
     (is (= (parse-set-position-args [(js-obj) callback-fn1])
-           {:onComplete callback-fn1}))))
+           {:onComplete callback-fn1})))
+  (is (= (parse-set-position-args [(js-obj "animateSpeed" 350)])
+         {:animateSpeed 350}))
+  (let [callback-fn1 (fn [] 1)]
+    (is (= (parse-set-position-args [212 (js-obj "onComplete" callback-fn1)])
+           {:animateSpeed 212, :onComplete callback-fn1}))))
