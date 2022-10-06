@@ -24,7 +24,7 @@
 (declare percent? size-string->number tshirt-sizes)
 
 ;; TODO
-;; - [ ] .move('0-0') and .move('0-0-0') should work as expected
+;; - [ ] .move('0-0') and .move('0-0-0') should work as expected (GitHub Issue #6)
 
 (defn click-root-el [js-evt]
   nil)

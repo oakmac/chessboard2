@@ -183,9 +183,11 @@
 
         ; _ (js/console.log "first dom-ops:" (pr-str (first dom-ops)))
         ; _ (js/console.log "second dom-ops:" (pr-str (second dom-ops)))]
-
+    ;; apply the DOM operations to the board
     (dom-ops/apply-ops! board-state dom-ops)
+    ;; update the board position
     (swap! board-state assoc :position new-pos)
+    ;; return the Promise object
     return-promise))
 
 (defn set-position-instant!
