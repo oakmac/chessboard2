@@ -9,10 +9,11 @@
 // libraries
 const assert = require('assert')
 const commonmark = require('commonmark')
+const docs = require('../data/docs.json')
 const fs = require('fs-plus')
 const kidif = require('kidif')
 const mustache = require('mustache')
-const docs = require('../data/docs.json')
+const path = require('path')
 
 const encoding = {encoding: 'utf8'}
 
@@ -26,7 +27,7 @@ const cssCDNLink = 'https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chess
 
 let chessboardJsScript = jsCDNLink
 if (useDevFile) {
-  chessboardJsScript = '<script src="js/chessboard.js"></script>'
+  chessboardJsScript = '<script src="js/chessboard2.js"></script>'
 }
 
 // grab some mustache templates
@@ -40,8 +41,11 @@ const headTemplate = fs.readFileSync('templates/_head.mustache', encoding)
 const headerTemplate = fs.readFileSync('templates/_header.mustache', encoding)
 const footerTemplate = fs.readFileSync('templates/_footer.mustache', encoding)
 
-const latestChessboardJS = fs.readFileSync('public/js/chessboard2.js', encoding)
-const latestChessboardCSS = fs.readFileSync('public/css/chessboard2.css', encoding)
+const latestChessboardJS = fs.readFileSync(path.join(__dirname, '../target/chessboard2.js'), encoding)
+const latestChessboardCSS = fs.readFileSync(path.join(__dirname, '../src-css/chessboard2.css'), encoding)
+
+assert(typeof latestChessboardJS === 'string' && latestChessboardJS !== '')
+assert(typeof latestChessboardCSS === 'string' && latestChessboardCSS !== '')
 
 // grab the examples
 let examplesArr = kidif('examples/*.example')
@@ -101,8 +105,8 @@ $('#startBtn').on('click', board2.start)
 $('#clearBtn').on('click', board2.clear)`.trim()
 
 function writeSrcFiles () {
-  fs.writeFileSync('website/js/chessboard.js', latestChessboardJS, encoding)
-  fs.writeFileSync('website/css/chessboard.css', latestChessboardCSS, encoding)
+  fs.writeFileSync('website/js/chessboard2.js', latestChessboardJS, encoding)
+  fs.writeFileSync('website/css/chessboard2.css', latestChessboardCSS, encoding)
 }
 
 function writeHomepage () {
@@ -247,10 +251,10 @@ function buildExamplesNavHTML () {
 }
 
 function buildExamplesJS () {
-  let txt = 'window.CHESSBOARD_EXAMPLES = {}\n\n'
+  let txt = 'window.CHESSBOARD2_EXAMPLES = {}\n\n'
 
   examplesArr.forEach(function (ex) {
-    txt += 'CHESSBOARD_EXAMPLES["' + ex.id + '"] = {\n' +
+    txt += 'CHESSBOARD2_EXAMPLES["' + ex.id + '"] = {\n' +
       '  description: ' + JSON.stringify(ex.description) + ',\n' +
       '  html: ' + JSON.stringify(ex.html) + ',\n' +
       '  name: ' + JSON.stringify(ex.name) + ',\n' +

@@ -13,7 +13,6 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600|Roboto+Mono">
     <link rel="stylesheet" href="css/website2.css" />
-    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU" crossorigin="anonymous">
     <link rel="stylesheet" href="css/chessboard2.css" />
 </head>
 
@@ -54,9 +53,9 @@
 
 
 <script>
-window.CHESSBOARD_EXAMPLES = {}
+window.CHESSBOARD2_EXAMPLES = {}
 
-CHESSBOARD_EXAMPLES["1000"] = {
+CHESSBOARD2_EXAMPLES["1000"] = {
   description: "Chessboard.js initializes to an empty board with no second argument.",
   html: "<div id=\"myBoard\" style=\"width: 400px;\"></div>",
   name: "Empty Board",
@@ -66,7 +65,7 @@ var board = Chessboard2('myBoard')
   }
 };
 
-CHESSBOARD_EXAMPLES["1001"] = {
+CHESSBOARD2_EXAMPLES["1001"] = {
   description: "Pass <code class=\"js string\">'start'</code> as the second argument to initialize\nthe board to the start position.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Start Position",
@@ -76,7 +75,7 @@ var board = Chessboard2('myBoard', 'start')
   }
 };
 
-CHESSBOARD_EXAMPLES["1002"] = {
+CHESSBOARD2_EXAMPLES["1002"] = {
   description: "Pass a <a href=\"docs.html#fen_string\">FEN String</a> as the second argument to\ninitialize the board to a specific position.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "FEN String",
@@ -87,7 +86,7 @@ var board = Chessboard2('myBoard', ruyLopez)
   }
 };
 
-CHESSBOARD_EXAMPLES["1003"] = {
+CHESSBOARD2_EXAMPLES["1003"] = {
   description: "Pass a <a href=\"docs.html#position_object\">Position Object</a> as the second argument to initialize the board to a specific position.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Position Object",
@@ -102,7 +101,7 @@ var board = Chessboard2('myBoard', position)
   }
 };
 
-CHESSBOARD_EXAMPLES["1004"] = {
+CHESSBOARD2_EXAMPLES["1004"] = {
   description: "You can have multiple boards on the same page.",
   html: "<div id=\"board1\" class=\"small-board\"></div>\n<div id=\"board2\" class=\"small-board\"></div>\n<div id=\"board3\" class=\"small-board\"></div>",
   name: "Multiple Boards",
@@ -125,7 +124,7 @@ var board3 = Chessboard2('board3', {
   }
 };
 
-CHESSBOARD_EXAMPLES["2000"] = {
+CHESSBOARD2_EXAMPLES["2000"] = {
   description: "Set the <a href=\"docs.html#config:position\"><code class=\"js plain\">position</code></a> property to <code class=\"js string\">'start'</code> to initialize the board to the start position.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Start Position",
@@ -138,7 +137,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["2001"] = {
+CHESSBOARD2_EXAMPLES["2001"] = {
   description: "Use the <a href=\"docs.html#config:orientation\"><code class=\"js plain\">orientation</code></a> property to set board orientation.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Orientation",
@@ -152,7 +151,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["2002"] = {
+CHESSBOARD2_EXAMPLES["2002"] = {
   description: "Use the <a href=\"docs.html#config:showNotation\"><code class=\"js plain\">showNotation</code></a> property to turn board notation on or off.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Notation",
@@ -166,7 +165,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["2003"] = {
+CHESSBOARD2_EXAMPLES["2003"] = {
   description: "Set <a href=\"docs.html#config:draggable\"><code class=\"js plain\">draggable</code></a> to <code class='js keyword'>true</code> to allow drag and drop of pieces. Pieces will return to their original square when dropped off the board (ie: the default for <a href=\"docs.html#config:dropOffBoard\"><code class=\"js plain\">dropOffBoard</code></a> is <code class=\"js string\">'snapback'</code>).",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Draggable Snapback",
@@ -181,7 +180,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["2004"] = {
+CHESSBOARD2_EXAMPLES["2004"] = {
   description: "Use the <a href=\"docs.html#config:pieceTheme\"><code class=\"js plain\">pieceTheme</code></a> property to set the source of piece images.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Piece Theme String",
@@ -195,7 +194,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["2005"] = {
+CHESSBOARD2_EXAMPLES["2005"] = {
   description: "You can control animation speeds with the <a href=\"docs.html#config:moveSpeed\"><code class=\"js plain\">moveSpeed</code></a>, <a href=\"docs.html#config:snapbackSpeed\"><code class=\"js plain\">snapbackSpeed</code></a>, <a href=\"docs.html#config:snapSpeed\"><code class=\"js plain\">snapSpeed</code></a>, and <a href=\"docs.html#config:trashSpeed\"><code class=\"js plain\">trashSpeed</code></a> properties.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"ruyLopezBtn\">Ruy Lopez</button>\n<button id=\"startBtn\">Start Position</button>",
   name: "Animation Speed",
@@ -216,7 +215,7 @@ $('#startBtn').on('click', board.start)
   }
 };
 
-CHESSBOARD_EXAMPLES["2006"] = {
+CHESSBOARD2_EXAMPLES["2006"] = {
   description: "Set <a href=\"docs.html#config:sparePieces\"><code class=\"js plain\">sparePieces</code></a> to <code class=\"js keyword\">true</code> to show spare pieces that can be dropped onto the board.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"startBtn\">Start Position</button>\n<button id=\"clearBtn\">Clear Board</button>",
   name: "Spare Pieces",
@@ -233,7 +232,7 @@ $('#clearBtn').on('click', board.clear)
   }
 };
 
-CHESSBOARD_EXAMPLES["2030"] = {
+CHESSBOARD2_EXAMPLES["2030"] = {
   description: "<a href=\"docs.html#config:pieceTheme\"><code class=\"js plain\">pieceTheme</code></a> can be a function.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Piece Theme Function",
@@ -257,7 +256,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["2044"] = {
+CHESSBOARD2_EXAMPLES["2044"] = {
   description: "You can set the <a href=\"docs.html#config:position\"><code class=\"js plain\">position</code></a> property to a <a href=\"http://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation\">FEN</a> string.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Position FEN",
@@ -270,7 +269,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["2063"] = {
+CHESSBOARD2_EXAMPLES["2063"] = {
   description: "You can set the <a href=\"docs.html#config:position\"><code class=\"js plain\">position</code></a> property with a <a href=\"docs.html#position_object\">Position Object</a>.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Position Object",
@@ -287,7 +286,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["2082"] = {
+CHESSBOARD2_EXAMPLES["2082"] = {
   description: "Set <a href=\"docs.html#config:dropOffBoard\"><code class=\"js plain\">dropOffBoard</code></a> to <code class='js string'>'trash'</code> to remove pieces when they are dropped outside the board.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Draggable Trash",
@@ -302,7 +301,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["3000"] = {
+CHESSBOARD2_EXAMPLES["3000"] = {
   description: "<p>Use the <a href=\"docs.html#methods:position\">.position()</a>, <a href=\"docs.html#methods:fen\">.fen()</a>, or <a href=\"docs.html#methods:getPosition\">.getPosition()</a> methods to retrieve the\nposition of the board as either a JS Object, FEN String, or JS Map.</p>\n",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"showPositionBtn\">show .position() in console</button>\r\n<button id=\"showFenBtn\">show .fen() in console</button>\r\n<button id=\"showGetPositionBtn\">show .getPosition() in console</button>",
   name: "Get Position",
@@ -347,7 +346,7 @@ $('#showGetPositionBtn').on('click', clickGetPositionBtn)
   }
 };
 
-CHESSBOARD_EXAMPLES["3001"] = {
+CHESSBOARD2_EXAMPLES["3001"] = {
   description: "<p>Use the <a href=\"docs.html#methods:position\">.position()</a>, <a href=\"docs.html#methods:setPosition\">.setPosition()</a>, <a href=\"docs.html#methods:fen\">.fen()</a>, <a href=\"docs.html#methods:start\">.start()</a>, or <a href=\"docs.html#methods:clear\">.clear()</a> methods to\nset the board position.</p>\n",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"setStartBtn\">Start Position</button>\n<button id=\"setRuyLopezBtn\">Ruy Lopez</button>\n<button id=\"setRookCheckmateBtn\">Rook Checkmate</button>\r\n<button id=\"pawnAttackBtn\">Pawn Attack!</button>\r\n\r\n<button id=\"clearBoardBtn\">Clear Board</button>\r\n<button id=\"setPawns3\">Pawn Attack 2!</button>\r\n<button id=\"setPawns4\">Pawns 4</button>\r\n\r\n<button id=\"setWithCallback\">Set Position with Callback</button>\r\n<button id=\"setWithAnimateSpeed\">Queen's Gambit (Set Position with Animate Speed)</button>\r\n<button id=\"setWithPromise\">Queen's Gambit Accepted (Set Position returns a Promise)</button>\r\n<button id=\"setWithObject\">Queen's Gambit Declined (Set Position with an Object)</button>",
   name: "Set Position",
@@ -426,7 +425,7 @@ $('#setWithObject').on('click', function () {
   }
 };
 
-CHESSBOARD_EXAMPLES["3002"] = {
+CHESSBOARD2_EXAMPLES["3002"] = {
   description: "Pass <code class=\"js keyword\">false</code> as the second argument to the <a href=\"docs.html#methods:start\"><code class=\"js plain\">start</code></a> and <a href=\"docs.html#methods:position\"><code class=\"js plain\">position</code></a> methods to set the board position instantly.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"setStartBtn\">Start Position</button>\r\n<button id=\"setRuyLopezBtn\">Ruy Lopez</button>\r\n<button id=\"setRookCheckmateBtn\">Rook Checkmate</button>\r\n\r\n<button id=\"setPawns1\">Pawns 1</button>\r\n<button id=\"setPawns2\">Pawns 2</button>\r\n<button id=\"setPawns3\">Pawns 3</button>",
   name: "Set Position Instantly",
@@ -484,7 +483,7 @@ $('#setPawns3').on('click', function () {
   }
 };
 
-CHESSBOARD_EXAMPLES["3003"] = {
+CHESSBOARD2_EXAMPLES["3003"] = {
   description: "<p>Use the <a href=\"docs.html#methods:clear\">clear()</a> method to remove all pieces from the board.</p>\n",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"clearBoardBtn\">Clear Board</button>\n<button id=\"startPositionBtn\">Start Position</button>\n<button id=\"clearBoardInstantBtn\">Clear Board Instant</button>\n<button id=\"clearBoardCallbackBtn\">Clear Board with Callback</button>\n<button id=\"clearBoardAnimateSpeedBtn\">Clear Board with Animate Speed</button>",
   name: "Clear Board",
@@ -517,7 +516,7 @@ $('#clearBoardAnimateSpeedBtn').on('click', async function () {
   }
 };
 
-CHESSBOARD_EXAMPLES["3004"] = {
+CHESSBOARD2_EXAMPLES["3004"] = {
   description: "<p>Use the <a href=\"docs.html#methods:move\">.move()</a> method to make one or more moves on the board.</p>\n",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n<button id=\"move1Btn\">e2-e4</button>\n<button id=\"move2Btn\">d2-d4, g8-f6</button>\n<button id=\"move3Btn\">Animation Speed</button>\n<button id=\"disableAnimationsBtn\">Disable animations with 'false'</button>\n<button id=\"moveWithCallbackBtn\">.move() with callback function</button>\n<button id=\"move6Btn\">.move() with config object</button>\n<button id=\"move7Btn\">Single Move returns a Promise Object</button>\n<button id=\"move8Btn\">Multiple Moves returns an Array of Promises</button>\n<!-- <button id=\"move9Btn\">Move 9</button> -->\n<button id=\"move10Btn\">Combine Instant and Animated Moves</button>\n<button id=\"startPositionBtn\">Start Position</button>",
   name: "Move Pieces",
@@ -618,7 +617,7 @@ $('#startPositionBtn').on('click', board.start)
   }
 };
 
-CHESSBOARD_EXAMPLES["3005"] = {
+CHESSBOARD2_EXAMPLES["3005"] = {
   description: "Use the <a href=\"docs.html#methods:orientation\"><code class=\"js plain\">orientation</code></a> method to retrieve and set the orientation. Use the <a href=\"docs.html#methods:flip\"><code class=\"js plain\">flip</code></a> method to flip orientation.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n\n<button id=\"flipOrientationBtn\">Flip orientation</button>\n<button id=\"whiteOrientationBtn\">White orientation</button>\n<button id=\"blackOrientationBtn\">Black orientation</button>\n<button id=\"showOrientationBtn\">Show orientation in console</button>",
   name: "Orientation",
@@ -650,7 +649,7 @@ $('#showOrientationBtn').on('click', function () {
   }
 };
 
-CHESSBOARD_EXAMPLES["3006"] = {
+CHESSBOARD2_EXAMPLES["3006"] = {
   description: "Use the <a href=\"docs.html#methods:destroy\"><code class=\"js plain\">destroy</code></a> method to kill the board and remove it from the DOM.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"destroyBtn\">Destroy Board</button>",
   name: "Destroy Board",
@@ -662,7 +661,7 @@ $('#destroyBtn').on('click', board.destroy)
   }
 };
 
-CHESSBOARD_EXAMPLES["3007"] = {
+CHESSBOARD2_EXAMPLES["3007"] = {
   description: "Use the <a href=\"docs.html#methods:resize\"><code class=\"js plain\">resize</code></a> method to recalculate and redraw the board based on the size of it's parent element. See the full effect of this example in a <a href=\"examples/3007\" target=\"_new\">new window</a>.",
   html: "<div id=\"myBoard\" style=\"width: 60%\"></div>",
   name: "Resize",
@@ -674,7 +673,7 @@ $(window).resize(board.resize)
   }
 };
 
-CHESSBOARD_EXAMPLES["3008"] = {
+CHESSBOARD2_EXAMPLES["3008"] = {
   description: "TODO: write me :)",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"addArrow1Btn\">Add Arrow 1</button>\n<button id=\"addArrow2Btn\">Add Arrow 2</button>\n<button id=\"addArrow3Btn\">Add Arrow 3</button>\n<button id=\"addArrow4Btn\">Add Arrow 4</button>\n<button id=\"moveArrow4Btn\">Move Arrow 4</button>\n<br />\n<button id=\"addArrow5Btn\">Add Arrow 5</button>\n<button id=\"removeArrow5Btn\">Remove Arrow 5</button>\n<button id=\"logArrowsBtn\">console.log Arrows</button>\n<button id=\"clearArrowsBtn\">Clear Arrows</button>",
   name: "Analysis Arrows",
@@ -745,7 +744,7 @@ $('#clearArrowsBtn').on('click', function () {
   }
 };
 
-CHESSBOARD_EXAMPLES["3009"] = {
+CHESSBOARD2_EXAMPLES["3009"] = {
   description: "TODO: write me :)",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"addCircle1Btn\">Default Circle at d4</button>\n<button id=\"addCircle2Btn\">Large, Orange Circle at e4</button>\n<button id=\"addCircle3Btn\">Small, Purple Circle at e4</button>\n<button id=\"addCircle4Btn\">Add Circle 4</button>\n<button id=\"addCircle5Btn\">Add Circle with Config Object</button>\n<br />\n<button id=\"removeCircle1Btn\">Remove Circle at e4</button>\n<button id=\"removeCircle2Btn\">Remove Circle 2</button>\n<button id=\"logCirclesBtn\">console.log Circles</button>\n<button id=\"clearCirclesBtn\">Clear Circles</button>",
   name: "Circles",
@@ -817,7 +816,7 @@ $('#clearCirclesBtn').on('click', function () {
   }
 };
 
-CHESSBOARD_EXAMPLES["3010"] = {
+CHESSBOARD2_EXAMPLES["3010"] = {
   description: "TODO: write me :)",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"itemsBtn1\">.items()</button>\n<button id=\"itemsBtn2\">.getItems()</button>\n<button id=\"itemsBtn3\">Log Items</button>\n<button id=\"flipBoardBtn\">Flip Board</button>\n<button id=\"clearArrowsBtn\">Clear Arrows</button>\n<button id=\"addArrowsBtn\">Add Arrows</button>",
   name: "Items",
@@ -859,7 +858,7 @@ $('#clearArrowsBtn').on('click', board.clearArrows)
   }
 };
 
-CHESSBOARD_EXAMPLES["3011"] = {
+CHESSBOARD2_EXAMPLES["3011"] = {
   description: "You can use the `removePiece()` function to remove pieces from the board. Be aware\nthat removing pieces from the board changes the board's position.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"btn1\">Remove a1</button>\n<button id=\"btn2\">Remove d1, e1, f1</button>\n<button id=\"btn3\">Remove c7 Instantly</button>\n<br />\n<button id=\"addBtn1\">Add White Rook to e4</button>\n<button id=\"addBtn2\">Add Black Knight to d5</button>\n<button id=\"addBtn3\">Add White Queen to a5</button>\n<button id=\"btnStart\">Start Position</button>",
   name: "Pieces",
@@ -902,7 +901,7 @@ $('#btnStart').on('click', function () {
   }
 };
 
-CHESSBOARD_EXAMPLES["3012"] = {
+CHESSBOARD2_EXAMPLES["3012"] = {
   description: "FIXME: write this\n\nThings are not looking great for White here.\n\nNOTE: in chessboard v1, this was called \"notation\"",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<br />\n<br />\n<br />\n<button id=\"showCoordinatesBtn\">Show Coordinates</button>\n<button id=\"hideCoordinatesBtn\">Hide Coordinates</button>\n<button id=\"toggleCoordinatesBtn\">Toggle Coordinates</button>",
   name: "Coordinates",
@@ -937,7 +936,7 @@ $('#toggleCoordinatesBtn').on('click', function () {
   }
 };
 
-CHESSBOARD_EXAMPLES["4000"] = {
+CHESSBOARD2_EXAMPLES["4000"] = {
   description: "The <a href=\"docs.html#config:onChange\"><code class=\"js plain\">onChange</code></a> event fires when the board position changes.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"ruyLopezBtn\">Ruy Lopez</button>\n<button id=\"startPositionBtn\">Start Position</button>",
   name: "onChange",
@@ -966,7 +965,7 @@ $('#startPositionBtn').on('click', board.start)
   }
 };
 
-CHESSBOARD_EXAMPLES["4001"] = {
+CHESSBOARD2_EXAMPLES["4001"] = {
   description: "The <a href=\"docs.html#config:onDragStart\"><code class=\"js plain\">onDragStart</code></a> event fires every time a piece is picked up.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "onDragStart",
@@ -991,7 +990,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["4002"] = {
+CHESSBOARD2_EXAMPLES["4002"] = {
   description: "Prevent the drag action by returning <code class=\"js keyword\">false</code> from the <a href=\"docs.html#config:onDragStart\"><code class=\"js plain\">onDragStart</code></a> function.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"flipOrientationBtn\">Flip Orientation</button>",
   name: "onDragStart Prevent Drag",
@@ -1017,7 +1016,7 @@ $('#flipOrientationBtn').on('click', board.flip)
   }
 };
 
-CHESSBOARD_EXAMPLES["4003"] = {
+CHESSBOARD2_EXAMPLES["4003"] = {
   description: "The <a href=\"docs.html#config:onDragMove\"><code class=\"js plain\">onDragMove</code></a> event fires every time a piece changes location.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "onDragMove",
@@ -1044,7 +1043,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["4004"] = {
+CHESSBOARD2_EXAMPLES["4004"] = {
   description: "The <a href=\"docs.html#config:onDrop\"><code class=\"js plain\">onDrop</code></a> event fires every time a piece is dropped.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "onDrop",
@@ -1070,7 +1069,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["4005"] = {
+CHESSBOARD2_EXAMPLES["4005"] = {
   description: "If <code class=\"js string\">'snapback'</code> is returned from the <a href=\"docs.html#config:onDrop\"><code class=\"js plain\">onDrop</code></a> function, the dragged piece will return to it's source square.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "onDrop Snapback",
@@ -1092,7 +1091,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["4006"] = {
+CHESSBOARD2_EXAMPLES["4006"] = {
   description: "If <code class=\"js string\">'trash'</code> is returned from the <a href=\"docs.html#config:onDrop\"><code class=\"js plain\">onDrop</code></a> function, the dragged piece will be removed.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "onDrop Trash",
@@ -1114,7 +1113,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["4011"] = {
+CHESSBOARD2_EXAMPLES["4011"] = {
   description: "The <a href=\"docs.html#config:onSnapbackEnd\"><code class=\"js plain\">onSnapbackEnd</code></a> event fires after a piece has snapped back to it's original square.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "onSnapbackEnd",
@@ -1137,7 +1136,7 @@ var board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["4012"] = {
+CHESSBOARD2_EXAMPLES["4012"] = {
   description: "The <a href=\"docs.html#config:onMoveEnd\"><code class=\"js plain\">onMoveEnd</code></a> event fires at the end of animations when the board position changes.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<button id=\"ruyLopezBtn\">Ruy Lopez</button>\n<button id=\"moveBtn\">a2-a4, h7-h5</button>\n<button id=\"startBtn\">Start Position</button>\n<button id=\"clearBtn\">Clear Board</button>",
   name: "onMoveEnd",
@@ -1167,7 +1166,7 @@ $('#clearBtn').on('click', board.clear)
   }
 };
 
-CHESSBOARD_EXAMPLES["5000"] = {
+CHESSBOARD2_EXAMPLES["5000"] = {
   description: "You can integrate chessboard.js with the <a href=\"https://github.com/jhlywa/chess.js\">chess.js</a> library to only allow legal moves.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\n<label>Status:</label>\n<div id=\"status\"></div>\n<label>FEN:</label>\n<div id=\"fen\"></div>\n<label>PGN:</label>\n<div id=\"pgn\"></div>",
   name: "Only Allow Legal Moves",
@@ -1259,7 +1258,7 @@ updateStatus()
   }
 };
 
-CHESSBOARD_EXAMPLES["5001"] = {
+CHESSBOARD2_EXAMPLES["5001"] = {
   description: "You can integrate chessboard.js with the <a href=\"https://github.com/jhlywa/chess.js\">chess.js</a> library to play against random moves.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Play Random Computer",
@@ -1322,7 +1321,7 @@ board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["5002"] = {
+CHESSBOARD2_EXAMPLES["5002"] = {
   description: "Who will win in this riveting game of <code class=\"js plain\">Math.random()</code> vs <code class=\"js plain\">Math.random()</code>?",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Random vs Random",
@@ -1353,7 +1352,7 @@ window.setTimeout(makeRandomMove, 500)
   }
 };
 
-CHESSBOARD_EXAMPLES["5003"] = {
+CHESSBOARD2_EXAMPLES["5003"] = {
   description: "Use the <code class=\"js plain\"><a href=\"docs.html#config:onMouseoverSquare\">onMouseoverSquare</a></code> and <code class=\"js plain\"><a href=\"docs.html#config:onMouseoutSquare\">onMouseoutSquare</a></code> events to highlight legal squares.",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Highlight Legal Moves",
@@ -1447,7 +1446,7 @@ board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["5004"] = {
+CHESSBOARD2_EXAMPLES["5004"] = {
   description: "Use CSS to show piece highlighting.",
   html: "<style type=\"text/css\">\r\n.highlight-white {\n  box-shadow: inset 0 0 3px 3px yellow;\n}\r\n.highlight-black {\n  box-shadow: inset 0 0 3px 3px blue;\n}\r\n</style>\n<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Piece Highlighting 1",
@@ -1507,7 +1506,7 @@ window.setTimeout(makeRandomMove, 500)
   }
 };
 
-CHESSBOARD_EXAMPLES["5005"] = {
+CHESSBOARD2_EXAMPLES["5005"] = {
   description: "Use CSS to show piece highlighting.",
   html: "<style type=\"text/css\">\n.highlight-white {\n  box-shadow: inset 0 0 3px 3px yellow;\n}\n.highlight-black {\n  box-shadow: inset 0 0 3px 3px blue;\n}\n</style>\n<div id=\"myBoard\" style=\"width: 400px\"></div>",
   name: "Piece Highlighting 2",
@@ -1599,7 +1598,7 @@ board = Chessboard2('myBoard', config)
   }
 };
 
-CHESSBOARD_EXAMPLES["9001"] = {
+CHESSBOARD2_EXAMPLES["9001"] = {
   description: "<p>This file exists for Cypress testing</p>\n",
   html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n\r\n<section>\r\n  <h1>test1: e2 - e4</h1>\r\n  <button id=\"test1move1Btn\">e2-e4</button>\n  <div id=\"test1results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test2: multiple moves</h1>\n  <button id=\"test2move1Btn\">step1</button>\n  <div id=\"test2results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test3: set position callback</h1>\n  <button id=\"test3step1Btn\">step1</button>\n  <div id=\"test3results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test4: set position promise</h1>\n  <button id=\"test4step1Btn\">step1</button>\n  <div id=\"test4results\"></div>\n</section>\n\n<hr />\n\n<section>\n  <h1>test5: orientation</h1>\n  <button id=\"test5step1Btn\">step1: add arrows</button>\n  <button id=\"test5step2Btn\">step2: add circles</button>\n  <button id=\"test5step3Btn\">step3: flip board</button>\n  <button id=\"test5step4Btn\">step4: remove some items</button>\n  <div id=\"test5results\"></div>\n</section>\n\n<hr />",
   name: "Move Pieces Test",
@@ -1681,7 +1680,7 @@ $('#test5step4Btn').on('click', function () {
 </script>
 <script src="js/jquery-3.4.1.min.js"></script>
 <script src="js/prettify.min.js"></script>
-<script src="js/chessboard.js"></script>
+<script src="js/chessboard2.js"></script>
 <script src="js/chess-0.10.2.min.js"></script>
 <script src="js/examples.js"></script>
 </body>

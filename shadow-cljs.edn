@@ -5,7 +5,7 @@
  :builds
  {:chessboard2
   {:target :browser
-   :output-to "public/js"
+   :output-dir "target/"
    :modules {:chessboard2 {:entries [com.oakmac.chessboard2.core]}}}
 
   :node-tests

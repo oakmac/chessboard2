@@ -2,9 +2,11 @@
 .DS_Store
 .lsp/
 .shadow-cljs/
-*.diff
 node_modules/
-public/js/
-tests.js
+target/
+website/css/chessboard2.css
 website/examples/
-website/js/chessboard.js
+website/js/chessboard2.js
+
+*.diff
+tests.js

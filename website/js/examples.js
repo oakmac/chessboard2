@@ -1,6 +1,6 @@
 ;(function () {
   var $ = window.jQuery
-  var EXAMPLES = window.CHESSBOARD_EXAMPLES
+  var EXAMPLES = window.CHESSBOARD2_EXAMPLES
   var prettyPrint = window.prettyPrint
 
   function htmlEscape (str) {
