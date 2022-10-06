@@ -1,6 +1,5 @@
 (ns com.oakmac.chessboard2.core
   (:require
-    [com.oakmac.chessboard2.animations :refer [calculate-animations]]
     [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
@@ -8,15 +7,14 @@
     [com.oakmac.chessboard2.js-api :as js-api]
     [com.oakmac.chessboard2.util.board :refer [start-position]]
     [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
-    [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element! set-style-prop!]]
-    [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
-    [com.oakmac.chessboard2.util.functions :refer [defer]]
+    [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element!]]
+    [com.oakmac.chessboard2.util.fen :refer [fen->position valid-fen?]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.logging :refer [warn-log]]
-    [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position move->map]]
+    [com.oakmac.chessboard2.util.moves :refer [move->map]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
-    [com.oakmac.chessboard2.util.predicates :refer [arrow-item? circle-item? piece-item? fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
-    [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids square->dimensions]]
+    [com.oakmac.chessboard2.util.predicates :refer [arrow-item? circle-item? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
+    [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids]]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
     [goog.array :as garray]
     [goog.dom :as gdom]
@@ -27,9 +25,8 @@
 ;; TODO
 ;; - [ ] .move('0-0') and .move('0-0-0') should work as expected (GitHub Issue #6)
 
-(defn click-root-el [js-evt]
-  nil)
-  ; (.log js/console "clicked root element:" js-evt))
+; (defn click-root-el [js-evt]
+;   (.log js/console "clicked root element:" js-evt))
 
 ;; NOTE: the transitionend event fires for every CSS property that is transitioned
 ;; This function fires twice for most (but not all) piece moves (css props 'left' and 'top')
@@ -121,8 +118,6 @@
 
 ;; -----------------------------------------------------------------------------
 ;; API Methods
-
-;; FIXME: should be able to remove a circle either via square code or id
 
 (defn get-items-by-type
   "Returns a map of <type> Items on the board"
@@ -334,7 +329,7 @@
         (remove-arrow board-state item-id)))
 
     :else
-    (if-let [arrow (get-in @board-state [:items item-id-or-squares])]
+    (if-let [_arrow (get-in @board-state [:items item-id-or-squares])]
       (remove-arrow board-state item-id-or-squares)
       ;; TODO: error code here?
       (warn-log "Invalid argument passed to removeArrow():" item-id-or-squares))))
@@ -450,16 +445,6 @@
   (and (object? js-move)
        (valid-square? (gobj/get js-move "from"))
        (valid-square? (gobj/get js-move "to"))))
-
-;; FIXME: handle 0-0 and 0-0-0
-;; FIXME: this function should be variadic
-; (defn js-move-piece
-;   [board-state arg1]
-;   (cond
-;     (valid-move-string? arg1) (move-piece board-state (move->map arg1 "MOVE_FORMAT"))
-;     ;; TODO (array-of-moves? arg1) ()
-;     (looks-like-a-move-object? arg1) (move-piece board-state (js->clj arg1 :keywordize-keys true))
-;     :else (js/console.warn "FIXME ERROR CODE: Invalid value passed to the .move() method:" arg1)))
 
 ;; TODO: this function should accept an Array of squares
 ;; TODO: this function should accept an Object with "onFinishAnimation" callback
@@ -649,7 +634,8 @@
        "clearArrows" (partial clear-arrows board-state)
        "getArrows" (partial js-get-arrows board-state)
        "removeArrow" (partial js-remove-arrow board-state)
-       "moveArrow" (partial js-move-arrow board-state)
+       ;; TODO: should this method exist? would be neat to prototype it and see the effect
+       ; "moveArrow" (partial js-move-arrow board-state)
 
        "addCircle" (partial js-add-circle board-state)
        "circles" (partial js-get-circles board-state)
@@ -657,10 +643,14 @@
        "getCircles" (partial js-get-circles board-state)
        "removeCircle" (partial js-remove-circle board-state)
 
-       "config" #() ;; FIXME
-       "getConfig" #() ;; FIXME
-       "setConfig" #() ;; FIXME
+       ;; FIXME: implement these
+       ; https://github.com/oakmac/chessboardjs2/issues/7
+       ; "config" #()
+       ; "getConfig" #()
+       ; "setConfig" #()
 
+       ;; FIXME: allow adding custom items
+       ;; https://github.com/oakmac/chessboardjs2/issues/9
        "addItem" #() ;; FIXME: add a custom Item to the board
        "clearItems" #() ;; FIXME
        "getItems" (partial js-get-items board-state)
@@ -675,7 +665,6 @@
 
        "clear" (partial js-api/clear board-state)
        "move" (partial js-api/move-piece board-state)
-       ; "movePiece" (partial js-move-piece board-state) ;; FIXME: write this
        ;; FIXME: moveInstant ???
        "position" (partial js-api/position board-state)
        "getPosition" (partial js-api/get-position board-state)
@@ -697,9 +686,10 @@
        "showCoordinates" (partial show-coordinates! board-state)
        "toggleCoordinates" (partial toggle-coordinates! board-state)
 
-       ;; TODO: do we need getOrientation and setOrientation?
-       "flip" #(orientation board-state "flip")
-       "orientation" #(orientation board-state %1)
+       "flip" (partial orientation board-state "flip")
+       "orientation" (partial orientation board-state)
+       "getOrientation" (partial orientation board-state nil)
+       "setOrientation" (partial orientation board-state)
 
        "animatePiece" #() ;; FIXME:
        "bouncePiece" #() ;; FIXME

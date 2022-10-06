@@ -19,7 +19,7 @@ It is possible (although unlikely) that chessboard.js will have a v2.0.0 branch.
 
 ## Development Setup
 
-Make sure that [node.js], [yarn], and some version of the JVM are installed (for [shadow-cljs]), then:
+Make sure that [node.js], [yarn], and a modern version of the JVM are installed (for [shadow-cljs]), then:
 
 [node.js]:https://nodejs.org
 [yarn]:https://yarnpkg.com/
@@ -41,6 +41,8 @@ npm run local-dev
 ```sh
 ## Unit Tests
 npx shadow-cljs compile node-tests
+## or
+npm run test
 
 ## Cypress
 npm run cypress

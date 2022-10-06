@@ -1,7 +1,7 @@
 (ns test.chessboard2.js-api-test
   (:require
    [cljs.test :refer [deftest is]]
-   [com.oakmac.chessboard2.js-api :refer [parse-move-args parse-position-args]]
+   [com.oakmac.chessboard2.js-api :refer [parse-move-args parse-set-position-args]]
    [com.oakmac.chessboard2.constants :refer [animate-speed-strings->times]]))
 
 (deftest parse-move-args-test
@@ -58,22 +58,22 @@
              :onComplete callback-fn2
              :to "d4"}]))))
 
-(deftest parse-position-args-test
-  (is (= (parse-position-args [false])
+(deftest parse-set-position-args-test
+  (is (= (parse-set-position-args [false])
          {:animate false}))
-  (is (= (parse-position-args ["fen-string-here" false])
+  (is (= (parse-set-position-args ["fen-string-here" false])
          {:animate false}))
-  (is (= (parse-position-args [false "fen-string-here"])
+  (is (= (parse-set-position-args [false "fen-string-here"])
          {:animate false}))
-  (is (= (parse-position-args [(js-obj) false 2000])
+  (is (= (parse-set-position-args [(js-obj) false 2000])
          {:animate false
           :animateSpeed 2000}))
-  (is (= (parse-position-args [2000 "fen-string-here"])
+  (is (= (parse-set-position-args [2000 "fen-string-here"])
          {:animateSpeed 2000}))
   (let [callback-fn1 (fn [] 1)]
-    (is (= (parse-position-args [2000 "fen-string-here" callback-fn1])
+    (is (= (parse-set-position-args [2000 "fen-string-here" callback-fn1])
            {:animateSpeed 2000
             :onComplete callback-fn1})))
   (let [callback-fn1 (fn [] 1)]
-    (is (= (parse-position-args [(js-obj) callback-fn1])
+    (is (= (parse-set-position-args [(js-obj) callback-fn1])
            {:onComplete callback-fn1}))))

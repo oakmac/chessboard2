@@ -10,7 +10,7 @@
     [goog.crypt.base64 :as base64]))
 
 (defn NotationFiles
-  [{:keys [board-width color id opacity orientation size square] :as cfg}]
+  [_cfg]
   (let [num-files 8
         files (range 0 num-files)]
     (->> files
@@ -20,7 +20,7 @@
       (apply str))))
 
 (defn NotationRanks
-  [{:keys [board-width color id opacity orientation size square] :as cfg}]
+  [_cfg]
   (let [num-ranks 8
         ranks (range 0 num-ranks)]
     (->> ranks
@@ -30,7 +30,7 @@
       (apply str))))
 
 (defn Circle
-  [{:keys [board-width color id opacity orientation size square] :as cfg}]
+  [{:keys [board-width color id opacity orientation size square] :as _cfg}]
   (let [square-dims (square->dimensions square board-width orientation)
         square-width (/ board-width 8) ;; FIXME: need to support variable number of squares here
         circle-width (* size square-width)]
@@ -180,7 +180,7 @@
 
 ;; TODO: this function is a hot mess; refactor to something more functional / elegant
 (defn Squares
-  [{:keys [board-height num-rows num-cols square-el-ids items-container-id] :as opts}]
+  [{:keys [num-rows num-cols square-el-ids] :as _opts}]
   (let [html (atom "")
         white? (atom true)]
     (doseq [rank-idx (reverse (range 0 num-rows))]
@@ -196,7 +196,7 @@
     @html))
 
 (defn BoardContainer
-  [{:keys [board-height container-id num-rows num-cols orientation show-notation? items-container-id] :as opts}]
+  [{:keys [board-height container-id orientation show-notation? items-container-id] :as opts}]
   (template
     (str
       "<div class='chessboard-21da3{show-notation}' id='{container-id}'>"

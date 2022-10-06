@@ -13,8 +13,10 @@
     "url": "https://github.com/oakmac/chessboardjs2/issues"
   },
   "scripts": {
+    "build": "shadow-cljs release chessboard2 && ./scripts/website.js",
     "cypress": "cypress open",
-    "local-dev": "serve website/ -p 3232"
+    "local-dev": "serve website/ -p 3232",
+    "test": "shadow-cljs compile node-tests"
   },
   "devDependencies": {
     "commonmark": "0.30.0",

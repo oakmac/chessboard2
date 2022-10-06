@@ -3,22 +3,18 @@
   (:require
     [com.oakmac.chessboard2.api :as api]
     [com.oakmac.chessboard2.constants :refer [animate-speed-strings animate-speed-strings->times start-position]]
-    [com.oakmac.chessboard2.util.data-transforms :refer [clj->js-map js-map->clj map->js-return-format]]
+    [com.oakmac.chessboard2.util.data-transforms :refer [clj->js-map js-map->clj]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
-    [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position move->map]]
+    [com.oakmac.chessboard2.util.logging :refer [warn-log]]
+    [com.oakmac.chessboard2.util.moves :refer [move->map]]
     [com.oakmac.chessboard2.util.predicates :refer [fen-string?
                                                     map-string?
                                                     start-string?
-                                                    valid-color?
                                                     valid-js-position-map?
                                                     valid-js-position-object?
                                                     valid-move-string?
-                                                    valid-piece?
-                                                    valid-position?
                                                     valid-square?]]
     [com.oakmac.chessboard2.util.string :refer [lower-case-if-string safe-lower-case]]
-    [goog.array :as garray]
-    [goog.dom :as gdom]
     [goog.object :as gobj]))
 
 (def valid-move-keys
@@ -87,7 +83,8 @@
                   m))))))
 
 ;; TODO: should we allow them to pass a JS object here with the position?
-(defn parse-position-args
+;; FIXME: they should be allowed to pass a JS Object of the options here
+(defn parse-set-position-args
   "Parse variadic arguments to the .position() and .setPosition() functions into a config map
   Returns the config map"
   [args]
@@ -147,10 +144,7 @@
      ;; first argument is a Position Map: set the position
      (valid-js-position-map? new-pos) (api/set-position! board-state (js-map->clj new-pos) opts)
      ;; ¯\_(ツ)_/¯
-     :else
-     ;; FIXME: error code here
-     (do (js/console.warn "Invalid value passed to .setPosition()")
-         nil))))
+     :else (warn-log "Invalid position passed to setPosition():" new-pos))))
 
 (defn position
   "Sets or returns the board position."
@@ -160,7 +154,7 @@
     (.shift js-args)
     (let [first-arg (aget js-args 0)
           args-len (count js-args)
-          opts (parse-position-args js-args)]
+          opts (parse-set-position-args js-args)]
       (cond
         ;; no first argument: return the position as a JS Object
         (zero? args-len) (get-position board-state nil)
@@ -177,10 +171,7 @@
         ;; first argument is a Position Map: set the position
         (valid-js-position-map? first-arg) (api/set-position! board-state (js-map->clj first-arg) opts)
         ;; ¯\_(ツ)_/¯
-        :else
-        ;; FIXME: error code here
-        (do (js/console.warn "Invalid value passed to .position()")
-            nil)))))
+        :else (warn-log "Invalid value passed to position():" first-arg)))))
 
 (defn clear
   "TODO: write me"

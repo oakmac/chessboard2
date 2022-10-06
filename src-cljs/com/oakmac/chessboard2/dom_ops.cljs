@@ -2,11 +2,8 @@
   "DOM operations that change the board"
   (:require
     [com.oakmac.chessboard2.feature-flags :as flags]
-    [com.oakmac.chessboard2.util.board :refer [start-position]]
-    [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
-    [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element! set-style-prop!]]
-    [com.oakmac.chessboard2.util.functions :refer [defer]]
-    [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]))
+    [com.oakmac.chessboard2.util.dom :as dom-util :refer [append-html! remove-element!]]
+    [com.oakmac.chessboard2.util.functions :refer [defer]]))
 
 (defn valid-op? [op]
   (and

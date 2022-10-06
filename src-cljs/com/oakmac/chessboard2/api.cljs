@@ -1,36 +1,16 @@
 (ns com.oakmac.chessboard2.api
   "Functions that represent the CLJS API for Chessboard2"
   (:require
-    [com.oakmac.chessboard2.animations :refer [calculate-animations]]
-    [com.oakmac.chessboard2.css :as css]
-    [com.oakmac.chessboard2.dom-ops :as dom-ops]
+    [com.oakmac.chessboard2.animations :refer [animation->dom-op calculate-animations]]
     [com.oakmac.chessboard2.constants :refer [animate-speed-strings->times]]
+    [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
-    [com.oakmac.chessboard2.html :as html]
-    [com.oakmac.chessboard2.util.board :refer [start-position]]
-    [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
-    [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element! set-style-prop!]]
-    [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
-    [com.oakmac.chessboard2.util.functions :refer [defer]]
-    [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
-    [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
-    [goog.object :as gobj]
-
-
-
-
-    ;; FIXME: figure out the name for where this belongs
-    [com.oakmac.chessboard2.homeless :as homeless]
-
-
-
-
-
-    [com.oakmac.chessboard2.util.predicates :refer [fen-string? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]))
+    [com.oakmac.chessboard2.util.predicates :refer [valid-square? valid-position?]]
+    [goog.object :as gobj]))
 
 (defn convert-animate-speed
-  [{:keys [animate animateSpeed] :as move} default-speed-ms]
+  [{:keys [animate animateSpeed] :as _move} default-speed-ms]
   (cond
     (false? animate) 0
     (number? animateSpeed) animateSpeed
@@ -65,7 +45,7 @@
         ;; add move duration times to the animations
         animations2 (map
                       (fn [{:keys [source] :as anim}]
-                        (let [{:keys [animate animateSpeed] :as move} (get moves-map source)]
+                        (let [{:keys [animate] :as move} (get moves-map source)]
                           (cond-> anim
                             true (assoc :duration-ms (convert-animate-speed move default-speed-ms))
                             (false? animate) (assoc :instant? true))))
@@ -118,7 +98,7 @@
         ;; convert animations to DOM operations
         dom-ops (map
                   (fn [anim]
-                    (homeless/animation->dom-op anim board-state))
+                    (animation->dom-op anim board-state))
                   animations3)]
     ;; apply the DOM operations
     (dom-ops/apply-ops! board-state dom-ops)
@@ -177,8 +157,8 @@
                     (if (zero? idx)
                       (-> anim
                         (assoc :on-finish animation-finished-callback)
-                        (homeless/animation->dom-op board-state))
-                      (homeless/animation->dom-op anim board-state)))
+                        (animation->dom-op board-state))
+                      (animation->dom-op anim board-state)))
                   animations)]
 
         ; _ (js/console.log "first dom-ops:" (pr-str (first dom-ops)))

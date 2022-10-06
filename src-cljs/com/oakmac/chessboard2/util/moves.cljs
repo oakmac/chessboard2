@@ -1,5 +1,6 @@
 (ns com.oakmac.chessboard2.util.moves)
 
+;; TODO: good candidate for unit tests
 ;; FIXME: does this function need to handle 0-0 and 0-0-0?
 (defn move->map
   "Converts a move String to a map"
@@ -16,6 +17,7 @@
         :to (aget arr 1)}
        nil))))
 
+;; TODO: good candidate for unit tests
 (defn apply-move-to-position
   "applies a move to a position, returns the new position with the move executed"
   [position {:keys [from to] :as _move}]
