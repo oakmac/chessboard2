@@ -2,6 +2,7 @@
 .DS_Store
 .lsp/
 .shadow-cljs/
+dist/
 node_modules/
 target/
 website/css/chessboard2.css
@@ -10,4 +11,5 @@ website/js/chessboard2.js
 website/build-report.html
 
 *.diff
+*.tgz
 tests.js

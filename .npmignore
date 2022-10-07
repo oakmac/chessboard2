@@ -1,0 +1,17 @@
+.clj-kondo/
+.lsp/
+.shadow-cljs/
+cypress/
+data/
+examples/
+resources/
+scripts/
+src-cljs/
+src-css/
+target/
+templates/
+
+*.diff
+cypress.config.js
+shadow-cljs.edn
+tests.js
