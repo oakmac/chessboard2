@@ -651,11 +651,12 @@
 
        ;; FIXME: allow adding custom items
        ;; https://github.com/oakmac/chessboardjs2/issues/9
-       "addItem" #() ;; FIXME: add a custom Item to the board
+       "addItem" (partial js-api/add-item board-state)
        "clearItems" #() ;; FIXME
-       "getItems" (partial js-get-items board-state)
+       "getItems" (partial js-get-items board-state) ;; FIXME: should be able to pass the string type here as an argument
        "items" (partial js-get-items board-state)
-       "moveItem" #() ;; FIXME
+       "moveItem" (partial js-api/move-item board-state)
+       "removeItem" (partial js-api/remove-item board-state)
 
        ; "addPiece" (partial js-add-piece board-state) ;; FIXME: write this
        "clearPieces" (partial js-api/clear board-state)
@@ -674,6 +675,8 @@
        "fen" (partial js-api/fen board-state)
 
        "clearSquareHighlights" #() ;; FIXME - should this just be "clearSquares" ?
+       ;; would also be nice if this returned x,y coordinates of the squares, for custom
+       ;; integrations
        "getSquares" #() ;; FIXME: squares can have colors, ids, properties like "black" and "white"
                         ;;        whether they are highlighted or not
        "setSquare" #() ;; FIXME ;; .setSquare('e2', 'blue')

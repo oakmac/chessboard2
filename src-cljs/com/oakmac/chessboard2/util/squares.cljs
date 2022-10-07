@@ -1,7 +1,8 @@
 (ns com.oakmac.chessboard2.util.squares
   (:require
     [com.oakmac.chessboard2.util.base58 :refer [random-base58]]
-    [com.oakmac.chessboard2.util.board :refer [file->idx rank->idx]]))
+    [com.oakmac.chessboard2.util.board :refer [file->idx rank->idx]]
+    [com.oakmac.chessboard2.util.math :refer [half]]))
 
 ;; TODO: create this dynamically
 (def black-rank->idx
@@ -96,13 +97,13 @@
          square-width (/ board-width 8)
          left (* x square-width)
          top (* y square-width)]
-     {:center-left (+ left (/ square-width 2))
-      :center-top (+ top (/ square-width 2))
+     {:center-left (+ left (half square-width))
+      :center-top (+ top (half square-width))
       :left left
       :top top})))
 
 (defn squares->rect-dimensions
-  "Given two squares, draw a rectangle around them and returns the dimensions"
+  "Given two squares, draw a rectangle around them and return the dimensions"
   [corner1 corner2 board-width]
   (let [dims1 (square->dimensions corner1 board-width)
         dims2 (square->dimensions corner2 board-width)

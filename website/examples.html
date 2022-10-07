@@ -1676,6 +1676,59 @@ $('#test5step4Btn').on('click', function () {
   }
 };
 
+CHESSBOARD2_EXAMPLES["9002"] = {
+  description: "<p>This file exists for Cypress testing</p>\n",
+  html: "<div id=\"myBoard\" style=\"width: 400px\"></div>\r\n\r\n<section>\r\n  <h1>test1: custom items</h1>\r\n  <button id=\"test1step1Btn\">add custom item</button>\n  <button id=\"test1step2Btn\">move item</button>\n  <button id=\"test1step3Btn\">remove item</button>\n  <div id=\"test1results\"></div>\n</section>\n\n<hr />",
+  name: "Custom Items Test",
+  jsStr: "const board1 = Chessboard2('myBoard', '8/8/8/3pk3/8/4K3/8/8')\r\nwindow.board1 = board1\n\nfunction appendHtml (id, html) {\n  const el = document.getElementById(id)\n  el.innerHTML = el.innerHTML + html\n}\n\n// -----------------------------------------------------------------------------\n// Test 1\n\nconst starSvg = '<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 260 245\"><path fill=\"orange\" d=\"m56,237 74-228 74,228L10,96h240\"/></svg>'\n\nwindow.itm1Id = null\n\n$('#test1step1Btn').on('click', function () {\n  board1.addArrow('b7-d7')\n  board1.addCircle('g6', 'blue')\n\n  window.itm1Id = board1.addItem({\n    className: 'custom-item1',\n    data: {a: \"aaa\", b: \"bbb\", c: \"ccc\"},\n    isMovable: true,\n    html: '<img src=\"data:image/svg+xml;base64,' + window.btoa(starSvg) + '\" />',\n    square: 'c4',\n    type: 'custom-item1'\n  })\n\n  console.log('Custom item added with id:', window.itm1Id)\n})\n\n$('#test1step2Btn').on('click', async function () {\n  // board1.moveItem(window.itm1Id, 'a1')\n  const moveInfo = await board1.moveItem({\n    id: window.itm1Id,\n    to: 'a1'\n  })\n  console.log('move finished:', moveInfo)\n  appendHtml('test1results', '<div id=\"test1step2finished\">test1step2finished</div>')\n})\n\n$('#test1step3Btn').on('click', function () {\n  board1.removeItem(window.itm1Id)\n})",
+  jsFn: function () {
+const board1 = Chessboard2('myBoard', '8/8/8/3pk3/8/4K3/8/8')
+window.board1 = board1
+
+function appendHtml (id, html) {
+  const el = document.getElementById(id)
+  el.innerHTML = el.innerHTML + html
+}
+
+// -----------------------------------------------------------------------------
+// Test 1
+
+const starSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 245"><path fill="orange" d="m56,237 74-228 74,228L10,96h240"/></svg>'
+
+window.itm1Id = null
+
+$('#test1step1Btn').on('click', function () {
+  board1.addArrow('b7-d7')
+  board1.addCircle('g6', 'blue')
+
+  window.itm1Id = board1.addItem({
+    className: 'custom-item1',
+    data: {a: "aaa", b: "bbb", c: "ccc"},
+    isMovable: true,
+    html: '<img src="data:image/svg+xml;base64,' + window.btoa(starSvg) + '" />',
+    square: 'c4',
+    type: 'custom-item1'
+  })
+
+  console.log('Custom item added with id:', window.itm1Id)
+})
+
+$('#test1step2Btn').on('click', async function () {
+  // board1.moveItem(window.itm1Id, 'a1')
+  const moveInfo = await board1.moveItem({
+    id: window.itm1Id,
+    to: 'a1'
+  })
+  console.log('move finished:', moveInfo)
+  appendHtml('test1results', '<div id="test1step2finished">test1step2finished</div>')
+})
+
+$('#test1step3Btn').on('click', function () {
+  board1.removeItem(window.itm1Id)
+})
+  }
+};
+
 
 </script>
 <script src="js/jquery-3.4.1.min.js"></script>

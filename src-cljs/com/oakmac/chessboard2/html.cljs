@@ -1,10 +1,12 @@
 (ns com.oakmac.chessboard2.html
+  "functions that return raw HTML"
   (:require
     [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
     [com.oakmac.chessboard2.util.arrows :as arrow-util]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
+    [com.oakmac.chessboard2.util.math :refer [half]]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]
     [com.oakmac.chessboard2.util.template :refer [template]]
     [goog.crypt.base64 :as base64]))
@@ -48,10 +50,37 @@
       {:color color
        :height circle-width
        :id id
-       :left (- (:center-left square-dims) (/ circle-width 2))
+       :left (- (:center-left square-dims) (half circle-width))
        :opacity opacity
-       :top (- (:center-top square-dims) (/ circle-width 2))
+       :top (- (:center-top square-dims) (half circle-width))
        :width circle-width})))
+
+(defn CustomItem
+  [board-state {:keys [className html-str id square] :as cfg}]
+  (let [{:keys [board-width orientation piece-square-pct]} @board-state
+        square-dims (square->dimensions square board-width orientation)
+        square-height (/ board-width 8) ;; FIXME: need to support variable number of squares here
+        square-width square-height
+        ;; TODO: they need to be able to pass in a custom value for this
+        itm-height (* piece-square-pct square-height)
+        itm-width (* piece-square-pct square-width)]
+    (template
+      (str
+        "<div class='item-18a5b {className}' id='{id}'"
+          "style='"
+            "height:{height}px;"
+            "left:{left}px;"
+            "top:{top}px;"
+            "width:{width}px;"
+            "'>"
+          html-str
+        "</div>")
+      {:className className
+       :height itm-height
+       :id id
+       :left (- (:center-left square-dims) (half itm-width))
+       :top (- (:center-top square-dims) (half itm-height))
+       :width itm-width})))
 
 (defn ArrowCSS
   [{:keys [color id opacity] :as cfg}]

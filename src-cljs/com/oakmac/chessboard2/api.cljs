@@ -5,8 +5,13 @@
     [com.oakmac.chessboard2.constants :refer [animate-speed-strings->times]]
     [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
+    [com.oakmac.chessboard2.html :as html]
+    [com.oakmac.chessboard2.util.dom :refer [set-style-prop!]]
+    [com.oakmac.chessboard2.util.ids :refer [random-id]]
+    [com.oakmac.chessboard2.util.logging :refer [warn-log]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
     [com.oakmac.chessboard2.util.predicates :refer [valid-square? valid-position?]]
+    [com.oakmac.chessboard2.util.squares :refer [square->dimensions]]
     [goog.object :as gobj]))
 
 (defn convert-animate-speed
@@ -181,7 +186,120 @@
     ;; return the Promise object
     return-promise))
 
-(defn set-position-instant!
-  "Sets the board position instantly. Returns a Clojure map of the new position."
-  [board-state new-pos])
-  ;; FIXME: write me
+;; TODO: do we need this?
+; (defn set-position-instant!
+;   "Sets the board position instantly. Returns a Clojure map of the new position."
+;   [board-state new-pos])
+
+(defn add-item!
+  "Adds a Custom Item to the board. Returns the id of the new Item."
+  [board-state item-cfg]
+  (let [{:keys [className data isMovable html square type]} item-cfg
+        new-id (random-id type)
+        new-item {:id new-id
+                  :type type
+                  :data data}
+        inner-html (cond
+                     (string? html) html
+                     (fn? html) (html (clj->js new-item))
+                     ;; FIXME: let them pass a template object that gets interpolated
+                     :else (do (warn-log "Invalid html property of custom Item:" (pr-str item-cfg))
+                               ""))
+        item-html (html/CustomItem board-state
+                                   {:className className
+                                    :html-str inner-html
+                                    :id new-id
+                                    :square square})]
+    (dom-ops/apply-ops! board-state [{:new-html item-html}])
+    (swap! board-state assoc-in [:items new-id] new-item)
+    new-id))
+
+(defn remove-item!
+  "Removes an Item from the board"
+  [board-state item-id]
+  (dom-ops/apply-ops! board-state [{:remove-el item-id}])
+  (swap! board-state update-in [:items] dissoc item-id)
+  nil)
+
+(defn move-items
+  "Move Items on the board.
+  Returns a collection of Promises."
+  [board-state moves]
+  ; (when flags/runtime-checks?
+  ;   (assert (every? valid-move? moves) "Invalid moves passed to move-pieces"))
+  (let [current-board-state @board-state
+        board-width (:board-width current-board-state)
+        orientation (:orientation current-board-state)
+        default-speed-ms (:animate-speed-ms current-board-state)
+        animate-speed2 800
+
+        ;; add move duration times to the animations
+        ; animations2 (map
+        ;               (fn [{:keys [source] :as anim}]
+        ;                 (let [{:keys [animate] :as move} (get moves-map source)]
+        ;                   (cond-> anim
+        ;                     true (assoc :duration-ms (convert-animate-speed move default-speed-ms))
+        ;                     (false? animate) (assoc :instant? true))))
+        ;               animations)
+
+        ;; create an empty JS object to store Promise resolve-fns
+        js-resolve-fns (reduce
+                         (fn [js-resolves {:keys [id] :as _move}]
+                           (gobj/set js-resolves id nil)
+                           js-resolves)
+                         (js-obj)
+                         moves)
+
+        ;; create a collection of Promises: one for each animation
+        move-promises (reduce
+                        (fn [promises {:keys [id] :as _move}]
+                          (conj promises
+                                (js/Promise.
+                                  (fn [resolve-fn _reject-fn]
+                                    ;; store the resolve-fn on our object
+                                    (gobj/set js-resolve-fns id resolve-fn)))))
+                        []
+                        moves)
+
+        ;; attach callbacks to the animations
+        moves2 (map
+                 (fn [{:keys [id to] :as move}]
+                   (assoc move :on-finish
+                               (fn []
+                                 (let [js-move-info (js-obj
+
+                                                            ; "duration" duration-ms
+                                                            ; "from" source
+                                                            "to" to
+                                                            "id" id)]
+                                   ; ;; was a callback function provided for this move?
+                                   ; (when-let [callback-fn (get-in moves-map [source :onComplete])]
+                                   ;   (when (fn? callback-fn)
+                                   ;     (callback-fn js-move-info)))
+                                   ;; call the resolve-fn for the Promise
+                                   (when-let [resolve-fn (gobj/get js-resolve-fns id)]
+                                     (when (fn? resolve-fn)
+                                       (resolve-fn js-move-info)))))))
+                 moves)
+
+
+        dom-ops (map
+                  (fn [{:keys [id on-finish to] :as _move}]
+                    (let [target-square-dimensions (square->dimensions to board-width orientation)]
+                      {:defer-fn (fn []
+                                   ;; start move animation
+                                   (set-style-prop! id "transition" (str "all " animate-speed2 "ms"))
+                                   (set-style-prop! id "left" (str (:left target-square-dimensions) "px"))
+                                   (set-style-prop! id "top" (str (:top target-square-dimensions) "px"))
+                                   ;; add the callback if provided
+                                   (when (fn? on-finish)
+                                     (swap! board-state assoc-in [:animation-end-callbacks id]
+                                            (fn []
+                                              (on-finish)))))
+                       :duration-ms animate-speed2}))
+                  moves2)]
+
+    ;; apply the DOM operations
+    (dom-ops/apply-ops! board-state dom-ops)
+    ;; return the move promises
+    move-promises))

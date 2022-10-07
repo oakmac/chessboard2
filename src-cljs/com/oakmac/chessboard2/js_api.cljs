@@ -116,6 +116,10 @@
     {}))
 
 ;; FIXME: handle 0-0 and 0-0-0, user will have to specify white or black
+;; FIXME: the .move() method should support pieces or item-ids
+;; .movePiece() --> only Pieces
+;; .moveItem() --> only Items
+;; .move() --> either
 (defn move-piece
   "Returns a single JS Promise if only one move is made.
   Otherwise returns an Array of Promises of the moves being made."
@@ -217,3 +221,24 @@
       (cond
         (valid-fen? arg1) (api/set-position! board-state (fen->position arg1) opts)
         :else (get-position board-state "fen")))))
+
+(defn add-item
+  "Adds a custom item to the board."
+  [board-state js-itm-cfg]
+  ;; FIXME: do validation on js-itm-cfg here
+  (api/add-item! board-state (js->clj js-itm-cfg :keywordize-keys true)))
+
+;; FIXME: make this function variadic, support removing multiple item-ids at a time
+(defn remove-item
+  "Removes an Item from the board"
+  [board-state item-id]
+  (api/remove-item! board-state item-id))
+
+(defn move-item
+  "Moves an Item(s) on the board"
+  [board-state js-cfg]
+  ;; FIXME: parse variadic args smartly here
+  (let [moves (api/move-items board-state [(js->clj js-cfg :keywordize-keys true)])]
+    (if (= 1 (count moves))
+      (clj->js (first moves))
+      (clj->js moves))))

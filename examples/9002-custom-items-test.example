@@ -1,0 +1,68 @@
+===== id
+9002
+
+===== Name
+Custom Items Test
+
+===== DescriptionMD
+
+This file exists for Cypress testing
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+<section>
+  <h1>test1: custom items</h1>
+  <button id="test1step1Btn">add custom item</button>
+  <button id="test1step2Btn">move item</button>
+  <button id="test1step3Btn">remove item</button>
+  <div id="test1results"></div>
+</section>
+
+<hr />
+
+===== JS
+const board1 = Chessboard2('myBoard', '8/8/8/3pk3/8/4K3/8/8')
+window.board1 = board1
+
+function appendHtml (id, html) {
+  const el = document.getElementById(id)
+  el.innerHTML = el.innerHTML + html
+}
+
+// -----------------------------------------------------------------------------
+// Test 1
+
+const starSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 245"><path fill="orange" d="m56,237 74-228 74,228L10,96h240"/></svg>'
+
+window.itm1Id = null
+
+$('#test1step1Btn').on('click', function () {
+  board1.addArrow('b7-d7')
+  board1.addCircle('g6', 'blue')
+
+  window.itm1Id = board1.addItem({
+    className: 'custom-item1',
+    data: {a: "aaa", b: "bbb", c: "ccc"},
+    isMovable: true,
+    html: '<img src="data:image/svg+xml;base64,' + window.btoa(starSvg) + '" />',
+    square: 'c4',
+    type: 'custom-item1'
+  })
+
+  console.log('Custom item added with id:', window.itm1Id)
+})
+
+$('#test1step2Btn').on('click', async function () {
+  // board1.moveItem(window.itm1Id, 'a1')
+  const moveInfo = await board1.moveItem({
+    id: window.itm1Id,
+    to: 'a1'
+  })
+  console.log('move finished:', moveInfo)
+  appendHtml('test1results', '<div id="test1step2finished">test1step2finished</div>')
+})
+
+$('#test1step3Btn').on('click', function () {
+  board1.removeItem(window.itm1Id)
+})

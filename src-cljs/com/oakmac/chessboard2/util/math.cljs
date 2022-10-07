@@ -5,3 +5,7 @@
   (js/Math.sqrt
     (+ (js/Math.pow a 2)
        (js/Math.pow b 2))))
+
+(defn half
+  [x]
+  (/ x 2))
