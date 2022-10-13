@@ -66,7 +66,7 @@ function appendHtml (id, html) {
 // -----------------------------------------------------------------------------
 // Test 1
 
-$('#test1move1Btn').on('click', function () {
+attachEvent('test1move1Btn', 'click', () => {
   window.test1move = board1.move('e2-e4', () => {
     appendHtml('test1results', '<div id=test1move1finished>test1move1finished</div>')
   })
@@ -75,7 +75,7 @@ $('#test1move1Btn').on('click', function () {
 // -----------------------------------------------------------------------------
 // Test 2
 
-$('#test2move1Btn').on('click', function () {
+attachEvent('test2move1Btn', 'click', () => {
   window.test2move1 = board1.move('a2-a4', 500, () => {
     appendHtml('test2results', '<div id=test2move1finished>test2move1finished</div>')
   })
@@ -87,7 +87,7 @@ $('#test2move1Btn').on('click', function () {
 // -----------------------------------------------------------------------------
 // Test 3
 
-$('#test3step1Btn').on('click', function () {
+attachEvent('test3step1Btn', 'click', () => {
   window.test3step1 = board1.position('8/8/rnbqkbnr/pppppppp/PPPPPPPP/1NBQKBNR/8/8', 500, () => {
     appendHtml('test3results', '<div id=test3step1finished>test3step1finished</div>')
   })
@@ -96,7 +96,7 @@ $('#test3step1Btn').on('click', function () {
 // -----------------------------------------------------------------------------
 // Test 4
 
-$('#test4step1Btn').on('click', async function () {
+attachEvent('test4step1Btn', 'click', async () => {
   const result = await board1.position('8/8/8/3pk3/8/4K3/8/8')
   appendHtml('test4results', '<pre id=test4step1finished>' + JSON.stringify(result) + '</pre>')
 })
@@ -104,23 +104,23 @@ $('#test4step1Btn').on('click', async function () {
 // -----------------------------------------------------------------------------
 // Test 5
 
-$('#test5step1Btn').on('click', function () {
+attachEvent('test5step1Btn', 'click', () => {
   board1.addArrow('a2-a3', '#ffee66', 'small')
   board1.addArrow('b2-b4', '#66eeff', 'medium')
   board1.addArrow('c2-c5')
 })
 
-$('#test5step2Btn').on('click', function () {
+attachEvent('test5step2Btn', 'click', () => {
   board1.addCircle('e4', 'purple', 'small')
   board1.addCircle('f4', 'red', 'medium')
   board1.addCircle('g4', 'orange', 'large')
 })
 
-$('#test5step3Btn').on('click', function () {
+attachEvent('test5step3Btn', 'click', () => {
   board1.flip()
 })
 
-$('#test5step4Btn').on('click', function () {
+attachEvent('test5step4Btn', 'click', () => {
   board1.removeArrow('b2-b4')
   board1.removeCircle('g4')
 })

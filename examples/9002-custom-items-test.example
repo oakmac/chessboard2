@@ -37,7 +37,7 @@ const starSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 245"><
 
 window.itm1Id = null
 
-$('#test1step1Btn').on('click', function () {
+attachEvent('test1step1Btn', 'click', () => {
   board1.addArrow('b7-d7')
   board1.addCircle('g6', 'blue')
 
@@ -53,7 +53,7 @@ $('#test1step1Btn').on('click', function () {
   console.log('Custom item added with id:', window.itm1Id)
 })
 
-$('#test1step2Btn').on('click', async function () {
+attachEvent('test1step2Btn', 'click', async () => {
   // board1.moveItem(window.itm1Id, 'a1')
   const moveInfo = await board1.moveItem({
     id: window.itm1Id,
@@ -63,6 +63,6 @@ $('#test1step2Btn').on('click', async function () {
   appendHtml('test1results', '<div id="test1step2finished">test1step2finished</div>')
 })
 
-$('#test1step3Btn').on('click', function () {
+attachEvent('test1step3Btn', 'click', () => {
   board1.removeItem(window.itm1Id)
 })

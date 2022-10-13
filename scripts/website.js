@@ -19,7 +19,7 @@ const cmReader = new commonmark.Parser()
 const cmWriter = new commonmark.HtmlRenderer()
 
 // toggle development version
-const useLocalDevFiles = false
+const useLocalDevFiles = true
 const jsCDNScript = '<script src="https://unpkg.com/@chrisoakman/chessboardjs2@0.1.0/dist/chessboard2.min.js" integrity="sha384-ljFKlPNmPU0eDTYaCKv+07alkNG+MQFDJWCekcZv9C8Eptr0rVLJZZ03J5vOWlak" crossorigin="anonymous"></script>'
 const cssCDNLink = '<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs2@0.1.0/dist/chessboard2.min.css" integrity="sha384-fMMbbVRSzK7dM0LfiAtcxjQpQrr6jiiAXTWhwapOds+a8Bu/NUMxiHh+TKAY3LPk" crossorigin="anonymous">'
 
