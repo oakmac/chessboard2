@@ -4,8 +4,6 @@
 // This file builds the contents of the website/ folder.
 // -----------------------------------------------------------------------------
 
-// FIXME: add logging to this script
-
 // libraries
 const assert = require('assert')
 const commonmark = require('commonmark')
@@ -15,19 +13,21 @@ const kidif = require('kidif')
 const mustache = require('mustache')
 const path = require('path')
 
-const encoding = {encoding: 'utf8'}
+const encoding = { encoding: 'utf8' }
 
-const cmReader = new commonmark.Parser();
-const cmWriter = new commonmark.HtmlRenderer();
+const cmReader = new commonmark.Parser()
+const cmWriter = new commonmark.HtmlRenderer()
 
 // toggle development version
-const useDevFile = true
-const jsCDNLink = '<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js" integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD" crossorigin="anonymous"></script>'
-const cssCDNLink = 'https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css'
+const useLocalDevFiles = false
+const jsCDNScript = '<script src="https://unpkg.com/@chrisoakman/chessboardjs2@0.1.0/dist/chessboard2.min.js" integrity="sha384-ljFKlPNmPU0eDTYaCKv+07alkNG+MQFDJWCekcZv9C8Eptr0rVLJZZ03J5vOWlak" crossorigin="anonymous"></script>'
+const cssCDNLink = '<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs2@0.1.0/dist/chessboard2.min.css" integrity="sha384-fMMbbVRSzK7dM0LfiAtcxjQpQrr6jiiAXTWhwapOds+a8Bu/NUMxiHh+TKAY3LPk" crossorigin="anonymous">'
 
-let chessboardJsScript = jsCDNLink
-if (useDevFile) {
-  chessboardJsScript = '<script src="js/chessboard2.js"></script>'
+let jsScript = jsCDNScript
+let cssLink = cssCDNLink
+if (useLocalDevFiles) {
+  jsScript = '<script src="js/chessboard2.js"></script>'
+  cssLink = '<link rel="stylesheet" href="css/chessboard2.css">'
 }
 
 // grab some mustache templates
@@ -69,10 +69,11 @@ const examplesObj = examplesArr.reduce(function (examplesObj, example, idx) {
   return examplesObj
 }, {})
 
+// NOTE: this needs to stay in sync with the ids of the example files
 const examplesGroups = [
   {
     name: 'Basic Usage',
-    examples: [1000, 1001, 1002, 1003, 1004]
+    examples: ['1000-empty-board', 1001, 1002, 1003, 1004]
   },
   {
     name: 'Config',
@@ -92,10 +93,8 @@ const examplesGroups = [
   }
 ]
 
-const homepageExample1 = ''
-
 const homepageExample2 = `
-var board2 = Chessboard2('board2', {
+const board2 = Chessboard2('board2', {
   draggable: true,
   dropOffBoard: 'trash',
   sparePieces: true
@@ -110,30 +109,37 @@ function writeSrcFiles () {
 }
 
 function writeHomepage () {
-  const headHTML = mustache.render(headTemplate, {pageTitle: 'Homepage'})
+  const headHTML = mustache.render(headTemplate, { pageTitle: 'Homepage' })
 
   const html = mustache.render(homepageTemplate, {
-    chessboardJsScript: chessboardJsScript,
+    jsScript,
     example2: homepageExample2,
     footer: footerTemplate,
     head: headHTML
   })
-  fs.writeFileSync('website/index.html', html, encoding)
+  const filename = 'website/index.html'
+  fs.writeFileSync(filename, html, encoding)
+  infoLog('Wrote ' + filename)
 }
 
 function writeExamplesPage () {
-  const headHTML = mustache.render(headTemplate, {pageTitle: 'Examples'})
-  const headerHTML = mustache.render(headerTemplate, {examplesActive: true})
+  const headHTML = mustache.render(headTemplate, {
+    chessboard2CSSLink: cssLink,
+    pageTitle: 'Examples'
+  })
+  const headerHTML = mustache.render(headerTemplate, { examplesActive: true })
 
   const html = mustache.render(examplesTemplate, {
-    chessboardJsScript: chessboardJsScript,
+    jsScript,
     examplesJavaScript: buildExamplesJS(),
     footer: footerTemplate,
     head: headHTML,
     header: headerHTML,
     nav: buildExamplesNavHTML()
   })
-  fs.writeFileSync('website/examples.html', html, encoding)
+  const filename = 'website/examples.html'
+  fs.writeFileSync(filename, html, encoding)
+  infoLog('Wrote ' + filename)
 }
 
 const configTableRowsHTML = docs.config.reduce(function (html, itm) {
@@ -159,18 +165,21 @@ function writeSingleExamplePage (example) {
   if (isIntegrationExample(example)) {
     example.includeChessJS = true
   }
-  example.chessboardJsScript = chessboardJsScript
+  example.jsScript = jsScript
+  example.cssLink = cssLink
   const html = mustache.render(singleExampleTemplate, example)
-  fs.writeFileSync('website/examples/' + example.id + '.html', html, encoding)
+  const filename = 'website/examples/' + example.id + '.html'
+  fs.writeFileSync(filename, html, encoding)
 }
 
 function writeSingleExamplesPages () {
   examplesArr.forEach(writeSingleExamplePage)
+  infoLog('Wrote ' + examplesArr.length + ' single example pages')
 }
 
 function writeDocsPage () {
-  const headHTML = mustache.render(headTemplate, {pageTitle: 'Documentation'})
-  const headerHTML = mustache.render(headerTemplate, {docsActive: true})
+  const headHTML = mustache.render(headTemplate, { pageTitle: 'Documentation' })
+  const headerHTML = mustache.render(headerTemplate, { docsActive: true })
 
   const html = mustache.render(docsTemplate, {
     configTableRows: configTableRowsHTML,
@@ -184,8 +193,8 @@ function writeDocsPage () {
 }
 
 function writeDownloadPage () {
-  const headHTML = mustache.render(headTemplate, {pageTitle: 'Download'})
-  const headerHTML = mustache.render(headerTemplate, {downloadActive: true})
+  const headHTML = mustache.render(headTemplate, { pageTitle: 'Download' })
+  const headerHTML = mustache.render(headerTemplate, { downloadActive: true })
 
   const html = mustache.render(downloadTemplate, {
     footer: footerTemplate,
@@ -211,21 +220,11 @@ function writeWebsite () {
 }
 
 writeWebsite()
+infoLog('Successfully wrote the website/ folder 👍')
 
 // -----------------------------------------------------------------------------
 // HTML
 // -----------------------------------------------------------------------------
-
-function htmlEscape (str) {
-  return (str + '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/\//g, '&#x2F;')
-    .replace(/`/g, '&#x60;')
-}
 
 function buildExampleGroupHTML (idx, groupName, examplesInGroup) {
   const groupNum = idx + 1
@@ -328,7 +327,7 @@ function buildMethodRowHTML (method) {
 }
 
 function buildPropertyAndTypeHTML (section, name, type) {
-  let html = '<p><a href="docs.html#' + section + ':' + name + '">' +
+  const html = '<p><a href="docs.html#' + section + ':' + name + '">' +
     '<code class="js plain">' + name + '</code></a></p>' +
     '<p class=property-type-7ae66>' + buildTypeHTML(type) + '</p>'
   return html
@@ -340,7 +339,7 @@ function buildTypeHTML (type) {
   }
 
   let html = ''
-  for (var i = 0; i < type.length; i++) {
+  for (let i = 0; i < type.length; i++) {
     if (i !== 0) {
       html += ' <small>or</small><br />'
     }
@@ -348,12 +347,6 @@ function buildTypeHTML (type) {
   }
 
   return html
-}
-
-function buildRequiredHTML (req) {
-  if (!req) return 'no'
-  if (req === true) return 'yes'
-  return req
 }
 
 function buildDescriptionHTML (desc) {
@@ -383,7 +376,7 @@ function buildExamplesCellHTML (examplesIds) {
 
   let html = ''
   examplesIds.forEach(function (exampleId) {
-    var example = examplesObj[exampleId]
+    const example = examplesObj[exampleId]
     if (!example) return
     html += '<p><a href="examples.html#' + exampleId + '">' + example.name + '</a></p>'
   })
@@ -429,5 +422,5 @@ function isString (s) {
 }
 
 function infoLog (msg) {
-  console.log(msg)
+  console.log('[scripts/website.js] ' + msg)
 }

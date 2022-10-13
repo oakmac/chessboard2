@@ -1,7 +1,7 @@
 ;(function () {
-  var $ = window.jQuery
-  var EXAMPLES = window.CHESSBOARD2_EXAMPLES
-  var prettyPrint = window.prettyPrint
+  const $ = window.jQuery
+  const EXAMPLES = window.CHESSBOARD2_EXAMPLES
+  const prettyPrint = window.prettyPrint
 
   function htmlEscape (str) {
     return (str + '')
@@ -25,7 +25,7 @@
   }
 
   function buildExampleBodyHTML (example, id) {
-    var html = '<h2 class="hover-linkable">' +
+    const html = '<h2 class="hover-linkable">' +
         '<a class="hover-link" href="#' + id + '"></a>' +
         htmlEscape(example.name) +
       '</h2>' +
@@ -41,7 +41,7 @@
   }
 
   function showExample (exampleId) {
-    var groupIdx = $('#exampleLink-' + exampleId).parent('ul').attr('id').replace('groupContainer-', '')
+    const groupIdx = $('#exampleLink-' + exampleId).parent('ul').attr('id').replace('groupContainer-', '')
 
     $('#groupContainer-' + groupIdx).css('display', '')
     highlightGroupHeader(groupIdx)
@@ -54,25 +54,27 @@
   }
 
   function clickExampleNavLink () {
-    var exampleId = $(this).attr('id').replace('exampleLink-', '')
-    if (!EXAMPLES.hasOwnProperty(exampleId)) return
+    const exampleId = $(this).attr('id').replace('exampleLink-', '')
+    if (!EXAMPLES[exampleId]) return
 
     window.location.hash = exampleId
     loadExampleFromHash()
   }
 
+  const defaultExampleId = '1000-empty-board'
+
   function loadExampleFromHash () {
-    var exampleId = parseInt(window.location.hash.replace('#', ''), 10)
-    if (!EXAMPLES.hasOwnProperty(exampleId)) {
-      exampleId = 1000
+    let exampleId = window.location.hash.replace('#', '')
+    if (!EXAMPLES[exampleId]) {
+      exampleId = defaultExampleId
       window.location.hash = exampleId
     }
     showExample(exampleId)
   }
 
   function clickGroupHeader () {
-    var groupIdx = $(this).attr('id').replace('groupHeader-', '')
-    var $examplesList = $('#groupContainer-' + groupIdx)
+    const groupIdx = $(this).attr('id').replace('groupHeader-', '')
+    const $examplesList = $('#groupContainer-' + groupIdx)
     if ($examplesList.css('display') === 'none') {
       $examplesList.slideDown('fast')
     } else {
@@ -83,8 +85,9 @@
   function init () {
     $('#examplesNav').on('click', 'li', clickExampleNavLink)
     $('#examplesNav').on('click', 'h4', clickGroupHeader)
+    window.addEventListener('hashchange', loadExampleFromHash)
     loadExampleFromHash()
   }
 
-  $(document).ready(init)
+  window.addEventListener('load', init)
 })()

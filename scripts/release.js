@@ -9,15 +9,15 @@ const assert = require('assert')
 const csso = require('csso')
 const fs = require('fs-plus')
 
-const encoding = {encoding: 'utf8'}
+const encoding = { encoding: 'utf8' }
 
 const copyrightYear = '2021'
-const package = JSON.parse(fs.readFileSync('package.json', encoding))
-const version = package.version
+const packageJSON = JSON.parse(fs.readFileSync('package.json', encoding))
+const version = packageJSON.version
 const cssSrc = fs.readFileSync('src-css/chessboard2.css', encoding)
-                 .replace('@VERSION', version)
+  .replace('@VERSION', version)
 const jsSrc = fs.readFileSync('target/chessboard2.js', encoding)
-                .replace('@VERSION', version)
+  .replace('@VERSION', version)
 
 fs.removeSync('dist')
 fs.makeTreeSync('dist')
