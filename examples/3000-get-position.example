@@ -1,5 +1,5 @@
 ===== id
-3000
+3000-get-position
 
 ===== Name
 Get Position
@@ -26,7 +26,7 @@ const config = {
 }
 const board = Chessboard2('myBoard', config)
 
-function clickPositionBtn () {
+attachEvent('showPositionBtn', 'click', () => {
   console.log('Current position as an Object:')
   console.log(board.position())
 
@@ -35,14 +35,14 @@ function clickPositionBtn () {
 
   console.log('Current position as a FEN string:')
   console.log(board.position('fen'))
-}
+})
 
-function clickFenBtn () {
+attachEvent('showFenBtn', 'click', () => {
   console.log('Current position as a FEN string:')
   console.log(board.fen())
-}
+})
 
-function clickGetPositionBtn () {
+attachEvent('showGetPositionBtn', 'click', () => {
   console.log('Current position as an Object:')
   console.log(board.getPosition())
 
@@ -51,8 +51,4 @@ function clickGetPositionBtn () {
 
   console.log('Current position as a FEN string:')
   console.log(board.getPosition('fen'))
-}
-
-$('#showPositionBtn').on('click', clickPositionBtn)
-$('#showFenBtn').on('click', clickFenBtn)
-$('#showGetPositionBtn').on('click', clickGetPositionBtn)
+})

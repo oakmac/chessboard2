@@ -29,7 +29,7 @@ describe('Example 9001: moves', () => {
       .window().then(win => {
         assert.exists(win.board1)
         const pos1 = win.board1.position()
-        assert.equal(pos1['e4'], 'wP')
+        assert.equal(pos1.e4, 'wP')
       })
   })
 

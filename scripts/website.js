@@ -54,6 +54,8 @@ let examplesArr = kidif('examples/*.example')
 assert(examplesArr, 'Could not load the Example files')
 assert(examplesArr.length > 1, 'Zero examples loaded')
 
+infoLog('Loaded ' + examplesArr.length + ' examples')
+
 // convert Descriptions in Markdown to HTML
 examplesArr = examplesArr.map(ex => {
   if (ex.descriptionmd) {
@@ -64,32 +66,32 @@ examplesArr = examplesArr.map(ex => {
   return ex
 })
 
-const examplesObj = examplesArr.reduce(function (examplesObj, example, idx) {
-  examplesObj[example.id] = example
-  return examplesObj
-}, {})
+const examplesMap = new Map()
+examplesArr.forEach((example) => {
+  examplesMap.set(example.id, example)
+})
 
 // NOTE: this needs to stay in sync with the ids of the example files
 const examplesGroups = [
   {
     name: 'Basic Usage',
-    examples: ['1000-empty-board', 1001, 1002, 1003, 1004]
+    examples: ['1000-empty-board', '1001-start-position', '1002-fen-string', '1003-position-object', '1004-multiple-boards']
   },
   {
     name: 'Config',
-    examples: [2000, 2044, 2063, 2001, 2002, 2003, 2082, 2004, 2030, 2005, 2006]
+    examples: ['2000-config-position', '2044', '2063', '2001-config-orientation', '2002-config-notation', '2003', '2082', '2004', '2030', '2005', '2006']
   },
   {
     name: 'Methods',
-    examples: [3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007]
+    examples: ['3000-get-position', '3001-set-position', '3002-set-position-instant', '3003', '3004', '3005', '3006', '3007']
   },
   {
     name: 'Events',
-    examples: [4000, 4001, 4002, 4003, 4004, 4005, 4006, 4011, 4012]
+    examples: ['4000', '4001', '4002', '4003', '4004', '4005', '4006', '4011', '4012']
   },
   {
     name: 'Integration',
-    examples: [5000, 5001, 5002, 5003, 5004, 5005]
+    examples: ['5000', '5001', '5002', '5003', '5004', '5005']
   }
 ]
 
@@ -189,7 +191,9 @@ function writeDocsPage () {
     header: headerHTML,
     methodTableRows: methodTableRowsHTML
   })
-  fs.writeFileSync('website/docs.html', html, encoding)
+  const filename = 'website/docs.html'
+  fs.writeFileSync(filename, html, encoding)
+  infoLog('Wrote ' + filename)
 }
 
 function writeDownloadPage () {
@@ -201,12 +205,16 @@ function writeDownloadPage () {
     head: headHTML,
     header: headerHTML
   })
-  fs.writeFileSync('website/download.html', html, encoding)
+  const filename = 'website/download.html'
+  fs.writeFileSync(filename, html, encoding)
+  infoLog('Wrote ' + filename)
 }
 
 function writeLicensePage () {
   const html = mustache.render(licensePageTemplate)
-  fs.writeFileSync('website/license.html', html, encoding)
+  const filename = 'website/license.html'
+  fs.writeFileSync(filename, html, encoding)
+  infoLog('Wrote ' + filename)
 }
 
 function writeWebsite () {
@@ -232,7 +240,7 @@ function buildExampleGroupHTML (idx, groupName, examplesInGroup) {
     '<ul id="groupContainer-' + groupNum + '" style="display:none">'
 
   examplesInGroup.forEach(function (exampleId) {
-    const example = examplesObj[exampleId]
+    const example = examplesMap.get(exampleId)
     html += '<li id="exampleLink-' + exampleId + '">' + example.name + '</id>'
   })
 
@@ -376,7 +384,7 @@ function buildExamplesCellHTML (examplesIds) {
 
   let html = ''
   examplesIds.forEach(function (exampleId) {
-    const example = examplesObj[exampleId]
+    const example = examplesMap.get(exampleId)
     if (!example) return
     html += '<p><a href="examples.html#' + exampleId + '">' + example.name + '</a></p>'
   })

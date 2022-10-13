@@ -1,5 +1,5 @@
 ===== id
-3001
+3001-set-position
 
 ===== Name
 Set Position
@@ -32,20 +32,22 @@ set the board position.
 <button id="setWithObject">Queen's Gambit Declined (Set Position with an Object)</button>
 
 ===== JS
-var board = Chessboard2('myBoard')
+const board = Chessboard2('myBoard')
 
-$('#setStartBtn').on('click', board.start)
+attachEvent('setStartBtn', 'click', () => {
+  board.start()
+})
 
 const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
 const queensGambit = 'rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR'
 const queensGambitAccepted = 'rnbqkbnr/ppp2ppp/8/8/2pP4/8/PP2PPPP/RNBQKBNR'
 const queensGambitDeclined = 'rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR'
 
-$('#setRuyLopezBtn').on('click', function () {
+attachEvent('setRuyLopezBtn', 'click', () => {
   board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')
 })
 
-$('#setRookCheckmateBtn').on('click', function () {
+attachEvent('setRookCheckmateBtn', 'click', () => {
   board.position({
     a4: 'bK',
     c4: 'wK',
@@ -55,7 +57,7 @@ $('#setRookCheckmateBtn').on('click', function () {
 
 let pawnToggle = true
 
-$('#pawnAttackBtn').on('click', function () {
+attachEvent('pawnAttackBtn', 'click', () => {
   if (pawnToggle) {
     board.fen('pppppppp/pppppppp/pppppppp/pppppppp/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP')
     pawnToggle = false
@@ -65,10 +67,12 @@ $('#pawnAttackBtn').on('click', function () {
   }
 })
 
-$('#clearBoardBtn').on('click', board.clear)
+attachEvent('clearBoardBtn', 'click', () => {
+  board.clear()
+})
 
 let pawnToggle2 = true
-$('#setPawns3').on('click', function () {
+attachEvent('setPawns3', 'click', () => {
   if (pawnToggle2) {
     board.fen('pPpPpPpP/PpPpPpPp/pPpPpPpP/PpPpPpPp/pPpPpPpP/PpPpPpPp/pPpPpPpP/PpPpPpPp')
     pawnToggle2 = false
@@ -78,23 +82,23 @@ $('#setPawns3').on('click', function () {
   }
 })
 
-$('#setWithCallback').on('click', function () {
+attachEvent('setWithCallback', 'click', () => {
   board.position(ruyLopez, (positionInfo) => {
     console.log('Animations have finished:', positionInfo)
   })
 })
 
-$('#setWithAnimateSpeed').on('click', function () {
+attachEvent('setWithAnimateSpeed', 'click', () => {
   board.position(queensGambit, 'super slow')
 })
 
-$('#setWithPromise').on('click', function () {
+attachEvent('setWithPromise', 'click', () => {
   board.position(queensGambitAccepted).then(info => {
     console.log('Animations have finished:', info)
   })
 })
 
-$('#setWithObject').on('click', function () {
+attachEvent('setWithObject', 'click', () => {
   board.fen(queensGambitDeclined, {
     animateSpeed: 800,
     onComplete: function (posInfo) {

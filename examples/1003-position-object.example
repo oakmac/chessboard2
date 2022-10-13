@@ -1,5 +1,5 @@
 ===== id
-1003
+1003-position-object
 
 ===== Name
 Position Object
@@ -11,9 +11,9 @@ Pass a <a href="docs.html#position_object">Position Object</a> as the second arg
 <div id="myBoard" style="width: 400px"></div>
 
 ===== JS
-var position = {
+const kingAndPawnEndgame = {
   d6: 'bK',
   d4: 'wP',
   e4: 'wK'
 }
-var board = Chessboard2('myBoard', position)
+const board = Chessboard2('myBoard', kingAndPawnEndgame)

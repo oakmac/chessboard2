@@ -21,12 +21,21 @@
 {{{html}}}
 <!--- End Example HTML -------------------------------------------------------->
 
-<script src="js/jquery-3.4.1.min.js"></script>
 {{{jsScript}}}
 {{#includeChessJS}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js" integrity="sha384-s3XgLpvmHyscVpijnseAmye819Ee3yaGa8NxstkJVyA6nuDFjt59u1QvuEl/mecz" crossorigin="anonymous"></script>
 {{/includeChessJS}}
 <script>
+function attachEvent (selectorOrId, eventType, fn) {
+  const el1 = document.getElementById(selectorOrId)
+  if (el1) { el1.addEventListener(eventType, fn); return }
+
+  const el2 = document.querySelector(selectorOrId)
+  if (el2) { el2.addEventListener(eventType, fn); return }
+
+  console.warn('Unable to attachEvent to element:', selectorOrId)
+}
+
 // --- Begin Example JS --------------------------------------------------------
 {{{js}}}
 // --- End Example JS ----------------------------------------------------------

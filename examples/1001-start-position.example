@@ -1,5 +1,5 @@
 ===== id
-1001
+1001-start-position
 
 ===== Name
 Start Position
@@ -12,4 +12,4 @@ the board to the start position.
 <div id="myBoard" style="width: 400px"></div>
 
 ===== JS
-var board = Chessboard2('myBoard', 'start')
+const board = Chessboard2('myBoard', 'start')
