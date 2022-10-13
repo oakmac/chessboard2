@@ -17,7 +17,7 @@
     "build-report": "shadow-cljs run shadow.cljs.build-report chessboard2 website/build-report.html",
     "cypress": "cypress open",
     "local-dev": "serve website/ -p 3232",
-    "release": "shadow-cljs release chessboard2 && ./scripts/release.js && npm publish",
+    "release": "shadow-cljs release chessboard2 && ./scripts/release.js && npm publish --access=public",
     "test": "shadow-cljs compile node-tests"
   },
   "devDependencies": {
