@@ -18,6 +18,8 @@ const cssSrc = fs.readFileSync('src-css/chessboard2.css', encoding)
   .replace('@VERSION', version)
 const jsSrc = fs.readFileSync('target/chessboard2.js', encoding)
   .replace('@VERSION', version)
+  .replace('var shadow$provide = {};\n', '')
+  .replace('\n/*\n\n Copyright The Closure Library Authors.\n SPDX-License-Identifier: Apache-2.0\n*/\n', '')
 
 fs.removeSync('dist')
 fs.makeTreeSync('dist')
