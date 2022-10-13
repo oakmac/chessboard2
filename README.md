@@ -36,6 +36,16 @@ npx shadow-cljs release chessboard2 && ./scripts/website.js
 npm run local-dev
 ```
 
+In order to create and publish a release:
+
+```sh
+## update package.json version, add git tag
+
+npm run release
+
+npm publish --access=public
+```
+
 ## Tests
 
 ```sh
