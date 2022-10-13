@@ -5,10 +5,16 @@
 dist/
 node_modules/
 target/
+
 website/css/chessboard2.css
 website/examples/
 website/js/chessboard2.js
 website/build-report.html
+website/docs.html
+website/download.html
+website/examples.html
+website/index.html
+website/license.html
 
 *.diff
 *.tgz
