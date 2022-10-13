@@ -1,6 +1,6 @@
 {
   "author": "Chris Oakman <chris@oakmac.com> (https://chrisoakman.com)",
-  "description": "JavaScript Chess Board Component v2",
+  "description": "JavaScript Chessboard Component v2",
   "license": "ISC",
   "name": "@chrisoakman/chessboardjs2",
   "version": "0.1.0",
