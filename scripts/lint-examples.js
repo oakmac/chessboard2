@@ -6,15 +6,13 @@
 
 // libraries
 const assert = require('assert')
-const child_process = require('child_process')
+const childProcess = require('childProcess')
 const fs = require('fs-plus')
 const kidif = require('kidif')
 const path = require('path')
 
 fs.removeSync('tmp')
 fs.makeTreeSync('tmp')
-
-const encoding = { encoding: 'utf8' }
 
 // grab the examples
 const examplesArr = kidif('examples/*.example')
@@ -27,7 +25,7 @@ examplesArr.forEach((example) => {
   fs.writeFileSync(path.join('tmp', example.id + '.js'), example.js)
 })
 
-const output = child_process.execSync('npx standard --fix tmp/', {
+const output = childProcess.execSync('npx standard --fix tmp/', {
   cwd: path.join(__dirname, '..'),
   encoding: 'utf8'
 })

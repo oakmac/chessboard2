@@ -14,12 +14,22 @@
 {{{footer}}}
 
 <script>
+function attachEvent (selectorOrId, eventType, fn) {
+  const el1 = document.getElementById(selectorOrId)
+  if (el1) { el1.addEventListener(eventType, fn); return }
+
+  const el2 = document.querySelector(selectorOrId)
+  if (el2) { el2.addEventListener(eventType, fn); return }
+
+  console.warn('Unable to attachEvent to element:', selectorOrId)
+}
+
 {{{examplesJavaScript}}}
 </script>
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha384-i61gTtaoovXtAbKjo903+O55Jkn2+RtzHtvNez+yI49HAASvznhe9sZyjaSHTau9" crossorigin="anonymous"></script>
 <script src="js/prettify.min.js"></script>
-{{{jsScript}}}
 <script src="js/chess-0.10.2.min.js"></script>
+{{{jsScript}}}
 <script src="js/examples.js"></script>
 </body>
 </html>

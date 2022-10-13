@@ -75,23 +75,67 @@ examplesArr.forEach((example) => {
 const examplesGroups = [
   {
     name: 'Basic Usage',
-    examples: ['1000-empty-board', '1001-start-position', '1002-fen-string', '1003-position-object', '1004-multiple-boards']
+    examples: [
+      '1000-empty-board',
+      '1001-start-position',
+      '1002-fen-string',
+      '1003-position-object',
+      '1004-multiple-boards'
+    ]
   },
   {
     name: 'Config',
-    examples: ['2000-config-position', '2044', '2063', '2001-config-orientation', '2002-config-notation', '2003', '2082', '2004', '2030', '2005', '2006']
+    examples: [
+      '2000-config-position',
+      '2044',
+      '2063',
+      '2001-config-orientation',
+      '2002-config-notation',
+      '2003',
+      '2082',
+      '2004',
+      '2030',
+      '2005',
+      '2006'
+    ]
   },
   {
     name: 'Methods',
-    examples: ['3000-get-position', '3001-set-position', '3002-set-position-instant', '3003', '3004', '3005', '3006', '3007']
+    examples: [
+      '3000-get-position',
+      '3001-set-position',
+      '3002-set-position-instant',
+      '3003',
+      '3004-move-pieces',
+      '3005',
+      '3006',
+      '3007'
+    ]
   },
   {
     name: 'Events',
-    examples: ['4000', '4001', '4002', '4003', '4004', '4005', '4006', '4011', '4012']
+    examples: [
+      '4000',
+      '4001',
+      '4002',
+      '4003',
+      '4004',
+      '4005',
+      '4006',
+      '4011',
+      '4012'
+    ]
   },
   {
     name: 'Integration',
-    examples: ['5000', '5001', '5002', '5003', '5004', '5005']
+    examples: [
+      '5000',
+      '5001',
+      '5002',
+      '5003',
+      '5004',
+      '5005'
+    ]
   }
 ]
 

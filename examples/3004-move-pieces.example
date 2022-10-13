@@ -1,5 +1,5 @@
 ===== id
-3004
+3004-move-pieces
 
 ===== Name
 Move Pieces
@@ -27,16 +27,16 @@ Use the [.move()] method to make one or more moves on the board.
 ===== JS
 const board = Chessboard2('myBoard', 'start')
 
-$('#move1Btn').on('click', function () {
+attachEvent('move1Btn', 'click', () => {
   board.move('e2-e4')
 })
 
-$('#move2Btn').on('click', function () {
+attachEvent('move2Btn', 'click', () => {
   // pass multiple moves as arguments
   board.move('d2-d4', 'g8-f6')
 })
 
-$('#move3Btn').on('click', function () {
+attachEvent('move3Btn', 'click', () => {
   // you can pass a duration time to the .move() function
   // duration times are either in milliseconds or the following strings:
   // "super fast" - 40ms
@@ -47,12 +47,12 @@ $('#move3Btn').on('click', function () {
   board.move('b2-b7', 5000)
 })
 
-$('#disableAnimationsBtn').on('click', function () {
+attachEvent('disableAnimationsBtn', 'click', () => {
   // pass in false to disable animations
   board.move('d7-d5', false)
 })
 
-$('#moveWithCallbackBtn').on('click', function () {
+attachEvent('moveWithCallbackBtn', 'click', () => {
   // pass a callback function that will fire when the animation of the move is complete
   board.move('g1-f3', function (move) {
     console.log('Animation finished for g1-f3:')
@@ -60,7 +60,7 @@ $('#moveWithCallbackBtn').on('click', function () {
   })
 })
 
-$('#move6Btn').on('click', function () {
+attachEvent('move6Btn', 'click', () => {
   // pass a config object
   board.move({
     animate: true,
@@ -71,7 +71,7 @@ $('#move6Btn').on('click', function () {
   })
 })
 
-$('#move7Btn').on('click', function () {
+attachEvent('move7Btn', 'click', () => {
   // move() returns a Promise object that fires when the animation has completed
   board.move('c7-c5').then((move) => {
     console.log('Animation has completed. Here is information about the move:')
@@ -79,7 +79,7 @@ $('#move7Btn').on('click', function () {
   })
 })
 
-$('#move8Btn').on('click', function () {
+attachEvent('move8Btn', 'click', () => {
   // multiple moves will return an Array of Promises
   Promise.all(board.move('h2-h4', 'h1-h3')).then((moves) => {
     console.log('Animations are complete:')
@@ -89,7 +89,7 @@ $('#move8Btn').on('click', function () {
 
 /*
 FIXME FIXME FIXME - this does not work. Consider changing the API?
-$('#move9Btn').on('click', function () {
+attachEvent('move9Btn', 'click', () => {
   // the Promise object will reject if the move is invalid / not possible
   board.move('g6-f6').then((move) => {
     console.log('Animation has completed. Here is information about the move:')
@@ -101,7 +101,7 @@ $('#move9Btn').on('click', function () {
 })
 */
 
-$('#move10Btn').on('click', function () {
+attachEvent('move10Btn', 'click', () => {
   // you may combine instant and animated moves in the same .move() call
   board.move({
     animate: true,
@@ -116,4 +116,6 @@ $('#move10Btn').on('click', function () {
   })
 })
 
-$('#startPositionBtn').on('click', board.start)
+attachEvent('startPositionBtn', 'click', () => {
+  board.start()
+})

@@ -19,23 +19,27 @@ Use the [clear()](docs.html#methods:clear) method to remove all pieces from the 
 ===== JS
 const board = Chessboard2('myBoard', 'start')
 
-$('#clearBoardBtn').on('click', board.clear)
+attachEvent('clearBoardBtn', 'click', () => {
+  board.clear()
+})
 
-$('#startPositionBtn').on('click', board.start)
+attachEvent('startPositionBtn', 'click', () => {
+  board.start()
+})
 
-$('#clearBoardInstantBtn').on('click', function () {
+attachEvent('clearBoardInstantBtn', 'click', () => {
   // pass false to disable animations (ie: instant moves)
   board.clear(false)
 })
 
-$('#clearBoardCallbackBtn').on('click', function () {
+attachEvent('clearBoardCallbackBtn', 'click', () => {
   // pass a function that will fire once the pieces have been removed
   board.clear((positionInfo) => {
     console.log('Board has been cleared:', positionInfo)
   })
 })
 
-$('#clearBoardAnimateSpeedBtn').on('click', async function () {
+attachEvent('clearBoardAnimateSpeedBtn', 'click', async () => {
   // pass a string or number to control animation speed
   // board.clear() also returns a Promise that resolves when the animations finish
   const positionInfo = await board.clear(2500)
