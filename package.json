@@ -4,7 +4,7 @@
   "license": "ISC",
   "name": "@chrisoakman/chessboardjs2",
   "version": "0.1.0",
-  "homepage": "https://chessboardjs.com",
+  "homepage": "https://chessboardjs.com/v2",
   "repository": {
     "type": "git",
     "url": "https://github.com/oakmac/chessboardjs2.git"
@@ -17,10 +17,12 @@
     "build-report": "shadow-cljs run shadow.cljs.build-report chessboard2 website/build-report.html",
     "cypress": "cypress open",
     "local-dev": "serve website/ -p 3232",
+    "release": "shadow-cljs release chessboard2 && ./scripts/release.js && npm publish",
     "test": "shadow-cljs compile node-tests"
   },
   "devDependencies": {
     "commonmark": "0.30.0",
+    "csso": "5.0.5",
     "cypress": "10.9.0",
     "fs-plus": "3.1.1",
     "kidif": "1.1.0",

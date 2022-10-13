@@ -1,6 +1,7 @@
 .clj-kondo/
 .lsp/
 .shadow-cljs/
+00_scrap/
 cypress/
 data/
 examples/
@@ -10,6 +11,7 @@ src-cljs/
 src-css/
 target/
 templates/
+website/
 
 *.diff
 cypress.config.js
