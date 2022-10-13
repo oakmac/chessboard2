@@ -5,6 +5,7 @@
 dist/
 node_modules/
 target/
+tmp/
 
 website/css/chessboard2.css
 website/examples/
