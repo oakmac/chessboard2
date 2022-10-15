@@ -139,6 +139,13 @@ const examplesGroups = [
   }
 ]
 
+// sanity-check that all of the example ids exist
+examplesGroups.forEach((group) => {
+  group.examples.forEach((exampleId) => {
+    assert(examplesMap.has(exampleId), 'examplesGroups has invalid exampleId: ' + exampleId)
+  })
+})
+
 const homepageExample2 = `
 const board2 = Chessboard2('board2', {
   draggable: true,
