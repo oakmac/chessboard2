@@ -6,7 +6,7 @@
 
 // libraries
 const assert = require('assert')
-const childProcess = require('childProcess')
+const childProcess = require('child_process')
 const fs = require('fs-plus')
 const kidif = require('kidif')
 const path = require('path')
