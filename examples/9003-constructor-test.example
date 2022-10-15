@@ -1,0 +1,19 @@
+===== id
+9003-constructor-test
+
+===== Name
+Constructor test
+
+===== DescriptionMD
+
+This file exists for testing
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+===== JS
+// should print a console.error about no first argument
+const board1 = Chessboard2()
+
+// should print a console.error about not finding a DOM element
+const board2 = Chessboard2('zzzzz')
