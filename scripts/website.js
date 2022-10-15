@@ -268,6 +268,18 @@ function writeLicensePage () {
   infoLog('Wrote ' + filename)
 }
 
+// remove dynamically generated files
+function removeOldFiles () {
+  fs.removeSync('website/css/chessboard2.css')
+  fs.removeSync('website/docs.html')
+  fs.removeSync('website/download.html')
+  fs.removeSync('website/examples.html')
+  fs.removeSync('website/examples')
+  fs.removeSync('website/index.html')
+  fs.removeSync('website/js/chessboard2.js')
+  fs.removeSync('website/license.html')
+}
+
 function writeWebsite () {
   writeSrcFiles()
   writeHomepage()
@@ -278,6 +290,7 @@ function writeWebsite () {
   writeLicensePage()
 }
 
+removeOldFiles()
 writeWebsite()
 infoLog('Successfully wrote the website/ folder 👍')
 
