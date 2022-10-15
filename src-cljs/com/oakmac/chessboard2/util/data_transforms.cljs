@@ -1,13 +1,15 @@
-(ns com.oakmac.chessboard2.util.data-transforms)
+(ns com.oakmac.chessboard2.util.data-transforms
+  (:require
+    [goog.object :as gobj]))
 
 (defn js-map->clj
   "Converts a JavaScript Map to a Clojure Map"
   [js-m]
-  (let [clj-m (transient {})]
+  (let [tmp-obj (js-obj "z" (transient {}))]
     (.forEach js-m
       (fn [js-val js-key _js-map]
-        (assoc! clj-m js-key js-val)))
-    (persistent! clj-m)))
+        (gobj/set tmp-obj "z" (assoc! (gobj/get tmp-obj "z") js-key js-val))))
+    (persistent! (gobj/get tmp-obj "z"))))
 
 (defn clj->js-map
   "Converts a Clojure Map to a JavaScript Map"
