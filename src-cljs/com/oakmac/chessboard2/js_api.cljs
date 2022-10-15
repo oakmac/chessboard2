@@ -13,9 +13,39 @@
                                                     valid-js-position-map?
                                                     valid-js-position-object?
                                                     valid-move-string?
+                                                    valid-position?
                                                     valid-square?]]
     [com.oakmac.chessboard2.util.string :refer [lower-case-if-string safe-lower-case]]
     [goog.object :as gobj]))
+
+(def valid-config-keys
+  #{"position"})
+
+(defn parse-constructor-second-arg
+  "expands shorthand versions of the second argument to the Chessboard2 constructor"
+  [js-opts]
+  (let [opts (js->clj js-opts)]
+    (cond
+      (start-string? opts)
+      {:position start-position}
+
+      (valid-fen? opts)
+      {:position (fen->position opts)}
+
+      (valid-position? opts)
+      {:position opts}
+
+      (map? opts)
+      (let [opts2 (select-keys opts valid-config-keys)
+            their-pos (get opts2 "position")]
+        (cond-> {}
+          (start-string? their-pos)   (assoc :position start-position)
+          (valid-fen? their-pos)      (assoc :position (fen->position their-pos))
+          (valid-position? their-pos) (assoc :position their-pos)))
+          ;; FIXME: add other configs values here
+
+      :else
+      {})))
 
 (def valid-move-keys
   #{:animate :animateSpeed :from :onComplete :to})
@@ -211,7 +241,8 @@
 
 (defn fen
   "Return or set the board position using a FEN String
-  Returns a FEN String if returning the position, returns a Promise if setting the position"
+  Returns a FEN String if returning the position
+  Returns a Promise if setting the position"
   [board-state]
   (let [js-args (array)]
     (copy-arguments js-args)

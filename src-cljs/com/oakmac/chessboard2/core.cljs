@@ -10,7 +10,7 @@
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element!]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position valid-fen?]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
-    [com.oakmac.chessboard2.util.logging :refer [warn-log]]
+    [com.oakmac.chessboard2.util.logging :refer [error-log warn-log]]
     [com.oakmac.chessboard2.util.moves :refer [move->map]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [arrow-item? circle-item? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
@@ -524,35 +524,6 @@
   [{:keys [root-el] :as board-cfg}]
   (gobj/set root-el "innerHTML" (html/BoardContainer board-cfg)))
 
-(def valid-config-keys
-  #{"position"})
-
-(defn- expand-second-arg
-  "expands shorthand versions of the second argument"
-  [js-opts]
-  (let [opts (js->clj js-opts)]
-    (cond
-      (start-string? opts)
-      {:position start-position}
-
-      (valid-fen? opts)
-      {:position (fen->position opts)}
-
-      (valid-position? opts)
-      {:position opts}
-
-      (map? opts)
-      (let [opts2 (select-keys opts valid-config-keys)
-            their-pos (get opts2 "position")]
-        (cond-> {}
-          (start-string? their-pos)   (assoc :position start-position)
-          (valid-fen? their-pos)      (assoc :position (fen->position their-pos))
-          (valid-position? their-pos) (assoc :position their-pos)))
-          ;; FIXME: add other configs values here
-
-      :else
-      {})))
-
 ;; :coords true => default
 
 ;; recommend they style the coordinate text using CSS
@@ -588,121 +559,139 @@
        (remove-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71")
        (add-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71"))))
 
+(defn constructor2
+  [root-el js-opts]
+  (let [;; create some random IDs for internal elements
+        container-id (random-id "container")
+        items-container-id (random-id "items-container")
+
+        root-width (dom-util/get-width root-el)
+
+        opts1 (js-api/parse-constructor-second-arg js-opts)
+        square-el-ids (create-square-el-ids (:num-rows default-board-config)
+                                            (:num-cols default-board-config))
+        opts2 (merge default-board-config opts1)
+        opts3 (assoc opts2 :root-el root-el
+                           :animation-end-callbacks {}
+                           :animate-speed-ms default-animate-speed-ms
+                           :board-height root-width
+                           :board-width root-width
+                           :container-id container-id
+                           :items {}
+                           :items-container-id items-container-id
+                           :piece-square-pct 0.9
+                           :square->piece-id {}
+                           :square-el-ids square-el-ids)
+        ;; create an atom to track the state of the board
+        board-state (atom opts3)]
+
+    ;; add a watch function to the board state
+    (add-watch board-state :on-change board-state-change)
+
+    ;; Initial DOM Setup
+    (init-dom! @board-state)
+    (add-events! root-el board-state)
+    (draw-items-instant! board-state)
+
+    ;; return a JS object that implements the API
+    (js-obj
+      ;; TODO: do we need to animate arrows from square to square?
+      ;;       I think this might be worth prototyping at least to see the effect
+      ;; TODO: do we need to allow a method for setting multiple arrows in one call?
+      "addArrow" (partial js-add-arrow board-state)
+      "arrows" (partial js-get-arrows board-state)
+      "clearArrows" (partial clear-arrows board-state)
+      "getArrows" (partial js-get-arrows board-state)
+      "removeArrow" (partial js-remove-arrow board-state)
+      ;; TODO: should this method exist? would be neat to prototype it and see the effect
+      ; "moveArrow" (partial js-move-arrow board-state)
+
+      "addCircle" (partial js-add-circle board-state)
+      "circles" (partial js-get-circles board-state)
+      "clearCircles" (partial clear-circles board-state)
+      "getCircles" (partial js-get-circles board-state)
+      "removeCircle" (partial js-remove-circle board-state)
+
+      ;; FIXME: implement these
+      ; https://github.com/oakmac/chessboardjs2/issues/7
+      ; "config" #()
+      ; "getConfig" #()
+      ; "setConfig" #()
+
+      ;; FIXME: allow adding custom items
+      ;; https://github.com/oakmac/chessboardjs2/issues/9
+      "addItem" (partial js-api/add-item board-state)
+      "clearItems" #() ;; FIXME
+      "getItems" (partial js-get-items board-state) ;; FIXME: should be able to pass the string type here as an argument
+      "items" (partial js-get-items board-state)
+      "moveItem" (partial js-api/move-item board-state)
+      "removeItem" (partial js-api/remove-item board-state)
+
+      ; "addPiece" (partial js-add-piece board-state) ;; FIXME: write this
+      "clearPieces" (partial js-api/clear board-state)
+      "getPieces" (partial js-get-pieces board-state)
+      "pieces" (partial js-get-pieces board-state)
+      ; "removePiece" (partial js-remove-piece board-state) ;; FIXME: write this
+
+      "clear" (partial js-api/clear board-state)
+      "move" (partial js-api/move-piece board-state)
+      ;; FIXME: moveInstant ???
+      "position" (partial js-api/position board-state)
+      "getPosition" (partial js-api/get-position board-state)
+      "setPosition" (partial js-api/set-position board-state)
+
+      "destroy" #() ;; FIXME
+      "fen" (partial js-api/fen board-state)
+
+      "clearSquareHighlights" #() ;; FIXME - should this just be "clearSquares" ?
+      ;; would also be nice if this returned x,y coordinates of the squares, for custom
+      ;; integrations
+      "getSquares" #() ;; FIXME: squares can have colors, ids, properties like "black" and "white"
+                       ;;        whether they are highlighted or not
+      "setSquare" #() ;; FIXME ;; .setSquare('e2', 'blue')
+      "squares" #() ;; FIXME
+
+      "coordinates" #() ;; FIXME: returns the current state with 0 arg, allows changing with other args
+      "getCoordinates" #() ;; FIXME: returns the config object
+      "hideCoordinates" (partial hide-coordinates! board-state)
+      "setCoordinates" #() ;; FIXME: sets the config object (do we need this? just use .setConfig() ?)
+      "showCoordinates" (partial show-coordinates! board-state)
+      "toggleCoordinates" (partial toggle-coordinates! board-state)
+
+      "flip" (partial orientation board-state "flip")
+      "orientation" (partial orientation board-state)
+      "getOrientation" (partial orientation board-state nil)
+      "setOrientation" (partial orientation board-state)
+
+      "animatePiece" #() ;; FIXME:
+      "bouncePiece" #() ;; FIXME
+      "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
+      "pulsePiece" #() ;; FIXME
+
+      "resize" #() ;; FIXME
+
+      "start" (partial js-api/start board-state))))
+
 (defn constructor
   "Called to create a new Chessboard2 object."
-  ([el-id]
-   (constructor el-id {}))
+  ([]
+   (error-log "Please pass a DOM element, element ID, or query selector as the first argument to the Chessboard2() function."))
+  ([el]
+   (constructor el {}))
   ([el js-opts]
-   (let [root-el (dom-util/get-element el)
-         ;; FIXME: fail if the DOM element does not exist
-         container-id (random-id "container")
-         root-width (dom-util/get-width root-el)
-         opts1 (expand-second-arg js-opts)
-         square-el-ids (create-square-el-ids (:num-rows default-board-config)
-                                             (:num-cols default-board-config))
-         opts2 (merge default-board-config opts1)
-         items-container-id (random-id "items-container")
-         opts3 (assoc opts2 :root-el root-el
-                            :animation-end-callbacks {}
-                            :animate-speed-ms default-animate-speed-ms
-                            :board-height root-width
-                            :board-width root-width
-                            :container-id container-id
-                            :items {}
-                            :items-container-id items-container-id
-                            :piece-square-pct 0.9
-                            :square->piece-id {}
-                            :square-el-ids square-el-ids)
-         ;; create an atom to track the state of the board
-         board-state (atom opts3)]
+   (let [root-el (dom-util/get-element el)]
+     (if-not root-el
+       (error-log "Unable to find DOM element:" el)
+       (constructor2 root-el js-opts)))))
 
-     ;; add a watch function to the board state
-     (add-watch board-state :on-change board-state-change)
-
-     ;; Initial DOM Setup
-     (init-dom! @board-state)
-     (add-events! root-el board-state)
-     (draw-items-instant! board-state)
-
-     ;; return a JS object that implements the API
-     (js-obj
-       ;; TODO: do we need to animate arrows from square to square?
-       ;;       I think this might be worth prototyping at least to see the effect
-       ;; TODO: do we need to allow a method for setting multiple arrows in one call?
-       "addArrow" (partial js-add-arrow board-state)
-       "arrows" (partial js-get-arrows board-state)
-       "clearArrows" (partial clear-arrows board-state)
-       "getArrows" (partial js-get-arrows board-state)
-       "removeArrow" (partial js-remove-arrow board-state)
-       ;; TODO: should this method exist? would be neat to prototype it and see the effect
-       ; "moveArrow" (partial js-move-arrow board-state)
-
-       "addCircle" (partial js-add-circle board-state)
-       "circles" (partial js-get-circles board-state)
-       "clearCircles" (partial clear-circles board-state)
-       "getCircles" (partial js-get-circles board-state)
-       "removeCircle" (partial js-remove-circle board-state)
-
-       ;; FIXME: implement these
-       ; https://github.com/oakmac/chessboardjs2/issues/7
-       ; "config" #()
-       ; "getConfig" #()
-       ; "setConfig" #()
-
-       ;; FIXME: allow adding custom items
-       ;; https://github.com/oakmac/chessboardjs2/issues/9
-       "addItem" (partial js-api/add-item board-state)
-       "clearItems" #() ;; FIXME
-       "getItems" (partial js-get-items board-state) ;; FIXME: should be able to pass the string type here as an argument
-       "items" (partial js-get-items board-state)
-       "moveItem" (partial js-api/move-item board-state)
-       "removeItem" (partial js-api/remove-item board-state)
-
-       ; "addPiece" (partial js-add-piece board-state) ;; FIXME: write this
-       "clearPieces" (partial js-api/clear board-state)
-       "getPieces" (partial js-get-pieces board-state)
-       "pieces" (partial js-get-pieces board-state)
-       ; "removePiece" (partial js-remove-piece board-state) ;; FIXME: write this
-
-       "clear" (partial js-api/clear board-state)
-       "move" (partial js-api/move-piece board-state)
-       ;; FIXME: moveInstant ???
-       "position" (partial js-api/position board-state)
-       "getPosition" (partial js-api/get-position board-state)
-       "setPosition" (partial js-api/set-position board-state)
-
-       "destroy" #() ;; FIXME
-       "fen" (partial js-api/fen board-state)
-
-       "clearSquareHighlights" #() ;; FIXME - should this just be "clearSquares" ?
-       ;; would also be nice if this returned x,y coordinates of the squares, for custom
-       ;; integrations
-       "getSquares" #() ;; FIXME: squares can have colors, ids, properties like "black" and "white"
-                        ;;        whether they are highlighted or not
-       "setSquare" #() ;; FIXME ;; .setSquare('e2', 'blue')
-       "squares" #() ;; FIXME
-
-       "coordinates" #() ;; FIXME: returns the current state with 0 arg, allows changing with other args
-       "getCoordinates" #() ;; FIXME: returns the config object
-       "hideCoordinates" (partial hide-coordinates! board-state)
-       "setCoordinates" #() ;; FIXME: sets the config object (do we need this? just use .setConfig() ?)
-       "showCoordinates" (partial show-coordinates! board-state)
-       "toggleCoordinates" (partial toggle-coordinates! board-state)
-
-       "flip" (partial orientation board-state "flip")
-       "orientation" (partial orientation board-state)
-       "getOrientation" (partial orientation board-state nil)
-       "setOrientation" (partial orientation board-state)
-
-       "animatePiece" #() ;; FIXME:
-       "bouncePiece" #() ;; FIXME
-       "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
-       "pulsePiece" #() ;; FIXME
-
-       "resize" #() ;; FIXME
-
-       "start" (partial js-api/start board-state)))))
-
-;; TODO: support other module exports / formats here
-(when (and js/window (not (fn? (gobj/get js/window "Chessboard2"))))
+;; put Chessboard2 on the window object
+(when (and (exists? js/window)
+           (not (fn? (gobj/get js/window "Chessboard2"))))
   (gobj/set js/window "Chessboard2" constructor))
+
+;; common JS export
+(when (and (exists? js/exports)
+           (not= (type (gobj/get js/exports "nodeName")) "string"))
+  (gobj/set js/exports "Chessboard2" constructor))
+
+;; TODO: do we need to support AMD?
