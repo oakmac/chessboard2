@@ -30,7 +30,7 @@ Make sure that [node.js], [yarn], and a modern version of the JVM are installed 
 yarn install
 
 ## produce website/chessboard2.js and build the local website
-npx shadow-cljs release chessboard2 && ./scripts/website.js
+npm run build
 
 ## run a local web server on port 3232
 npm run local-dev
@@ -50,8 +50,6 @@ npm publish --access=public
 
 ```sh
 ## Unit Tests
-npx shadow-cljs compile node-tests
-## or
 npm run test
 
 ## Cypress
