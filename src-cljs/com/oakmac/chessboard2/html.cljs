@@ -209,7 +209,7 @@
 
 ;; TODO: this function is a hot mess; refactor to something more functional / elegant
 (defn Squares
-  [{:keys [num-rows num-cols square-el-ids] :as _opts}]
+  [{:keys [num-rows num-cols square->square-ids] :as _opts}]
   (let [html (atom "")
         white? (atom true)]
     (doseq [rank-idx (reverse (range 0 num-rows))]
@@ -218,7 +218,7 @@
         (let [coord (str (idx->alpha col-idx) (inc rank-idx))]
           (swap! html str (Square {:coord coord
                                    :color (if @white? "white" "black")
-                                   :id (get square-el-ids coord)}))
+                                   :id (get square->square-ids coord)}))
           (swap! white? not)))
       (swap! html str (str "</div>"))
       (swap! white? not))

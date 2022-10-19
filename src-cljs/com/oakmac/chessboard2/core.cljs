@@ -1,5 +1,6 @@
 (ns com.oakmac.chessboard2.core
   (:require
+    [clojure.set :as set]
     [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
@@ -14,7 +15,7 @@
     [com.oakmac.chessboard2.util.moves :refer [move->map]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [arrow-item? circle-item? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
-    [com.oakmac.chessboard2.util.squares :refer [create-square-el-ids]]
+    [com.oakmac.chessboard2.util.squares :as square-util]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
     [goog.array :as garray]
     [goog.dom :as gdom]
@@ -42,11 +43,47 @@
       ;; remove callback from the cache
       (swap! board-state update-in [:animation-end-callbacks] dissoc el-id))))
 
+(defn on-touch-start
+  [board-state js-evt]
+  (let [target-el (gobj/get js-evt "target")
+        {:keys [root-el square->piece-id square->square-ids]} @board-state
+        dom-path (dom-util/el->path target-el root-el)
+
+        piece-id->square (set/map-invert square->piece-id)
+
+        ;; was a piece touched? if so, this will be its id, nil otherwise
+        piece-id (reduce
+                   (fn [_acc el]
+                     (let [el-id (gobj/get el "id")]
+                       (if (contains? piece-id->square el-id)
+                         (reduced el-id)
+                         nil)))
+                   nil
+                   dom-path)
+
+        square (if piece-id
+                 ;; if they touched a piece we can grab it's square from the position
+                 (get piece-id->square piece-id)
+                 ;; else traverse the DOM path
+                 (let [square-id->square (set/map-invert square->square-ids)]
+                   (reduce
+                     (fn [_acc el]
+                       (let [el-id (gobj/get el "id")]
+                         (if-let [possible-square (get square-id->square el-id)]
+                           (reduced possible-square)
+                           nil)))
+                     nil
+                     dom-path)))]
+    ;; FIXME: finish writing this
+    (js/console.log "piece-id:" piece-id)
+    (js/console.log "square:" square)))
+
 (defn- add-events!
   "Attach DOM events."
   [root-el board-state]
   ; (.addEventListener root-el "click" click-root-el)
-  (.addEventListener root-el "transitionend" (partial on-transition-end board-state)))
+  (.addEventListener root-el "transitionend" (partial on-transition-end board-state))
+  (.addEventListener root-el "touchstart" (partial on-touch-start board-state)))
 
 (defn toggle-orientation [o]
   (if (= o "white") "black" "white"))
@@ -568,8 +605,8 @@
         root-width (dom-util/get-width root-el)
 
         opts1 (js-api/parse-constructor-second-arg js-opts)
-        square-el-ids (create-square-el-ids (:num-rows default-board-config)
-                                            (:num-cols default-board-config))
+        square->square-ids (square-util/create-random-square-ids (:num-rows default-board-config)
+                                                             (:num-cols default-board-config))
         opts2 (merge default-board-config opts1)
         opts3 (assoc opts2 :root-el root-el
                            :animation-end-callbacks {}
@@ -581,7 +618,7 @@
                            :items-container-id items-container-id
                            :piece-square-pct 0.9
                            :square->piece-id {}
-                           :square-el-ids square-el-ids)
+                           :square->square-ids square->square-ids)
         ;; create an atom to track the state of the board
         board-state (atom opts3)]
 

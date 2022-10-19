@@ -49,8 +49,8 @@
         col-idx (range 0 num-cols)]
     (str (idx->alpha row-idx) (inc col-idx))))
 
-(defn create-square-el-ids
-  "TODO: write doc string here"
+(defn create-random-square-ids
+  "returns a map of square -> square-id"
   [num-rows num-cols]
   (reduce
     (fn [square-el-ids square]

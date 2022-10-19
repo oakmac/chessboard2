@@ -4,18 +4,48 @@
 ===== Name
 Play Random Computer
 
-===== Description
-You can integrate chessboard.js with the <a href="https://github.com/jhlywa/chess.js">chess.js</a> library to play against random moves.
+===== DescriptionMD
+You can integrate chessboardjs2 with the [chess.js library](https://github.com/jhlywa/chess.js) to play against random moves.
 
 ===== HTML
-<div id="myBoard" style="width: 400px"></div>
+<!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.js" integrity="sha384-L0SnMpUnYUX6GNzeu549NqRJHDc9gljfSbFwmJFLZRNJiKLrLI+W9Cpw/DgHy5Vu" crossorigin="anonymous"></script>
+-->
+<script src="js/chess-0.10.2.min.js"></script>
+<!-- <div id="myBoard" style="width: 400px"></div> -->
+<div id="myBoard"></div>
 
 ===== JS
-// NOTE: this example uses the chess.js library:
+// This example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
 
-var board = null
-var game = new Chess()
+// NOTE: the game object is separate from the board object
+// the game object:
+// - controls the state of the game
+// - understands how pieces move and what moves are legal
+// - knows who's turn it is
+// - en passant, castling, draw logic, etc
+const game = new Chess()
+
+// the board object is "dumb":
+// - reflects the current position
+// - handles input events from users
+const boardConfig = {
+  draggable: true,
+  onDragStart: onDragStart,
+  onTouchSquare: onTouchSquare,
+  onDrop: onDrop,
+  onSnapEnd: onSnapEnd,
+  position: 'start',
+  touchMove: true
+}
+const board = Chessboard2('myBoard', boardConfig)
+
+function onTouchSquare (square, piece, board) {
+  console.log('onTouchSquare:', square, piece, board)
+  // board.orientation
+  // board.position
+}
 
 function onDragStart (source, piece, position, orientation) {
   // do not pick up pieces if the game is over
@@ -56,12 +86,3 @@ function onDrop (source, target) {
 function onSnapEnd () {
   board.position(game.fen())
 }
-
-var config = {
-  draggable: true,
-  position: 'start',
-  onDragStart: onDragStart,
-  onDrop: onDrop,
-  onSnapEnd: onSnapEnd
-}
-board = Chessboard2('myBoard', config)

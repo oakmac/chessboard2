@@ -19,7 +19,9 @@
     [goog.object :as gobj]))
 
 (def valid-config-keys
-  #{"position"})
+  #{"draggable"
+    "onTouchSquare"
+    "position"})
 
 (defn parse-constructor-second-arg
   "expands shorthand versions of the second argument to the Chessboard2 constructor"

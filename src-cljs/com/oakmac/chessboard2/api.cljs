@@ -191,6 +191,7 @@
 ;   "Sets the board position instantly. Returns a Clojure map of the new position."
 ;   [board-state new-pos])
 
+;; TODO: we should allow fade-in animation of Custom Items
 (defn add-item!
   "Adds a Custom Item to the board. Returns the id of the new Item."
   [board-state item-cfg]
@@ -289,6 +290,9 @@
                       {:defer-fn (fn []
                                    ;; start move animation
                                    (set-style-prop! id "transition" (str "all " animate-speed2 "ms"))
+
+
+                                   ;; FIXME: these are the wrong coordinates, we need to animate to the center of the square
                                    (set-style-prop! id "left" (str (:left target-square-dimensions) "px"))
                                    (set-style-prop! id "top" (str (:top target-square-dimensions) "px"))
                                    ;; add the callback if provided

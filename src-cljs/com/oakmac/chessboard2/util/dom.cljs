@@ -80,3 +80,22 @@
        (fn []
         (set-style-prop! el "transition" (str "all " animate-speed-ms "ms"))
         (set-style-prop! el "opacity" "0"))))))
+
+;; TODO: could write a Cypress test for this function
+(defn el->path
+  "returns a JS Array of the parent DOM nodes from el to stop-node (included)
+  stop-node defaults to document.body if not provided"
+  ([el]
+   (el->path el js/document.body))
+  ([el stop-node]
+   (let [js-path (array)
+         stop-node (gdom/getElement stop-node)
+         append-parent-node-fn (fn [current-node]
+                                 (when current-node
+                                   ;; add this node to the path
+                                   (.push js-path current-node)
+                                   ;; recurse to parent node unless we are already there
+                                   (when-not (= current-node stop-node)
+                                     (recur (gdom/getParentElement current-node)))))]
+     (append-parent-node-fn el)
+     js-path)))
