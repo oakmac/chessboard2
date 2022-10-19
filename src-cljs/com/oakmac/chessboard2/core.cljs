@@ -32,7 +32,7 @@
 ;; NOTE: the transitionend event fires for every CSS property that is transitioned
 ;; This function fires twice for most (but not all) piece moves (css props 'left' and 'top')
 (defn on-transition-end
-  "This function fires on every 'transitionend' event inside the root container."
+  "This function fires on every 'transitionend' event inside the root DOM element."
   [board-state js-evt]
   (let [target-el (gobj/get js-evt "target")
         el-id (gobj/get target-el "id")]
@@ -44,14 +44,16 @@
       (swap! board-state update-in [:animation-end-callbacks] dissoc el-id))))
 
 (defn on-touch-start
+  "This function fires on every 'touchstart' event inside the root DOM element"
   [board-state js-evt]
-  (let [target-el (gobj/get js-evt "target")
-        {:keys [root-el square->piece-id square->square-ids]} @board-state
+  ;; TODO: do we need to preventDefault on js-evt here?
+  (let [{:keys [config orientation position root-el square->piece-id square->square-ids]} @board-state
+        {:keys [onTouchSquare touchMove]} config
+        target-el (gobj/get js-evt "target")
         dom-path (dom-util/el->path target-el root-el)
-
         piece-id->square (set/map-invert square->piece-id)
 
-        ;; was a piece touched? if so, this will be its id, nil otherwise
+        ;; was a piece touched? if so, this will be its id, otherwise nil
         piece-id (reduce
                    (fn [_acc el]
                      (let [el-id (gobj/get el "id")]
@@ -62,9 +64,9 @@
                    dom-path)
 
         square (if piece-id
-                 ;; if they touched a piece we can grab it's square from the position
+                 ;; if they touched a piece we can grab its square from board-state
                  (get piece-id->square piece-id)
-                 ;; else traverse the DOM path
+                 ;; else grab that information from the DOM
                  (let [square-id->square (set/map-invert square->square-ids)]
                    (reduce
                      (fn [_acc el]
@@ -73,10 +75,27 @@
                            (reduced possible-square)
                            nil)))
                      nil
-                     dom-path)))]
-    ;; FIXME: finish writing this
-    (js/console.log "piece-id:" piece-id)
-    (js/console.log "square:" square)))
+                     dom-path)))
+
+        _ (when flags/runtime-checks?
+            (when-not (valid-square? square)
+              (error-log "Invalid square in on-touch-start")))
+
+        ;; NOTE: piece be nil if there is no piece on the square they touched
+        piece (get position square)
+
+        ;; call their onTouchSquare function if provided
+        on-touchsquare-result (when (fn? onTouchSquare)
+                                (let [js-board-info (js-obj "orientation" orientation
+                                                            "position" (clj->js position))]
+                                  (onTouchSquare square piece js-board-info)))]
+    ;; highlight the square and queue a move if touchmove is enabled
+    (when (and (true? touchMove)
+               (not (false? on-touchsquare-result))
+               piece)
+      ;; FIXME: highlight square here, queue touchmove
+      (js/console.log "move queued:" square piece))
+    nil))
 
 (defn- add-events!
   "Attach DOM events."
@@ -580,6 +599,10 @@
    :position {}
    :show-coords? true}) ;; are the Coordinates showing?
 
+(def default-config
+  {:draggable false
+   :touchMove false})
+
 (def default-animate-speed-ms 120)
 ; (def default-animate-speed-ms 2500)
 
@@ -604,10 +627,16 @@
 
         root-width (dom-util/get-width root-el)
 
-        opts1 (js-api/parse-constructor-second-arg js-opts)
+        ;; TODO: refactor all of this config / opts code
+        their-opts (js-api/parse-constructor-second-arg js-opts)
+        their-config (:config their-opts)
+        starting-config (merge default-config their-config)
         square->square-ids (square-util/create-random-square-ids (:num-rows default-board-config)
-                                                             (:num-cols default-board-config))
-        opts2 (merge default-board-config opts1)
+                                                                 (:num-cols default-board-config))
+        opts2 (merge default-board-config
+                {:config starting-config}
+                (when (:position their-opts)
+                  {:position (:position their-opts)}))
         opts3 (assoc opts2 :root-el root-el
                            :animation-end-callbacks {}
                            :animate-speed-ms default-animate-speed-ms

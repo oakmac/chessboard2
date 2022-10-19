@@ -21,7 +21,11 @@
 (def valid-config-keys
   #{"draggable"
     "onTouchSquare"
-    "position"})
+    ;; "onDragStart"
+    ;; "onDrop"
+    ;; "onSnapEnd"
+    "position"
+    "touchMove"})
 
 (defn parse-constructor-second-arg
   "expands shorthand versions of the second argument to the Chessboard2 constructor"
@@ -41,9 +45,18 @@
       (let [opts2 (select-keys opts valid-config-keys)
             their-pos (get opts2 "position")]
         (cond-> {}
+          ;; set initial position
           (start-string? their-pos)   (assoc :position start-position)
           (valid-fen? their-pos)      (assoc :position (fen->position their-pos))
-          (valid-position? their-pos) (assoc :position their-pos)))
+          (valid-position? their-pos) (assoc :position their-pos)
+
+          ;; booleans
+          (true? (get opts2 "draggable")) (assoc-in [:config :draggable] true)
+          (true? (get opts2 "touchMove")) (assoc-in [:config :touchMove] true)
+
+          ;; event functions
+          (fn? (get opts2 "onTouchSquare")) (assoc-in [:config :onTouchSquare] (get opts2 "onTouchSquare"))))
+
           ;; FIXME: add other configs values here
 
       :else

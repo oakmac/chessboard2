@@ -45,6 +45,7 @@ function onTouchSquare (square, piece, board) {
   console.log('onTouchSquare:', square, piece, board)
   // board.orientation
   // board.position
+  return false
 }
 
 function onDragStart (source, piece, position, orientation) {
