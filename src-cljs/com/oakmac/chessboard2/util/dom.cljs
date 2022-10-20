@@ -7,6 +7,9 @@
 (defn query-select [q]
   (.querySelector js/document q))
 
+(defn query-select-all [q]
+  (.querySelectorAll js/document q))
+
 (defn get-element
   "does it's best to grab a native DOM element from it's argument
   arg can be either:
@@ -27,6 +30,9 @@
   [el]
   (let [js-box (.getBoundingClientRect el)]
     {:height (gobj/get js-box "height")
+     :left (gobj/get js-box "left")
+     ; :right (gobj/get js-box "right")
+     :top (gobj/get js-box "top")
      :width (gobj/get js-box "width")}))
 
 (defn get-width
