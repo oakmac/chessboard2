@@ -31,7 +31,7 @@ const game = new Chess()
 // - reflects the current position
 // - handles input events from users
 const boardConfig = {
-  draggable: true,
+  draggable: true, // FIXME: <-- need to implement this
   onDragStart: onDragStart,
   onTouchSquare: onTouchSquare,
   onDrop: onDrop,
@@ -41,11 +41,56 @@ const boardConfig = {
 }
 const board = Chessboard2('myBoard', boardConfig)
 
-function onTouchSquare (square, piece, board) {
-  console.log('onTouchSquare:', square, piece, board)
-  // board.orientation
-  // board.position
-  return false
+let pendingMove = null
+
+// There are 5 outcomes from this action:
+// - start a pending move
+// - clear a pending move
+// - clear a pending move AND start a different pending move
+// - make a move (ie: complete their pending move)
+// - do nothing
+function onTouchSquare (square, piece, boardInfo) {
+  // ask chess.js what legal moves are available from this square
+  const legalMoves = game.moves({ square: square, verbose: true })
+  // console.log('legalMoves:', legalMoves)
+
+  if (pendingMove) {
+    // ask chess.js to make a move
+    const moveResult = game.move({ from: pendingMove, to: square })
+
+    // was this a legal move?
+    if (moveResult) {
+      // FIXME: if you flip these two calls, there is a rendering bug
+      // need to be able to update the board while an animation is happening
+
+      // clear any highlights
+      board.clearCircles()
+
+      // update the board position
+      board.position(game.fen()).then(() => {
+        window.setTimeout(makeRandomMove, 250)
+      })
+    } else if (piece && legalMoves.length > 0) {
+      board.clearCircles()
+      // reset the pending move to this new square
+      pendingMove = square
+      legalMoves.forEach(m => {
+        board.addCircle(m.to)
+      })
+      // FIXME: highlight square here
+    } else {
+      pendingMove = null
+      board.clearCircles()
+      // TODO: clear any move highlights here
+    }
+    // else if there is a piece on the square
+  } else if (piece && legalMoves.length > 0) {
+    pendingMove = square
+    legalMoves.forEach(m => {
+      board.addCircle(m.to)
+    })
+    // FIXME: highlight square here
+  }
 }
 
 function onDragStart (source, piece, position, orientation) {
@@ -57,12 +102,12 @@ function onDragStart (source, piece, position, orientation) {
 }
 
 function makeRandomMove () {
-  var possibleMoves = game.moves()
+  const possibleMoves = game.moves()
 
   // game over
   if (possibleMoves.length === 0) return
 
-  var randomIdx = Math.floor(Math.random() * possibleMoves.length)
+  const randomIdx = Math.floor(Math.random() * possibleMoves.length)
   game.move(possibleMoves[randomIdx])
   board.position(game.fen())
 }

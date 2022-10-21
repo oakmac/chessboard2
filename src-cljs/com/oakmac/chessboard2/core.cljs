@@ -1,6 +1,7 @@
 (ns com.oakmac.chessboard2.core
   (:require
     [clojure.set :as set]
+    [clojure.string :as str]
     [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
@@ -24,6 +25,7 @@
 (declare percent? size-string->number tshirt-sizes)
 
 ;; TODO
+;; - need to write a Cypress test for piece capture that happens as a result of .position() method
 ;; - [ ] .move('0-0') and .move('0-0-0') should work as expected (GitHub Issue #6)
 
 ; (defn click-root-el [js-evt]
@@ -43,15 +45,45 @@
       ;; remove callback from the cache
       (swap! board-state update-in [:animation-end-callbacks] dissoc el-id))))
 
+;; TODO: move this to dom-util, use native JS objects
+(defn xy-within-box?
+  [x y {:keys [height left top width] :as _dimensions}]
+  (and (>= x left)
+       (< x (+ left width))
+       (>= y top)
+       (< y (+ top height))))
+
 (defn on-touch-start
   "This function fires on every 'touchstart' event inside the root DOM element"
   [board-state js-evt]
-  ;; TODO: do we need to preventDefault on js-evt here?
+  ;; prevent "double-tap to zoom"
+  (dom-util/safe-prevent-default js-evt)
   (let [{:keys [config orientation position root-el square->piece-id square->square-ids]} @board-state
         {:keys [onTouchSquare touchMove]} config
         target-el (gobj/get js-evt "target")
         dom-path (dom-util/el->path target-el root-el)
         piece-id->square (set/map-invert square->piece-id)
+
+        js-first-touch (aget (gobj/get js-evt "touches") 0)
+        clientX (gobj/get js-first-touch "clientX")
+        clientY (gobj/get js-first-touch "clientY")
+        ; _ (js/console.log "touch X/Y:" clientX clientY)
+
+        square-els-selector (->> square->square-ids
+                              vals
+                              (map #(str "#" %))
+                              (str/join ", "))
+        square-els (dom-util/query-select-all square-els-selector)
+
+        square-id (reduce
+                    (fn [acc square-el]
+                      (let [{:keys [height left top width] :as dims} (dom-util/get-dimensions square-el)]
+                        (if (xy-within-box? clientX clientY dims)
+                          (reduced (gobj/get square-el "id"))
+                          nil)))
+                    nil
+                    square-els)
+        square-id->square (set/map-invert square->square-ids)
 
         ;; was a piece touched? if so, this will be its id, otherwise nil
         piece-id (reduce
@@ -63,25 +95,15 @@
                    nil
                    dom-path)
 
-        square (if piece-id
-                 ;; if they touched a piece we can grab its square from board-state
-                 (get piece-id->square piece-id)
-                 ;; else grab that information from the DOM
-                 (let [square-id->square (set/map-invert square->square-ids)]
-                   (reduce
-                     (fn [_acc el]
-                       (let [el-id (gobj/get el "id")]
-                         (if-let [possible-square (get square-id->square el-id)]
-                           (reduced possible-square)
-                           nil)))
-                     nil
-                     dom-path)))
+        square (get square-id->square square-id)
 
         _ (when flags/runtime-checks?
             (when-not (valid-square? square)
-              (error-log "Invalid square in on-touch-start")))
+              (error-log "Invalid square in on-touch-start:" square)
+              (js/console.log "piece-id:" piece-id)
+              (js/console.log dom-path)))
 
-        ;; NOTE: piece be nil if there is no piece on the square they touched
+        ;; NOTE: piece may be nil if there is no piece on the square they touched
         piece (get position square)
 
         ;; call their onTouchSquare function if provided
@@ -92,10 +114,33 @@
     ;; highlight the square and queue a move if touchmove is enabled
     (when (and (true? touchMove)
                (not (false? on-touchsquare-result))
-               piece)
-      ;; FIXME: highlight square here, queue touchmove
-      (js/console.log "move queued:" square piece))
+               piece))
+      ;; FIXME:
+      ;; - highlight the square here?
+      ;; - or should this be their responsibility?
+      ;; queue their touchmove
+      ; (swap! board-state assoc :touch-move-queue1 {:piece piece, :square square}))
     nil))
+
+; (defn on-mouse-down
+;   "This function fires on every 'mousedown' event inside the root DOM element"
+;   [board-state js-evt]
+;   ;; TODO: do we need to preventDefault on js-evt here?
+;   (let [{:keys [config orientation position root-el square->piece-id square->square-ids]} @board-state
+;         {:keys [onTouchSquare touchMove]} config
+;         target-el (gobj/get js-evt "target")
+;         dom-path (dom-util/el->path target-el root-el)
+;         piece-id->square (set/map-invert square->piece-id)
+;
+;         ;; was a piece touched? if so, this will be its id, otherwise nil
+;         piece-id (reduce
+;                    (fn [_acc el]
+;                      (let [el-id (gobj/get el "id")]
+;                        (if (contains? piece-id->square el-id)
+;                          (reduced el-id)
+;                          nil)))
+;                    nil
+;                    dom-path)]))
 
 (defn- add-events!
   "Attach DOM events."
@@ -103,6 +148,7 @@
   ; (.addEventListener root-el "click" click-root-el)
   (.addEventListener root-el "transitionend" (partial on-transition-end board-state))
   (.addEventListener root-el "touchstart" (partial on-touch-start board-state)))
+  ; (.addEventListener root-el "mousedown" (partial on-mouse-down board-state)))
 
 (defn toggle-orientation [o]
   (if (= o "white") "black" "white"))
@@ -603,7 +649,7 @@
   {:draggable false
    :touchMove false})
 
-(def default-animate-speed-ms 120)
+(def default-animate-speed-ms 80)
 ; (def default-animate-speed-ms 2500)
 
 (defn board-state-change

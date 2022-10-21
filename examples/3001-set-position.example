@@ -24,12 +24,15 @@ set the board position.
 
 <button id="clearBoardBtn">Clear Board</button>
 <button id="setPawns3">Pawn Attack 2!</button>
-<button id="setPawns4">Pawns 4</button>
 
 <button id="setWithCallback">Set Position with Callback</button>
 <button id="setWithAnimateSpeed">Queen's Gambit (Set Position with Animate Speed)</button>
 <button id="setWithPromise">Queen's Gambit Accepted (Set Position returns a Promise)</button>
 <button id="setWithObject">Queen's Gambit Declined (Set Position with an Object)</button>
+
+<!-- TODO: move these to a Cypress test -->
+<button id="testBtn1">Test 1</button>
+<button id="testBtn2">Test 2</button>
 
 ===== JS
 const board = Chessboard2('myBoard')
@@ -105,4 +108,17 @@ attachEvent('setWithObject', 'click', () => {
       console.log('Animations have finished:', posInfo)
     }
   })
+})
+
+
+
+
+
+
+attachEvent('testBtn1', 'click', () => {
+  board.position('r1bqkbnr/pppp1ppp/n7/4p3/3P4/4P3/PPP2PPP/RNBQKBNR')
+})
+
+attachEvent('testBtn2', 'click', () => {
+  board.position('r1bqkbnr/pppp1ppp/B7/4p3/3P4/4P3/PPP2PPP/RNBQK1NR')
 })
