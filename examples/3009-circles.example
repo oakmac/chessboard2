@@ -8,7 +8,7 @@ Circles
 TODO: write me :)
 
 ===== HTML
-<div id="myBoard" style="width: 400px"></div>
+<div id="myBoard"></div>
 <button id="addCircle1Btn">Default Circle at d4</button>
 <button id="addCircle2Btn">Large, Orange Circle at e4</button>
 <button id="addCircle3Btn">Small, Purple Circle at e4</button>
@@ -27,25 +27,25 @@ let circle2Id = null
 let circle3Id = null
 let circle4Id = null
 
-$('#addCircle1Btn').on('click', function () {
+attachEvent('addCircle1Btn', 'click', () => {
   circle1Id = board.addCircle('d4')
 })
 
-$('#addCircle2Btn').on('click', function () {
+attachEvent('addCircle2Btn', 'click', () => {
   circle2Id = board.addCircle('e4', 'orange', 'large')
   // console.log('added "small" Circle 2 with id:', circle2Id)
 })
 
-$('#addCircle3Btn').on('click', function () {
+attachEvent('addCircle3Btn', 'click', () => {
   circle3Id = board.addCircle('e4', 'purple', 'small')
 })
 
-$('#addCircle4Btn').on('click', function () {
+attachEvent('addCircle4Btn', 'click', () => {
   circle4Id = board.addCircle('d5', '#8e8e8e', 'medium')
   // console.log('added "large" Circle 4 with id:', circle4Id)
 })
 
-$('#addCircle5Btn').on('click', function () {
+attachEvent('addCircle5Btn', 'click', () => {
   circle5Id = board.addCircle({
     color: 'orange',
     square: 'h1',
@@ -55,20 +55,20 @@ $('#addCircle5Btn').on('click', function () {
   console.log('added Circle 5 with id:', circle5Id)
 })
 
-$('#removeCircle1Btn').on('click', function () {
+attachEvent('removeCircle1Btn', 'click', () => {
   // board.removeCircle('e4')
 
   // FIXME: make variadic work
   board.removeCircle('e4', 'e5', 'e6', 'e7')
 })
 
-$('#removeCircle2Btn').on('click', function () {
+attachEvent('removeCircle2Btn', 'click', () => {
   if (circle4Id) {
     board.removeCircle(circle4Id)
   }
 })
 
-$('#logCirclesBtn').on('click', function () {
+attachEvent('logCirclesBtn', 'click', () => {
   console.log('Circles Array:')
   console.log(board.getCircles())
 
@@ -81,6 +81,6 @@ $('#logCirclesBtn').on('click', function () {
   console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 })
 
-$('#clearCirclesBtn').on('click', function () {
+attachEvent('clearCirclesBtn', 'click', () => {
   board.clearCircles()
 })
