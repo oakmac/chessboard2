@@ -327,9 +327,9 @@ function buildExamplesJS () {
   examplesArr.forEach(function (ex) {
     txt += 'CHESSBOARD2_EXAMPLES["' + ex.id + '"] = {\n' +
       '  description: ' + JSON.stringify(ex.description) + ',\n' +
-      '  html: ' + JSON.stringify(ex.html) + ',\n' +
+      '  html64: ' + JSON.stringify(btoa(ex.html)) + ',\n' +
       '  name: ' + JSON.stringify(ex.name) + ',\n' +
-      '  jsStr: ' + JSON.stringify(ex.js) + ',\n' +
+      '  jsStr64: ' + JSON.stringify(btoa(ex.js)) + ',\n' +
       '  jsFn: function () {\n' + ex.js + '\n  }\n' +
       '};\n\n'
   })

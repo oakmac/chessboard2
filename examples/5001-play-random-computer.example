@@ -9,10 +9,14 @@ You can integrate chessboardjs2 with the [chess.js library](https://github.com/j
 
 ===== HTML
 <!--
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.js" integrity="sha384-L0SnMpUnYUX6GNzeu549NqRJHDc9gljfSbFwmJFLZRNJiKLrLI+W9Cpw/DgHy5Vu" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.js"
+  integrity="sha384-L0SnMpUnYUX6GNzeu549NqRJHDc9gljfSbFwmJFLZRNJiKLrLI+W9Cpw/DgHy5Vu"
+  crossorigin="anonymous"></script>
 -->
 <script src="js/chess-0.10.2.min.js"></script>
 <!-- <div id="myBoard" style="width: 400px"></div> -->
+
+
 <div id="myBoard"></div>
 
 ===== JS
@@ -52,44 +56,55 @@ let pendingMove = null
 function onTouchSquare (square, piece, boardInfo) {
   // ask chess.js what legal moves are available from this square
   const legalMoves = game.moves({ square: square, verbose: true })
-  // console.log('legalMoves:', legalMoves)
 
-  if (pendingMove) {
+  // Option 1: start a pending move
+  if (!pendingMove && legalMoves.length > 0) {
+    pendingMove = square
+
+    // add circles showing where the legal moves are for this piece
+    legalMoves.forEach(move => {
+      board.addCircle(move.to)
+    })
+  }
+  // Option 2: clear a pending move if the user selects the same square twice
+  else if (pendingMove && pendingMove === square) {
+    pendingMove = null
+    board.clearCircles()
+  }
+  // Option 3: clear a pending move and start a new pending move
+  else if (pendingMove) {
     // ask chess.js to make a move
+    // FIXME: need to add pawn promotion here
     const moveResult = game.move({ from: pendingMove, to: square })
 
     // was this a legal move?
     if (moveResult) {
-      // FIXME: if you flip these two calls, there is a rendering bug
-      // need to be able to update the board while an animation is happening
-
-      // clear any highlights
+      // clear circles on the board
       board.clearCircles()
 
-      // update the board position
+      // update to the new position
       board.position(game.fen()).then(() => {
+        // wait a smidge, then make a random move for Black
         window.setTimeout(makeRandomMove, 250)
       })
-    } else if (piece && legalMoves.length > 0) {
-      board.clearCircles()
-      // reset the pending move to this new square
+    }
+    // if the move was not legal, then start a new pendingMove from this square
+    else if (piece) {
       pendingMove = square
+
+      // remove any previous circles
+      board.clearCircles()
+
+      // add circles showing where the legal moves are for this piece
       legalMoves.forEach(m => {
         board.addCircle(m.to)
       })
-      // FIXME: highlight square here
-    } else {
+    }
+    // else clear pendingMove
+    else {
       pendingMove = null
       board.clearCircles()
-      // TODO: clear any move highlights here
     }
-    // else if there is a piece on the square
-  } else if (piece && legalMoves.length > 0) {
-    pendingMove = square
-    legalMoves.forEach(m => {
-      board.addCircle(m.to)
-    })
-    // FIXME: highlight square here
   }
 }
 

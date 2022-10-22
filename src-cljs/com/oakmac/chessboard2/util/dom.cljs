@@ -31,19 +31,22 @@
       (let [el2 (.querySelector js/document arg)]
         (if el2 el2 nil)))))
 
-(defn get-dimensions
-  "returns the {:height, :width} of a DOM element"
-  [el]
-  (let [js-box (.getBoundingClientRect el)]
-    {:height (gobj/get js-box "height")
-     :left (gobj/get js-box "left")
-     ; :right (gobj/get js-box "right")
-     :top (gobj/get js-box "top")
-     :width (gobj/get js-box "width")}))
+(defn xy-inside-element?
+  [el x y]
+  (let [js-box (.getBoundingClientRect el)
+        left (gobj/get js-box "left")
+        width (gobj/get js-box "width")
+        height (gobj/get js-box "height")
+        top (gobj/get js-box "top")]
+    (and (>= x left)
+         (< x (+ left width))
+         (>= y top)
+         (< y (+ top height)))))
 
 (defn get-width
   [el]
-  (:width (get-dimensions el)))
+  (-> (.getBoundingClientRect el)
+      (gobj/get "width")))
 
 (defn set-style-prop!
   [el prop value]
@@ -53,9 +56,8 @@
 
 (defn append-html!
   [el additional-html]
-  (let [el (get-element el)
-        current-html (gobj/get el "innerHTML")]
-    (gobj/set el "innerHTML" (str current-html additional-html))))
+  (-> (get-element el)
+      (.insertAdjacentHTML "beforeend" additional-html)))
 
 (defn add-class!
   [el classname]

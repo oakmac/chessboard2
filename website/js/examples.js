@@ -30,11 +30,11 @@
         htmlEscape(example.name) +
       '</h2>' +
       '<p>' + example.description + '</p>' +
-      '<div class="container-4e1ee">' + example.html + '</div>' +
+      '<div class="container-4e1ee">' + atob(example.html64) + '</div>' +
       '<h4>JavaScript</h4>' +
-      '<pre class="prettyprint">' + htmlEscape(example.jsStr) + '</pre>' +
+      '<pre class="prettyprint">' + htmlEscape(atob(example.jsStr64)) + '</pre>' +
       '<h4>HTML</h4>' +
-      '<pre class="prettyprint">' + htmlEscape(example.html) + '</pre>' +
+      '<pre class="prettyprint">' + htmlEscape(atob(example.html64)) + '</pre>' +
       '<p><a class="small-link-335ea" href="examples/' + id + '" target="_blank">View this example in new window.</a></p>'
 
     return html
