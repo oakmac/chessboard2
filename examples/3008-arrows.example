@@ -8,7 +8,7 @@ Analysis Arrows
 TODO: write me :)
 
 ===== HTML
-<div id="myBoard" style="width: 400px"></div>
+<div id="myBoard"></div>
 <button id="addArrow1Btn">Add Arrow 1</button>
 <button id="addArrow2Btn">Add Arrow 2</button>
 <button id="addArrow3Btn">Add Arrow 3</button>
@@ -26,32 +26,32 @@ let arrow1Id = null
 let arrow2Id = null
 let arrow3Id = null
 
-$('#addArrow1Btn').on('click', function () {
+attachEvent('addArrow1Btn', 'click', () => {
   arrow1Id = board.addArrow('e2-e4')
   console.log('added Arrow 1 with id:', arrow1Id)
 })
 
-$('#addArrow2Btn').on('click', function () {
+attachEvent('addArrow2Btn', 'click', () => {
   arrow2Id = board.addArrow('c7-c5', '#ffee66', 'small')
   console.log('added "small" Arrow 2 with id:', arrow2Id)
 })
 
-$('#addArrow3Btn').on('click', function () {
+attachEvent('addArrow3Btn', 'click', () => {
   arrow3Id = board.addArrow('d7-d5', '#66eeff', 'medium')
   console.log('added "medium" Arrow 3 with id:', arrow3Id)
 })
 
-$('#addArrow4Btn').on('click', function () {
+attachEvent('addArrow4Btn', 'click', () => {
   arrow4Id = board.addArrow('e7-e5', '#aaff22', 'large')
   console.log('added "large" Arrow 4 with id:', arrow4Id)
 })
 
-$('#moveArrow4Btn').on('click', function () {
+attachEvent('moveArrow4Btn', 'click', () => {
   board.moveArrow(arrow4Id, 'g8-f6')
   console.log('move Arrow 4 with id:', arrow4Id)
 })
 
-$('#addArrow5Btn').on('click', function () {
+attachEvent('addArrow5Btn', 'click', () => {
   arrow5Id = board.addArrow({
     color: 'orange',
     end: 'f3',
@@ -62,12 +62,12 @@ $('#addArrow5Btn').on('click', function () {
   console.log('added Arrow 5 with id:', arrow5Id)
 })
 
-$('#removeArrow5Btn').on('click', function () {
+attachEvent('removeArrow5Btn', 'click', () => {
   board.removeArrow(arrow5Id)
   console.log('remove Arrow 5 with id:', arrow5Id)
 })
 
-$('#logArrowsBtn').on('click', function () {
+attachEvent('logArrowsBtn', 'click', () => {
   console.log('Arrows Array:')
   console.log(board.getArrows())
 
@@ -80,6 +80,6 @@ $('#logArrowsBtn').on('click', function () {
   console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 })
 
-$('#clearArrowsBtn').on('click', function () {
+attachEvent('clearArrowsBtn', 'click', () => {
   board.clearArrows()
 })
