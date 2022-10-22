@@ -35,25 +35,30 @@
   [{:keys [board-width color id opacity orientation size square] :as _cfg}]
   (let [square-dims (square->dimensions square board-width orientation)
         square-width (/ board-width 8) ;; FIXME: need to support variable number of squares here
-        circle-width (* size square-width)]
+        circle-width (* size square-width)
+        circle-width-pct (* (/ circle-width board-width) 100)
+        left-px (- (:center-left square-dims) (half circle-width))
+        left-pct (* (/ left-px board-width) 100)
+        top-px (- (:center-top square-dims) (half circle-width))
+        top-pct (* (/ top-px board-width) 100)]
     (template
       (str
         "<div class='item-18a5b circle-a0266' id='{id}'"
           "style='"
             "background-color:{color};"
-            "height:{height}px;"
-            "left:{left}px;"
+            "height:{height}%;"
+            "left:{left}%;"
             "opacity:{opacity};"
-            "top:{top}px;"
-            "width:{width}px;"
+            "top:{top}%;"
+            "width:{width}%;"
           "'></div>")
       {:color color
-       :height circle-width
+       :height circle-width-pct
        :id id
-       :left (- (:center-left square-dims) (half circle-width))
+       :left left-pct
        :opacity opacity
-       :top (- (:center-top square-dims) (half circle-width))
-       :width circle-width})))
+       :top top-pct
+       :width circle-width-pct})))
 
 (defn CustomItem
   [board-state {:keys [className html-str id square] :as cfg}]
@@ -90,23 +95,23 @@
         "<div class='item-18a5b arrow-bc3c7' id='{id}'"
           "style='"
             "top: {top-offset}px;"
-            "opacity: {opacity};"
+            "opacity:{opacity};"
             "transform:"
               "translate({start-x-css}px, {start-y-css}px)"
               "rotate({angle}rad);'>"
           "<div class='arrow-line-a8dce' style='"
-            "background-color: {color};"
-            "width: {line-length}px;"
-            "height: {line-thickness}px;"
-            "margin-left: {arrow-margin-left}px;"
-            "border-top-left-radius: {border-radius}px;"
-            "border-bottom-left-radius: {border-radius}px;"
+            "background-color:{color};"
+            "width:{line-length}px;"
+            "height:{line-thickness}px;"
+            "margin-left:{arrow-margin-left}px;"
+            "border-top-left-radius:{border-radius}px;"
+            "border-bottom-left-radius:{border-radius}px;"
             "'>"
           "</div>"
           "<div class='arrow-head-38dfa' style='"
-            "background-color: {color};"
-            "height: {arrow-height}px;"
-            "width: {arrow-width}px;"
+            "background-color:{color};"
+            "height:{arrow-height}px;"
+            "width:{arrow-width}px;"
             "'>"
           "</div>"
         "</div>")

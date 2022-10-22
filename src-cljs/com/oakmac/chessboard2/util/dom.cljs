@@ -66,13 +66,15 @@
 
 (defn add-class!
   [el classname]
-  (let [el (get-element el)]
-    (.add (gobj/get el "classList") classname)))
+  (-> (get-element el)
+      (gobj/get "classList")
+      (.add classname)))
 
 (defn remove-class!
   [el classname]
-  (let [el (get-element el)]
-    (.remove (gobj/get el "classList") classname)))
+  (-> (get-element el)
+      (gobj/get "classList")
+      (.remove classname)))
 
 (defn remove-element!
   [el]

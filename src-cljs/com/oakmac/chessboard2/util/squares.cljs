@@ -96,8 +96,10 @@
          ;; ie: a 4x6 square board
          square-width (/ board-width 8)
          left-px (* x square-width)
-         top-px (* y square-width)]
-     {:center-left (+ left-px (half square-width))
+         top-px (* y square-width)
+         center-left-px (+ left-px (half square-width))]
+     {:center-left center-left-px
+      :center-left-pct (* (/ center-left-px board-width) 100)
       :center-top (+ top-px (half square-width))
       :left left-px
       :top top-px

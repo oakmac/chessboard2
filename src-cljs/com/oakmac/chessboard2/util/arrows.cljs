@@ -36,4 +36,9 @@
        :line-thickness line-thickness
        :start-x-css start-x-css
        :start-y-css start-y-css
-       :top-offset top-offset}))
+
+       :start-x-css-pct (* (/ start-x-css board-width) 100)
+       :start-y-css-pct (* (/ start-y-css board-width) 100)
+
+       :top-offset top-offset
+       :top-offset-pct (* (/ top-offset board-width) 100)}))
