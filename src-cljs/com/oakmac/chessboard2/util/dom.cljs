@@ -54,6 +54,11 @@
       (gobj/get "style")
       (gobj/set prop value)))
 
+(defn set-inner-html!
+  [el html]
+  (-> (get-element el)
+      (gobj/set "innerHTML" html)))
+
 (defn append-html!
   [el additional-html]
   (-> (get-element el)

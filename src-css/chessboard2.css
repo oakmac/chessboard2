@@ -5,12 +5,16 @@
 }
 
 .items-container-c9182 {
-  position: relative;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .board-container-41a68 {
   border: 2px solid black;
-  /* box-sizing: border-box; */
+  box-sizing: border-box;
   position: relative;
 }
 
@@ -62,14 +66,10 @@
   justify-content: center;
   opacity: 100%;
   position: absolute;
-
-  /* transition: left 1s, top 1s, opacity 1s; */
-  /* transition: all 1s; */
 }
 
 .piece-349f8.hidden-20b44 {
   opacity: 0;
-  /* transition: all 1s; */
 }
 
 .item-18a5b {

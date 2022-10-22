@@ -6,7 +6,7 @@
     [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.html :as html]
-    [com.oakmac.chessboard2.util.dom :refer [set-style-prop!]]
+    [com.oakmac.chessboard2.util.dom :as dom-util :refer [get-element set-style-prop!]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.logging :refer [warn-log]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
@@ -307,3 +307,18 @@
     (dom-ops/apply-ops! board-state dom-ops)
     ;; return the move promises
     move-promises))
+
+(defn resize!
+  "Takes measurements from the DOM and updates height / width values if necessary"
+  [board-state]
+  (let [{:keys [items-container-id position squares-container-id]} @board-state
+        items-container-el (dom-util/get-element items-container-id)
+        inner-width (dom-util/get-width items-container-el)]
+    ;; update height / width values in board-state
+    ;; FIXME: this will need to adjust based on number of rows / columns
+    (swap! board-state assoc :board-width inner-width
+                             :board-height inner-width)
+    ;; set Squares height
+    (dom-util/set-style-prop! squares-container-id "height" (str inner-width "px")))
+    ;; FIXME: adjust Items and Custom Items here
+  nil)

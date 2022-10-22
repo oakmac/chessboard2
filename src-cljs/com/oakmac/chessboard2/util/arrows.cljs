@@ -3,6 +3,7 @@
     [com.oakmac.chessboard2.util.math :refer [hypotenuse]]
     [com.oakmac.chessboard2.util.squares :refer [square->dimensions]]))
 
+;; FIXME: need to transition this to using pct instead of pixels
 (defn position
   "Returns a Map of Arrow positioning information"
   [{:keys [board-width end orientation size start] :as _arrow-config}]

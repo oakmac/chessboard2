@@ -180,25 +180,26 @@
 
 ;; FIXME: need alt text here for the image
 (defn Piece
-  [{:keys [board-orientation board-width _color id hidden? piece piece-square-pct square _width] :as piece-config}]
+  [{:keys [board-orientation board-width _color id hidden? piece piece-square-pct square] :as piece-config}]
   (when flags/runtime-checks?
     (when (or (not= piece-required-keys (set (keys piece-config)))
               (some nil? (vals piece-config)))
-      (js/console.warn "RUNTIME CHECK: not enough args passed to html/Piece")
+      (js/console.warn "Not enough args passed to html/Piece:")
       (js/console.warn (pr-str (keys piece-config)))))
-  (let [{:keys [left top]} (square->dimensions square board-width board-orientation)
+  (let [{:keys [left top left-pct top-pct]} (square->dimensions square board-width board-orientation)
         square-width (/ board-width 8)
-        piece-pct (* 100 piece-square-pct)]
+        piece-pct (* 100 piece-square-pct)
+        square-width-pct (* (/ square-width board-width) 100)]
    (str
      "<div class='piece-349f8' id='" id "'"
-       " style='height:" square-width "px;"
-               "left:" left "px;"
-               "top:" top "px;"
-               "width:" square-width "px;"
+       " style='left:" left-pct "%;"
+               "top:" top-pct "%;"
+               "height:" square-width-pct "%;"
+               "width:" square-width-pct "%;"
        (when hidden? "opacity:0;")
        "'>"
      ;; FIXME: this needs to be customizable for the user
-     "<img src='data:image/svg+xml;base64," (piece->imgsrc piece) "' alt='' style='height: " piece-pct "%; width: " piece-pct "%;' />"
+     "<img src='data:image/svg+xml;base64," (piece->imgsrc piece) "' alt='' style='height:" piece-pct "%;width:" piece-pct "%;' />"
      "</div>")))
 
 (defn Square
@@ -225,27 +226,27 @@
     @html))
 
 (defn BoardContainer
-  [{:keys [board-height container-id orientation show-notation? items-container-id] :as opts}]
+  [{:keys [container-id orientation show-notation? items-container-id squares-container-id] :as opts}]
   (template
     (str
       "<div class='chessboard-21da3{show-notation}' id='{container-id}'>"
-      "<div class=board-container-41a68 style='height:{board-height}px;width:{board-height}px;'>"
-      "<div id='{items-container-id}' class=items-container-c9182 style='height:0'></div>"
-      "<div class='" css/squares " "
+      "<div class=board-container-41a68>"
+      "<div id='{items-container-id}' class='items-container-c9182'></div>"
+      "<div id='{squares-container-id}' class='" css/squares " "
         (if (= orientation "white")
           css/orientation-white
           css/orientation-black)
-        "' style='height:" board-height "px;'>{Squares}"
+           ;; NOTE: Squares container starts off with zero height and then is adjusted
+        "' style='height:0'>{Squares}"
       "</div>"   ;; end .squares-2dea6
       "<div class='notation-files-c3c0a'>{NotationFiles}</div>"
       "<div class='notation-ranks-d3f97'>{NotationRanks}</div>"
       "</div>"   ;; end .board-container-41a68
       "</div>") ;; end .chessboard-21da3
-    {:board-height board-height
-     :board-width board-height
-     :container-id container-id
+    {:container-id container-id
      :items-container-id items-container-id
      :NotationFiles (NotationFiles opts)
      :NotationRanks (NotationRanks opts)
+     :show-notation (if show-notation? "" " hide-notation-cbe71")
      :Squares (Squares opts)
-     :show-notation (if show-notation? "" " hide-notation-cbe71")}))
+     :squares-container-id squares-container-id}))

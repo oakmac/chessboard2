@@ -95,12 +95,16 @@
          ;; FIXME: need to support boards with variable number of height / width squares
          ;; ie: a 4x6 square board
          square-width (/ board-width 8)
-         left (* x square-width)
-         top (* y square-width)]
-     {:center-left (+ left (half square-width))
-      :center-top (+ top (half square-width))
-      :left left
-      :top top})))
+         left-px (* x square-width)
+         top-px (* y square-width)]
+     {:center-left (+ left-px (half square-width))
+      :center-top (+ top-px (half square-width))
+      :left left-px
+      :top top-px
+
+      ;; TODO: deprecate the pixel approach; move everything to percents
+      :left-pct (* (/ left-px board-width) 100)
+      :top-pct (* (/ top-px board-width) 100)})))
 
 (defn squares->rect-dimensions
   "Given two squares, draw a rectangle around them and return the dimensions"

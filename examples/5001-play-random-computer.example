@@ -8,16 +8,10 @@ Play Random Computer
 You can integrate chessboardjs2 with the [chess.js library](https://github.com/jhlywa/chess.js) to play against random moves.
 
 ===== HTML
-<!--
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.js"
-  integrity="sha384-L0SnMpUnYUX6GNzeu549NqRJHDc9gljfSbFwmJFLZRNJiKLrLI+W9Cpw/DgHy5Vu"
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.12.1/chess.js"
+  integrity="sha384-8sJV/krC8iV2g7t0PolQxFVckDtxhfM5gNHNAFPG2ZS/bScudOjfsB8ewhG2xle8"
   crossorigin="anonymous"></script>
--->
-<script src="js/chess-0.10.2.min.js"></script>
-<!-- <div id="myBoard" style="width: 400px"></div> -->
-
-
-<div id="myBoard"></div>
+<div id="myBoard" style=""></div>
 
 ===== JS
 // This example uses the chess.js library:

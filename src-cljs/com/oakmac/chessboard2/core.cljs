@@ -6,6 +6,7 @@
     [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.html :as html]
+    [com.oakmac.chessboard2.api :as api]
     [com.oakmac.chessboard2.js-api :as js-api]
     [com.oakmac.chessboard2.util.board :refer [start-position]]
     [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
@@ -20,6 +21,7 @@
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
     [goog.array :as garray]
     [goog.dom :as gdom]
+    [goog.functions :as gfunctions]
     [goog.object :as gobj]))
 
 (declare percent? size-string->number tshirt-sizes)
@@ -134,9 +136,17 @@
       ; (swap! board-state assoc :touch-move-queue1 {:piece piece, :square square}))
     nil))
 
+(defn on-window-resize
+  [board-state _js-evt]
+  (api/resize! board-state))
+
+(def debounced-on-window-resize
+  (gfunctions/debounce on-window-resize 10))
+
 (defn- add-events!
   "Attach DOM events."
   [root-el board-state]
+  (.addEventListener js/window "resize" (partial debounced-on-window-resize board-state))
   (.addEventListener root-el "mousedown" (partial on-mouse-down board-state))
   (.addEventListener root-el "touchstart" (partial on-touch-start board-state))
   (.addEventListener root-el "transitionend" (partial on-transition-end board-state)))
@@ -614,8 +624,20 @@
 ;; Constructor
 
 (defn init-dom!
-  [{:keys [root-el] :as board-cfg}]
-  (gobj/set root-el "innerHTML" (html/BoardContainer board-cfg)))
+  [board-state]
+  (let [{:keys [items-container-id root-el squares-container-id] :as board-cfg} @board-state]
+    ;; write the container <div>s to the DOM
+    (dom-util/set-inner-html! root-el (html/BoardContainer board-cfg))
+    ;; NOTE: I think we could just call api/resize! here
+    ;; take some measurements
+    (let [items-container-el (dom-util/get-element items-container-id)
+          inner-width (dom-util/get-width items-container-el)]
+      ;; update the inner height / width
+      ;; FIXME: this will need to adjust based on number of rows / columns
+      (swap! board-state assoc :board-width inner-width
+                               :board-height inner-width)
+      ;; update the Squares container height to fill the space
+      (dom-util/set-style-prop! squares-container-id "height" (str inner-width "px")))))
 
 ;; :coords true => default
 
@@ -661,6 +683,7 @@
   (let [;; create some random IDs for internal elements
         container-id (random-id "container")
         items-container-id (random-id "items-container")
+        squares-container-id (random-id "squares-container")
 
         root-width (dom-util/get-width root-el)
 
@@ -674,17 +697,16 @@
                 {:config starting-config}
                 (when (:position their-opts)
                   {:position (:position their-opts)}))
-        opts3 (assoc opts2 :root-el root-el
+        opts3 (assoc opts2 :animate-speed-ms default-animate-speed-ms
                            :animation-end-callbacks {}
-                           :animate-speed-ms default-animate-speed-ms
-                           :board-height root-width
-                           :board-width root-width
                            :container-id container-id
                            :items {}
                            :items-container-id items-container-id
                            :piece-square-pct 0.9
+                           :root-el root-el
                            :square->piece-id {}
-                           :square->square-ids square->square-ids)
+                           :square->square-ids square->square-ids
+                           :squares-container-id squares-container-id)
         ;; create an atom to track the state of the board
         board-state (atom opts3)]
 
@@ -692,7 +714,7 @@
     (add-watch board-state :on-change board-state-change)
 
     ;; Initial DOM Setup
-    (init-dom! @board-state)
+    (init-dom! board-state)
     (add-events! root-el board-state)
     (draw-items-instant! board-state)
 
@@ -771,7 +793,7 @@
       "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
       "pulsePiece" #() ;; FIXME
 
-      "resize" #() ;; FIXME
+      "resize" (partial api/resize! board-state)
 
       "start" (partial js-api/start board-state))))
 

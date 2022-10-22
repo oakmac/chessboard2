@@ -56,8 +56,8 @@
        :defer-fn (fn []
                    ;; start move animation
                    (set-style-prop! new-piece-id "transition" (str "all " animate-speed2 "ms"))
-                   (set-style-prop! new-piece-id "left" (str (:left target-square-dimensions) "px"))
-                   (set-style-prop! new-piece-id "top" (str (:top target-square-dimensions) "px"))
+                   (set-style-prop! new-piece-id "left" (str (:left-pct target-square-dimensions) "%"))
+                   (set-style-prop! new-piece-id "top" (str (:top-pct target-square-dimensions) "%"))
                    ;; add the callback if provided
                    (when (fn? on-finish)
                      (swap! board-state assoc-in [:animation-end-callbacks new-piece-id]
