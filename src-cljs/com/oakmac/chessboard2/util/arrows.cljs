@@ -1,9 +1,8 @@
 (ns com.oakmac.chessboard2.util.arrows
   (:require
-    [com.oakmac.chessboard2.util.math :refer [hypotenuse]]
+    [com.oakmac.chessboard2.util.math :refer [half hypotenuse]]
     [com.oakmac.chessboard2.util.squares :refer [square->dimensions]]))
 
-;; FIXME: need to transition this to using pct instead of pixels
 (defn position
   "Returns a Map of Arrow positioning information"
   [{:keys [board-width end orientation size start] :as _arrow-config}]
@@ -20,7 +19,7 @@
         arrow-height (* square-width size)
         top-offset (- (/ arrow-height 2))
         line-thickness (/ arrow-height 3)
-        border-radius (/ line-thickness 2)
+        border-radius (half line-thickness)
         line-length (+ (hypotenuse dy dx)
                        (* -1 arrow-width)
                        (* 2 border-radius))
@@ -33,6 +32,7 @@
        :arrow-margin-left (* -1 border-radius)
        :border-radius border-radius
        :line-length line-length
+
        :line-thickness line-thickness
        :start-x-css start-x-css
        :start-y-css start-y-css
@@ -42,3 +42,7 @@
 
        :top-offset top-offset
        :top-offset-pct (* (/ top-offset board-width) 100)}))
+
+       ; :line-length-pct (* (/ line-length board-width) 100)
+       ; :left-pct (:center-left-pct start-dims)
+       ; :top-pct (:center-top-pct start-dims)}))

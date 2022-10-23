@@ -9,13 +9,13 @@ TODO: write me :)
 
 ===== HTML
 <div id="myBoard"></div>
-<button id="addArrow1Btn">Add Arrow 1</button>
-<button id="addArrow2Btn">Add Arrow 2</button>
-<button id="addArrow3Btn">Add Arrow 3</button>
+<button id="addArrow1Btn">Add Arrow at e2-e4</button>
+<button id="addArrow2Btn">Add Arrow c7-c5</button>
+<button id="addArrow3Btn">Add Arrow d7-d5</button>
 <button id="addArrow4Btn">Add Arrow 4</button>
 <button id="moveArrow4Btn">Move Arrow 4</button>
 <br />
-<button id="addArrow5Btn">Add Arrow 5</button>
+<button id="addArrow5Btn">Add Arrow g1-f3</button>
 <button id="removeArrow5Btn">Remove Arrow 5</button>
 <button id="logArrowsBtn">console.log Arrows</button>
 <button id="clearArrowsBtn">Clear Arrows</button>

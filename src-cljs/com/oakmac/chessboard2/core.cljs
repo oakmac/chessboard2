@@ -222,14 +222,7 @@
 ;; -----------------------------------------------------------------------------
 ;; API Methods
 
-(defn get-items-by-type
-  "Returns a map of <type> Items on the board"
-  [board-state type-str]
-  (let [items (->> @board-state
-                   :items
-                   vals
-                   (filter #(= type-str (:type %))))]
-    (zipmap (map :id items) items)))
+
 
 (defn get-circles-by-square
   "Returns a Map of Circles with their square as the key."
@@ -243,7 +236,7 @@
 (defn js-get-circles
   "Returns the Circle Items on the board as either a JS Array (default), JS Object, or JS Map"
   [board-state return-fmt]
-  (map->js-return-format (get-items-by-type board-state "CHESSBOARD_CIRCLE")
+  (map->js-return-format (api/get-items-by-type board-state "CHESSBOARD_CIRCLE")
                          (safe-lower-case return-fmt)))
 
 (defn remove-circle-by-id
@@ -473,7 +466,7 @@
 (defn js-get-arrows
   "Returns the Arrow Items on the board as either a JS Array (default), JS Object, or JS Map"
   [board-state return-fmt]
-  (map->js-return-format (get-items-by-type board-state "CHESSBOARD_ARROW")
+  (map->js-return-format (api/get-items-by-type board-state "CHESSBOARD_ARROW")
                          (safe-lower-case return-fmt)))
 
 (defn get-items
@@ -567,7 +560,7 @@
   "Returns the Pieces on the board as either a JS Array (default), JS Object, or JS Map"
   [board-state return-fmt]
   ;; FIXME: this does not work correctly because pieces are not Items
-  (map->js-return-format (get-items-by-type board-state "CHESSBOARD_PIECE") (safe-lower-case return-fmt)))
+  (map->js-return-format (api/get-items-by-type board-state "CHESSBOARD_PIECE") (safe-lower-case return-fmt)))
 
 (defn valid-add-piece-config? [cfg]
   (and (valid-piece? (:piece cfg))

@@ -97,14 +97,16 @@
          square-width (/ board-width 8)
          left-px (* x square-width)
          top-px (* y square-width)
-         center-left-px (+ left-px (half square-width))]
+         center-left-px (+ left-px (half square-width))
+         center-top-px (+ top-px (half square-width))]
      {:center-left center-left-px
-      :center-left-pct (* (/ center-left-px board-width) 100)
-      :center-top (+ top-px (half square-width))
+      :center-top center-top-px
       :left left-px
       :top top-px
 
       ;; TODO: deprecate the pixel approach; move everything to percents
+      :center-left-pct (* (/ center-left-px board-width) 100)
+      :center-top-pct (* (/ center-top-px board-width) 100)
       :left-pct (* (/ left-px board-width) 100)
       :top-pct (* (/ top-px board-width) 100)})))
 
