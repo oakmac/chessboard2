@@ -53,7 +53,7 @@ infoLog('Success 👍')
 process.exit(0)
 
 function banner () {
-  return '/*! chessboardjs2 v' + version + ' | (c) ' + copyrightYear + ' Chris Oakman | ISC License | https://chessboardjs.com/v2 */\n'
+  return '/*! chessboard2 v' + version + ' | (c) ' + copyrightYear + ' Chris Oakman | ISC License | https://chessboardjs.com/v2 */\n'
 }
 
 function infoLog (msg) {

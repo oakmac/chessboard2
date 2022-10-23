@@ -5,7 +5,7 @@
 Play Random Computer
 
 ===== DescriptionMD
-You can integrate chessboardjs2 with the [chess.js library](https://github.com/jhlywa/chess.js) to play against random moves.
+You can integrate chessboard2 with the [chess.js library](https://github.com/jhlywa/chess.js) to play against random moves.
 
 ===== HTML
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.12.1/chess.js"

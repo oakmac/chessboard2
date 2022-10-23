@@ -738,13 +738,13 @@
       "removeCircle" (partial js-remove-circle board-state)
 
       ;; FIXME: implement these
-      ; https://github.com/oakmac/chessboardjs2/issues/7
+      ; https://github.com/oakmac/chessboard2/issues/7
       ; "config" #()
       ; "getConfig" #()
       ; "setConfig" #()
 
       ;; FIXME: allow adding custom items
-      ;; https://github.com/oakmac/chessboardjs2/issues/9
+      ;; https://github.com/oakmac/chessboard2/issues/9
       "addItem" (partial js-api/add-item board-state)
       "clearItems" #() ;; FIXME
       "getItems" (partial js-get-items board-state) ;; FIXME: should be able to pass the string type here as an argument
