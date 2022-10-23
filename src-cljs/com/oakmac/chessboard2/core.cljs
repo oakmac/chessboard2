@@ -282,6 +282,8 @@
 (defn add-circle
   "Adds a Circle to the board. Returns the id of the new Circle."
   [board-state {:keys [color id opacity size square] :as _circle-config}]
+  (when flags/runtime-checks?
+    (assert (valid-square? square) (str "Invalid square passed to add-circle:" (pr-str square))))
   (let [{:keys [board-width orientation]} @board-state
         id (or id (random-id "item"))
         size (size-string->number size)
@@ -327,6 +329,7 @@
   (or (contains? tshirt-sizes s)
       (percent? s)))
 
+;; TODO: move this to js-api ns and add unit tests for the argument parsing
 (defn js-add-circle
   [board-state arg1 arg2 arg3]
   (let [cfg (cond-> default-circle-config
@@ -337,7 +340,9 @@
               (valid-circle-size? arg2) (merge {:size arg2})
               (valid-circle-size? arg3) (merge {:size arg3})
               (looks-like-a-js-circle-config? arg1) (merge (js->clj arg1 :keywordize-keys true)))]
-    (add-or-replace-circle board-state cfg)))
+    (if (valid-square? (:square cfg))
+      (add-or-replace-circle board-state cfg)
+      (warn-log "Invalid square passed to .addCircle() method:" (:square cfg)))))
 
 (def default-arrow-config
   {:color "#777"

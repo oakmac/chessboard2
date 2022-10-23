@@ -8,8 +8,9 @@
 (defn valid-op? [op]
   (and
     (map? op)
-    (when-let [f (:defer-fn op)]
-      (fn? f))))
+    (if-let [f (:defer-fn op)]
+      (fn? f)
+      true)))
 
 (defn apply-ops!
   "Apply DOM operations to the board"

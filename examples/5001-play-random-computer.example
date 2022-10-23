@@ -12,6 +12,9 @@ You can integrate chessboard2 with the [chess.js library](https://github.com/jhl
   integrity="sha384-8sJV/krC8iV2g7t0PolQxFVckDtxhfM5gNHNAFPG2ZS/bScudOjfsB8ewhG2xle8"
   crossorigin="anonymous"></script>
 <div id="myBoard" style=""></div>
+<p id="gameStatus"></p>
+<h4>Game PGN:</h4>
+<div id="gamePGN" style="font-family: monospace"></div>
 
 ===== JS
 // This example uses the chess.js library:
@@ -34,10 +37,12 @@ const boardConfig = {
   onTouchSquare: onTouchSquare,
   onDrop: onDrop,
   onSnapEnd: onSnapEnd,
-  position: 'start',
+  position: game.fen(),
   touchMove: true
 }
 const board = Chessboard2('myBoard', boardConfig)
+
+updateStatus()
 
 let pendingMove = null
 
@@ -68,8 +73,11 @@ function onTouchSquare (square, piece, boardInfo) {
   // Option 3: clear a pending move and start a new pending move
   else if (pendingMove) {
     // ask chess.js to make a move
-    // FIXME: need to add pawn promotion here
-    const moveResult = game.move({ from: pendingMove, to: square })
+    const moveResult = game.move({
+      from: pendingMove,
+      to: square,
+      promotion: 'q' // always promote to a Queen for example simplicity
+    })
 
     // was this a legal move?
     if (moveResult) {
@@ -78,6 +86,9 @@ function onTouchSquare (square, piece, boardInfo) {
 
       // update to the new position
       board.position(game.fen()).then(() => {
+        updatePGN()
+        updateStatus()
+
         // wait a smidge, then make a random move for Black
         window.setTimeout(makeRandomMove, 250)
       })
@@ -102,6 +113,37 @@ function onTouchSquare (square, piece, boardInfo) {
   }
 }
 
+function updateStatus () {
+  let statusHTML = ''
+  const whosTurn = game.turn() === 'w' ? 'White' : 'Black'
+
+  if (!game.game_over()) {
+    if (game.in_check()) statusHTML = whosTurn + ' is in check! '
+    statusHTML = statusHTML + whosTurn + ' to move.'
+  } else if (game.in_checkmate() && game.turn() === 'w') {
+    statusHTML = 'Game over: white is in checkmate. Black wins!'
+  } else if (game.in_checkmate() && game.turn() === 'b') {
+    statusHTML = 'Game over: black is in checkmate. White wins!'
+  } else if (game.in_stalemate() && game.turn() === 'w') {
+    statusHTML = 'Game is drawn. White is stalemated.'
+  } else if (game.in_stalemate() && game.turn() === 'b') {
+    statusHTML = 'Game is drawn. Black is stalemated.'
+  } else if (game.in_threefold_repetition()) {
+    statusHTML = 'Game is drawn by threefold repetition rule.'
+  } else if (game.insufficient_material()) {
+    statusHTML = 'Game is drawn by insufficient material.'
+  } else if (game.in_draw()) {
+    statusHTML = 'Game is drawn.'
+  }
+
+  document.getElementById('gameStatus').innerHTML = statusHTML
+}
+
+function updatePGN () {
+  const pgnEl = document.getElementById('gamePGN')
+  pgnEl.innerHTML = game.pgn({max_width: 5, newline_char: '<br />'})
+}
+
 function onDragStart (source, piece, position, orientation) {
   // do not pick up pieces if the game is over
   if (game.game_over()) return false
@@ -118,7 +160,10 @@ function makeRandomMove () {
 
   const randomIdx = Math.floor(Math.random() * possibleMoves.length)
   game.move(possibleMoves[randomIdx])
-  board.position(game.fen())
+  board.position(game.fen(), (_positionInfo) => {
+    updateStatus()
+    updatePGN()
+  })
 }
 
 function onDrop (source, target) {
