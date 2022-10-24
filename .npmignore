@@ -16,4 +16,5 @@ website/
 *.diff
 cypress.config.js
 shadow-cljs.edn
+test-commonjs.js
 tests.js
