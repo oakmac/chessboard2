@@ -106,6 +106,7 @@
           "<div class='arrow-line-a8dce' style='"
             "background-color:{color};"
             "width:{line-width}%;"
+            "margin-left:{base-offset}%;"
             "'>"
           "</div>"
           "<div class='arrow-head-38dfa' style='"
