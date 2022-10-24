@@ -83,11 +83,15 @@
 }
 
 .arrow-head-38dfa {
+  height: 100%;
   clip-path: polygon(0 0, 0 100%, 100% 50%);
   margin-left: -1px;
 }
 
 .arrow-line-a8dce {
+  height: calc(100% / 3);
+  border-top-left-radius: 999px;
+  border-bottom-left-radius: 999px;
 }
 
 .circle-a0266 {
