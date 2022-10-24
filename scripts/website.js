@@ -19,9 +19,9 @@ const cmReader = new commonmark.Parser()
 const cmWriter = new commonmark.HtmlRenderer()
 
 // toggle development version
-const useLocalDevFiles = true
-const jsCDNScript = '<script src="https://unpkg.com/@chrisoakman/chessboard2@0.1.0/dist/chessboard2.min.js" integrity="sha384-ljFKlPNmPU0eDTYaCKv+07alkNG+MQFDJWCekcZv9C8Eptr0rVLJZZ03J5vOWlak" crossorigin="anonymous"></script>'
-const cssCDNLink = '<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboard2@0.1.0/dist/chessboard2.min.css" integrity="sha384-fMMbbVRSzK7dM0LfiAtcxjQpQrr6jiiAXTWhwapOds+a8Bu/NUMxiHh+TKAY3LPk" crossorigin="anonymous">'
+const useLocalDevFiles = false
+const jsCDNScript = '<script src="https://unpkg.com/@chrisoakman/chessboard2@0.2.0/dist/chessboard2.min.js" integrity="sha384-xlTkh4p+HAppJTBKFmgIxsCZs94kwA015Hf5aW6tQg5/DYwnfdd1Tr+1Hvh9c4Re" crossorigin="anonymous"></script>'
+const cssCDNLink = '<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboard2@0.2.0/dist/chessboard2.min.css" integrity="sha384-UAD3KzJ7THyDKHxQFPR2f3gGI2C/jdLP9AilbpnkGnf4b1PBvTJl6biezz0y9Vou" crossorigin="anonymous">'
 
 let jsScript = jsCDNScript
 let cssLink = cssCDNLink
