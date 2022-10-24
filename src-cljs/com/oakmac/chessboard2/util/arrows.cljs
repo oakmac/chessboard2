@@ -19,14 +19,13 @@
         base-offset-pct-of-board (/ head-height 6)
         head-width-pct-of-board (* head-height 0.8)
         arrow-width (+ (hypotenuse dy dx)
-                       base-offset-pct-of-board)
+                       base-offset-pct-of-board
+                       (/ head-height 6))
         angle (+ (js/Math.atan (/ dy dx))
                  (if (< dx 0) js/Math.PI 0))
         head-width (/ (* head-width-pct-of-board 100) arrow-width)
         base-offset (/ (* (- base-offset-pct-of-board) 100) arrow-width)
-        line-width (- 100 head-width)
-      ]
-      (.log js/console base-offset)
+        line-width (- 100 head-width)]
       {:angle angle
        :arrow-height head-height
        :arrow-width arrow-width
