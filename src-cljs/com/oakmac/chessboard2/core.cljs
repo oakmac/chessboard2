@@ -27,7 +27,7 @@
 (declare percent? size-string->number tshirt-sizes)
 
 ;; TODO
-;; - need to write a Cypress test for piece capture that happens as a result of .position() method
+;; - need to write a Cypress test for calling .move() while an animation is happening
 ;; - [ ] .move('0-0') and .move('0-0-0') should work as expected (GitHub Issue #6)
 
 ;; NOTE: the transitionend event fires for every CSS property that is transitioned
