@@ -19,34 +19,26 @@
     [com.oakmac.chessboard2.util.string :refer [lower-case-if-string safe-lower-case]]
     [goog.object :as gobj]))
 
-(defn valid-orientation?
-  [o]
-  (or (= o "white")
-      (= o "black")))
-
-(defn set-default-orientation
-  [o]
-  (if (= (safe-lower-case o) "black")
-    "black"
-    "white"))
-
+;; TODO: good candidate for unit tests
 (defn parse-constructor-second-arg
   "expands shorthand versions of the second argument to the Chessboard2 constructor"
   [js-opts]
-  (let [opts (js->clj js-opts :keywordize-keys true)]
+  (let [opts-with-strings (js->clj js-opts)
+        opts-with-keywords (js->clj js-opts :keywordize-keys true)]
     (cond
-      (start-string? opts)
+      (start-string? js-opts)
       {:position start-position}
 
-      (valid-fen? opts)
-      {:position (fen->position opts)}
+      (valid-fen? js-opts)
+      {:position (fen->position js-opts)}
 
-      (valid-position? opts)
-      {:position opts}
+      (valid-position? opts-with-strings)
+      {:position opts-with-strings}
 
-      (map? opts)
-      (let [opts2 (select-keys opts config/valid-config-keys)
-            their-pos (:position opts2)]
+      (map? opts-with-strings)
+      (let [;; remove any invalid config keys
+            opts2 (select-keys opts-with-keywords config/valid-config-keys)
+            their-pos (get opts-with-strings "position")]
         (cond-> opts2
           ;; set initial position
           (start-string? their-pos)   (assoc :position start-position)
