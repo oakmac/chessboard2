@@ -28,11 +28,11 @@ var config = {
 }
 var board = Chessboard2('myBoard', config)
 
-$('#ruyLopezBtn').on('click', function () {
+attachEvent('ruyLopezBtn', 'click', function () {
   board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')
 })
-$('#moveBtn').on('click', function () {
+attachEvent('moveBtn', 'click', function () {
   board.move('a2-a4', 'h7-h5')
 })
-$('#startBtn').on('click', board.start)
-$('#clearBtn').on('click', board.clear)
+attachEvent('startBtn', 'click', board.start)
+attachEvent('clearBtn', 'click', board.clear)

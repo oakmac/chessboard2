@@ -14,7 +14,6 @@ Who will win in this riveting game of <code class="js plain">Math.random()</code
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
 
-var board = null
 var game = new Chess()
 
 function makeRandomMove () {
@@ -30,6 +29,6 @@ function makeRandomMove () {
   window.setTimeout(makeRandomMove, 500)
 }
 
-board = Chessboard2('myBoard', 'start')
+const board = Chessboard2('myBoard', 'start')
 
 window.setTimeout(makeRandomMove, 500)

@@ -20,11 +20,10 @@ You can integrate chessboard.js with the <a href="https://github.com/jhlywa/ches
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
 
-var board = null
 var game = new Chess()
-var $status = $('#status')
-var $fen = $('#fen')
-var $pgn = $('#pgn')
+var $status = document.querySelector('#status')
+var $fen = document.querySelector('#fen')
+var $pgn = document.querySelector('#pgn')
 
 function onDragStart (source, piece, position, orientation) {
   // do not pick up pieces if the game is over
@@ -68,15 +67,13 @@ function updateStatus () {
   // checkmate?
   if (game.in_checkmate()) {
     status = 'Game over, ' + moveColor + ' is in checkmate.'
-  }
-
+  
   // draw?
-  else if (game.in_draw()) {
+  } else if (game.in_draw()) {
     status = 'Game over, drawn position'
-  }
 
   // game still on
-  else {
+  } else {
     status = moveColor + ' to move'
 
     // check?
@@ -97,6 +94,6 @@ var config = {
   onDrop: onDrop,
   onSnapEnd: onSnapEnd
 }
-board = Chessboard2('myBoard', config)
+const board = Chessboard2('myBoard', config)
 
 updateStatus()

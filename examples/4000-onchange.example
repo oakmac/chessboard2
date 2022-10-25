@@ -27,9 +27,9 @@ var config = {
 }
 var board = Chessboard2('myBoard', config)
 
-$('#ruyLopezBtn').on('click', function () {
+attachEvent('ruyLopezBtn', 'click', function () {
   var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
   board.position(ruyLopez)
 })
 
-$('#startPositionBtn').on('click', board.start)
+attachEvent('startPositionBtn', 'click', board.start)

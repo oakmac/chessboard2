@@ -20,15 +20,15 @@ Pass <code class="js keyword">false</code> as the second argument to the <a href
 ===== JS
 var board = Chessboard2('myBoard')
 
-$('#setStartBtn').on('click', function() {
+attachEvent('setStartBtn', 'click', function() {
   board.start(false)
 })
 
-$('#setRuyLopezBtn').on('click', function () {
+attachEvent('setRuyLopezBtn', 'click', function () {
   board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R', false)
 })
 
-$('#setRookCheckmateBtn').on('click', function () {
+attachEvent('setRookCheckmateBtn', 'click', function () {
   board.position({
     a4: 'bK',
     c4: 'wK',
@@ -36,7 +36,7 @@ $('#setRookCheckmateBtn').on('click', function () {
   }, false)
 })
 
-$('#setPawns1').on('click', function () {
+attachEvent('setPawns1', 'click', function () {
   board.position({
     a1: 'wP', b1: 'wP', c1: 'wP', d1: 'wP', e1: 'wP', f1: 'wP', g1: 'wP', h1: 'wP',
     a2: 'wP', b2: 'wP', c2: 'wP', d2: 'wP', e2: 'wP', f2: 'wP', g2: 'wP', h2: 'wP',
@@ -50,7 +50,7 @@ $('#setPawns1').on('click', function () {
   }, false)
 })
 
-$('#setPawns2').on('click', function () {
+attachEvent('setPawns2', 'click', function () {
   board.position({
     a5: 'wP', b5: 'wP', c5: 'wP', d5: 'wP', e5: 'wP', f5: 'wP', g5: 'wP', h5: 'wP',
     a6: 'wP', b6: 'wP', c6: 'wP', d6: 'wP', e6: 'wP', f6: 'wP', g6: 'wP', h6: 'wP',
@@ -59,7 +59,7 @@ $('#setPawns2').on('click', function () {
   }, false)
 })
 
-$('#setPawns3').on('click', function () {
+attachEvent('setPawns3', 'click', function () {
   board.position({
     a1: 'bP', b1: 'bP', c1: 'bP', d1: 'bP', e1: 'bP', f1: 'bP', g1: 'bP', h1: 'bP',
     a2: 'bP', b2: 'bP', c2: 'bP', d2: 'bP', e2: 'bP', f2: 'bP', g2: 'bP', h2: 'bP',

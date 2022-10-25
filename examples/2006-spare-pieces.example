@@ -19,5 +19,5 @@ var board = Chessboard2('myBoard', {
   sparePieces: true
 })
 
-$('#startBtn').on('click', board.start)
-$('#clearBtn').on('click', board.clear)
+attachEvent('startBtn', 'click', board.start)
+attachEvent('clearBtn', 'click', board.clear)
