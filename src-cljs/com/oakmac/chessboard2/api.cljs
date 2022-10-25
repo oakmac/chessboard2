@@ -318,32 +318,6 @@
     ;; return the move promises
     move-promises))
 
-;; TODO: if we use percent values for Arrow CSS then all of this code can go away
-(defn- set-arrow-position-css!
-  "Update the CSS for an Arrow."
-  [arrow board-width orientation]
-  (let [arrow-position (arrow-util/position (merge {:board-width board-width
-                                                    :orientation orientation}
-                                                   arrow))
-        {:keys [angle arrow-height arrow-margin-left arrow-width border-radius line-length line-thickness start-x-css start-y-css top-offset]} arrow-position
-        arrow-id (:id arrow)
-        arrow-el (get-element arrow-id)
-        arrow-line-el (get-element (str "#" arrow-id " .arrow-line-a8dce"))
-        arrow-head-el (get-element (str "#" arrow-id " .arrow-head-38dfa"))]
-    ;; update Item element
-    (set-style-prop! arrow-el "top" (str top-offset "px"))
-    (set-style-prop! arrow-el "transform" (str "translate(" start-x-css "px," start-y-css "px)"
-                                               "rotate(" angle "rad)"))
-    ;; update arrow-line
-    (set-style-prop! arrow-line-el "width" (str line-length "px"))
-    (set-style-prop! arrow-line-el "height" (str line-thickness "px"))
-    (set-style-prop! arrow-line-el "margin-left" (str arrow-margin-left "px"))
-    (set-style-prop! arrow-line-el "border-top-left-radius" (str border-radius "px"))
-    (set-style-prop! arrow-line-el "border-bottom-left-radius" (str border-radius "px"))
-    ;; update arrow-head
-    (set-style-prop! arrow-head-el "height" (str arrow-height "px"))
-    (set-style-prop! arrow-head-el "width" (str arrow-width "px"))))
-
 (defn resize!
   "Takes measurements from the DOM and updates height / width values if necessary"
   [board-state]
@@ -356,11 +330,7 @@
     (swap! board-state assoc :board-width inner-width
                              :board-height inner-width)
     ;; set Squares container height
-    (dom-util/set-style-prop! squares-container-id "height" (str inner-width "px"))
-
-    ;; update Arrows
-    (doseq [[_arrow-id arrow] arrows]
-      (set-arrow-position-css! arrow inner-width orientation)))
+    (dom-util/set-style-prop! squares-container-id "height" (str inner-width "px")))
 
     ;; FIXME: adjust Custom Items here
   nil)
