@@ -89,9 +89,9 @@
 }
 
 .arrow-line-a8dce {
-  height: calc(100% / 3);
-  border-top-left-radius: 999px;
-  border-bottom-left-radius: 999px;
+  border-bottom-left-radius: 9999px;
+  border-top-left-radius: 9999px;
+  height: 33.33%;
 }
 
 .circle-a0266 {
