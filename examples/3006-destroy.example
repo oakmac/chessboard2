@@ -1,5 +1,5 @@
 ===== id
-3006
+3006-destroy
 
 ===== Name
 Destroy Board
@@ -8,10 +8,19 @@ Destroy Board
 Use the <a href="docs.html#methods:destroy"><code class="js plain">destroy</code></a> method to kill the board and remove it from the DOM.
 
 ===== HTML
-<div id="myBoard" style="width: 400px"></div>
-<button id="destroyBtn">Destroy Board</button>
+<div id="myBoard1" class="small-board"></div>
+<div id="myBoard2" class="small-board"></div>
+<div id="myBoard3" class="small-board"></div>
+<br />
+<button id="destroyBtn1">Destroy Board 1</button>
+<button id="destroyBtn2">Destroy Board 2</button>
+<button id="destroyBtn3">Destroy Board 3</button>
 
 ===== JS
-const board = Chessboard2('myBoard', 'start')
+const board1 = Chessboard2('myBoard1', 'start')
+const board2 = Chessboard2('myBoard2', { e4: 'wK', d4: 'wP', d6: 'bK' })
+const board3 = Chessboard2('myBoard3', { e3: 'wR', e4: 'wK', g3: 'bK' })
 
-attachEvent('destroyBtn', 'click', board.destroy)
+attachEvent('destroyBtn1', 'click', board1.destroy)
+attachEvent('destroyBtn2', 'click', board2.destroy)
+attachEvent('destroyBtn3', 'click', board3.destroy)

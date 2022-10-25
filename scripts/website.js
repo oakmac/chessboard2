@@ -108,7 +108,7 @@ const examplesGroups = [
       '3003',
       '3004-move-pieces',
       '3005',
-      '3006',
+      '3006-destroy',
       '3007'
     ]
   },

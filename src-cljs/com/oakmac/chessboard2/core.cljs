@@ -98,6 +98,7 @@
       ;; - or should this be their responsibility?
       ;; queue their touchmove
       ; (swap! board-state assoc :touch-move-queue1 {:piece piece, :square square}))
+    ;; return null
     nil))
 
 ;; FIXME: this function should support onMouseDown instead of onTouchSquare
@@ -133,20 +134,15 @@
       ;; - or should this be their responsibility?
       ;; queue their touchmove
       ; (swap! board-state assoc :touch-move-queue1 {:piece piece, :square square}))
+    ;; return null
     nil))
-
-(defn on-window-resize
-  [board-state _js-evt]
-  (api/resize! board-state))
-
-(def debounced-on-window-resize
-  (gfunctions/debounce on-window-resize 10))
 
 (defn- add-events!
   "Attach DOM events."
   [root-el board-state]
-  ;; FIXME: we need to detach (or ignore) this event when the board is destroyed
-  (.addEventListener js/window "resize" (partial debounced-on-window-resize board-state))
+  (.addEventListener js/window "resize" (gfunctions/debounce
+                                          (fn [] (api/resize! board-state))
+                                          10)) ;; TODO: make this debounce value configurable
   (.addEventListener root-el "mousedown" (partial on-mouse-down board-state))
   (.addEventListener root-el "touchstart" (partial on-touch-start board-state))
   (.addEventListener root-el "transitionend" (partial on-transition-end board-state)))
@@ -653,16 +649,14 @@
 
 (defn board-state-change
   [_key _atom old-state new-state]
-
-  ;; FIXME: board orientation
-
-  ;; FIXME: coordinate config change
-
-  ;; show / hide coordinates
-  (when-not (= (:show-coords? old-state) (:show-coords? new-state))
-    (if (:show-coords? new-state)
-       (remove-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71")
-       (add-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71"))))
+  (when new-state
+    ;; FIXME: board orientation
+    ;; FIXME: coordinate config change
+    ;; show / hide coordinates
+    (when-not (= (:show-coords? old-state) (:show-coords? new-state))
+      (if (:show-coords? new-state)
+         (remove-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71")
+         (add-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71")))))
 
 (defn constructor2
   [root-el js-opts]
@@ -750,7 +744,7 @@
       "getPosition" (partial js-api/get-position board-state)
       "setPosition" (partial js-api/set-position board-state)
 
-      "destroy" #() ;; FIXME
+      "destroy" (partial api/destroy! board-state)
       "fen" (partial js-api/fen board-state)
 
       "clearSquareHighlights" #() ;; FIXME - should this just be "clearSquares" ?
