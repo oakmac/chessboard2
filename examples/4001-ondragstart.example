@@ -20,10 +20,10 @@ function onDragStart (source, piece, position, orientation) {
   console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 }
 
-var config = {
+const config = {
   draggable: true,
   position: 'start',
-  onDragStart: onDragStart,
+  onDragStart,
   sparePieces: true
 }
-var board = Chessboard2('myBoard', config)
+const board = Chessboard2('myBoard', config)

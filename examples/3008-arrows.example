@@ -5,7 +5,6 @@
 Analysis Arrows
 
 ===== DescriptionMD
-
 You can add analysis arrows to the board with the [.addArrow()] function.
 
 [.addArrow()]:docs#methods:addArrow

@@ -14,18 +14,18 @@ Use the <code class="js plain"><a href="docs.html#config:onMouseoverSquare">onMo
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
 
-var game = new Chess()
-var whiteSquareGrey = '#a9a9a9'
-var blackSquareGrey = '#696969'
+const game = new Chess()
+const whiteSquareGrey = '#a9a9a9'
+const blackSquareGrey = '#696969'
 
 function removeGreySquares () {
   document.querySelector('#myBoard .square-55d63').style.background = ''
 }
 
 function greySquare (square) {
-  var $square = document.querySelector('#myBoard .square-' + square)
+  const $square = document.querySelector('#myBoard .square-' + square)
 
-  var background = whiteSquareGrey
+  let background = whiteSquareGrey
   if ($square.hasClass('black-3c85d')) {
     background = blackSquareGrey
   }
@@ -48,7 +48,7 @@ function onDrop (source, target) {
   removeGreySquares()
 
   // see if the move is legal
-  var move = game.move({
+  const move = game.move({
     from: source,
     to: target,
     promotion: 'q' // NOTE: always promote to a queen for example simplicity
@@ -60,8 +60,8 @@ function onDrop (source, target) {
 
 function onMouseoverSquare (square, piece) {
   // get list of possible moves for this square
-  var moves = game.moves({
-    square: square,
+  const moves = game.moves({
+    square,
     verbose: true
   })
 
@@ -72,7 +72,7 @@ function onMouseoverSquare (square, piece) {
   greySquare(square)
 
   // highlight the possible squares for this piece
-  for (var i = 0; i < moves.length; i++) {
+  for (let i = 0; i < moves.length; i++) {
     greySquare(moves[i].to)
   }
 }
@@ -85,13 +85,13 @@ function onSnapEnd () {
   board.position(game.fen())
 }
 
-var config = {
+const config = {
   draggable: true,
   position: 'start',
-  onDragStart: onDragStart,
-  onDrop: onDrop,
-  onMouseoutSquare: onMouseoutSquare,
-  onMouseoverSquare: onMouseoverSquare,
-  onSnapEnd: onSnapEnd
+  onDragStart,
+  onDrop,
+  onMouseoutSquare,
+  onMouseoverSquare,
+  onSnapEnd
 }
 const board = Chessboard2('myBoard', config)

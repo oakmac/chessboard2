@@ -5,7 +5,6 @@
 Clear Board
 
 ===== DescriptionMD
-
 Use the [clear()](docs.html#methods:clear) method to remove all pieces from the board.
 
 ===== HTML

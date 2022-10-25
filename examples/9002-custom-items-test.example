@@ -5,7 +5,6 @@
 Custom Items Test
 
 ===== DescriptionMD
-
 This file exists for Cypress testing
 
 ===== HTML
@@ -43,7 +42,7 @@ attachEvent('test1step1Btn', 'click', () => {
 
   window.itm1Id = board1.addItem({
     className: 'custom-item1',
-    data: {a: "aaa", b: "bbb", c: "ccc"},
+    data: { a: 'aaa', b: 'bbb', c: 'ccc' },
     isMovable: true,
     html: '<img src="data:image/svg+xml;base64,' + window.btoa(starSvg) + '" />',
     square: 'c4',

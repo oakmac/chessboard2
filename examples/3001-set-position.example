@@ -5,7 +5,6 @@
 Set Position
 
 ===== DescriptionMD
-
 Use the [.position()], [.setPosition()], [.fen()], [.start()], or [.clear()] methods to
 set the board position.
 
@@ -109,11 +108,6 @@ attachEvent('setWithObject', 'click', () => {
     }
   })
 })
-
-
-
-
-
 
 attachEvent('testBtn1', 'click', () => {
   board.position('r1bqkbnr/pppp1ppp/n7/4p3/3P4/4P3/PPP2PPP/RNBQKBNR')

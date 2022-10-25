@@ -22,22 +22,22 @@ Use CSS to show piece highlighting.
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
 
-var $board = document.querySelector('#myBoard')
-var game = new Chess()
-var squareClass = 'square-55d63'
-var squareToHighlight = null
-var colorToHighlight = null
+const $board = document.querySelector('#myBoard')
+const game = new Chess()
+const squareClass = 'square-55d63'
+let squareToHighlight = null
+let colorToHighlight = null
 
 function makeRandomMove () {
-  var possibleMoves = game.moves({
+  const possibleMoves = game.moves({
     verbose: true
   })
 
   // exit if the game is over
   if (game.game_over()) return
 
-  var randomIdx = Math.floor(Math.random() * possibleMoves.length)
-  var move = possibleMoves[randomIdx]
+  const randomIdx = Math.floor(Math.random() * possibleMoves.length)
+  const move = possibleMoves[randomIdx]
 
   if (move.color === 'w') {
     $board.find('.' + squareClass).removeClass('highlight-white')
@@ -62,9 +62,9 @@ function onMoveEnd () {
     .addClass('highlight-' + colorToHighlight)
 }
 
-var config = {
+const config = {
   position: 'start',
-  onMoveEnd: onMoveEnd
+  onMoveEnd
 }
 const board = Chessboard2('myBoard', config)
 

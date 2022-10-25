@@ -20,15 +20,15 @@ function onChange (oldPos, newPos) {
   console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 }
 
-var config = {
+const config = {
   draggable: true,
   position: 'start',
-  onChange: onChange
+  onChange
 }
-var board = Chessboard2('myBoard', config)
+const board = Chessboard2('myBoard', config)
 
 attachEvent('ruyLopezBtn', 'click', function () {
-  var ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
+  const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
   board.position(ruyLopez)
 })
 

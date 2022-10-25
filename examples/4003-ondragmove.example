@@ -12,7 +12,7 @@ The <a href="docs.html#config:onDragMove"><code class="js plain">onDragMove</cod
 
 ===== JS
 function onDragMove (newLocation, oldLocation, source,
-                     piece, position, orientation) {
+  piece, position, orientation) {
   console.log('New location: ' + newLocation)
   console.log('Old location: ' + oldLocation)
   console.log('Source: ' + source)
@@ -22,10 +22,10 @@ function onDragMove (newLocation, oldLocation, source,
   console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 }
 
-var config = {
+const config = {
   draggable: true,
   position: 'start',
-  onDragMove: onDragMove,
+  onDragMove,
   sparePieces: true
 }
-var board = Chessboard2('myBoard', config)
+const board = Chessboard2('myBoard', config)

@@ -20,10 +20,10 @@ You can integrate chessboard.js with the <a href="https://github.com/jhlywa/ches
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
 
-var game = new Chess()
-var $status = document.querySelector('#status')
-var $fen = document.querySelector('#fen')
-var $pgn = document.querySelector('#pgn')
+const game = new Chess()
+const $status = document.querySelector('#status')
+const $fen = document.querySelector('#fen')
+const $pgn = document.querySelector('#pgn')
 
 function onDragStart (source, piece, position, orientation) {
   // do not pick up pieces if the game is over
@@ -38,7 +38,7 @@ function onDragStart (source, piece, position, orientation) {
 
 function onDrop (source, target) {
   // see if the move is legal
-  var move = game.move({
+  const move = game.move({
     from: source,
     to: target,
     promotion: 'q' // NOTE: always promote to a queen for example simplicity
@@ -57,9 +57,9 @@ function onSnapEnd () {
 }
 
 function updateStatus () {
-  var status = ''
+  let status = ''
 
-  var moveColor = 'White'
+  let moveColor = 'White'
   if (game.turn() === 'b') {
     moveColor = 'Black'
   }
@@ -67,7 +67,7 @@ function updateStatus () {
   // checkmate?
   if (game.in_checkmate()) {
     status = 'Game over, ' + moveColor + ' is in checkmate.'
-  
+
   // draw?
   } else if (game.in_draw()) {
     status = 'Game over, drawn position'
@@ -87,12 +87,12 @@ function updateStatus () {
   $pgn.html(game.pgn())
 }
 
-var config = {
+const config = {
   draggable: true,
   position: 'start',
-  onDragStart: onDragStart,
-  onDrop: onDrop,
-  onSnapEnd: onSnapEnd
+  onDragStart,
+  onDrop,
+  onSnapEnd
 }
 const board = Chessboard2('myBoard', config)
 

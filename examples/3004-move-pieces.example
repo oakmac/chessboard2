@@ -5,7 +5,6 @@
 Move Pieces
 
 ===== DescriptionMD
-
 Use the [.move()] method to make one or more moves on the board.
 
 [.move()]:docs.html#methods:move

@@ -5,7 +5,6 @@
 Get Position
 
 ===== DescriptionMD
-
 Use the [.position()], [.fen()], or [.getPosition()] methods to retrieve the
 position of the board as either a JS Object, FEN String, or JS Map.
 

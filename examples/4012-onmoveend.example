@@ -22,11 +22,11 @@ function onMoveEnd (oldPos, newPos) {
   console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 }
 
-var config = {
+const config = {
   position: 'start',
-  onMoveEnd: onMoveEnd
+  onMoveEnd
 }
-var board = Chessboard2('myBoard', config)
+const board = Chessboard2('myBoard', config)
 
 attachEvent('ruyLopezBtn', 'click', function () {
   board.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')

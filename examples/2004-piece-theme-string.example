@@ -11,8 +11,8 @@ Use the <a href="docs.html#config:pieceTheme"><code class="js plain">pieceTheme<
 <div id="myBoard" style="width: 400px"></div>
 
 ===== JS
-var config = {
+const config = {
   pieceTheme: 'img/chesspieces/alpha/{piece}.png',
   position: 'start'
 }
-var board = Chessboard2('myBoard', config)
+const board = Chessboard2('myBoard', config)

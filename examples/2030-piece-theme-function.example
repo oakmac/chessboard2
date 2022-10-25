@@ -21,8 +21,8 @@ function pieceTheme (piece) {
   return 'img/chesspieces/alpha/' + piece + '.png'
 }
 
-var config = {
-  pieceTheme: pieceTheme,
+const config = {
+  pieceTheme,
   position: 'start'
 }
-var board = Chessboard2('myBoard', config)
+const board = Chessboard2('myBoard', config)

@@ -22,10 +22,10 @@ Use CSS to show piece highlighting.
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
 
-var $board = document.querySelector('#myBoard')
-var game = new Chess()
-var squareToHighlight = null
-var squareClass = 'square-55d63'
+const $board = document.querySelector('#myBoard')
+const game = new Chess()
+let squareToHighlight = null
+const squareClass = 'square-55d63'
 
 function removeHighlights (color) {
   $board.find('.' + squareClass)
@@ -41,15 +41,15 @@ function onDragStart (source, piece, position, orientation) {
 }
 
 function makeRandomMove () {
-  var possibleMoves = game.moves({
+  const possibleMoves = game.moves({
     verbose: true
   })
 
   // game over
   if (possibleMoves.length === 0) return
 
-  var randomIdx = Math.floor(Math.random() * possibleMoves.length)
-  var move = possibleMoves[randomIdx]
+  const randomIdx = Math.floor(Math.random() * possibleMoves.length)
+  const move = possibleMoves[randomIdx]
   game.move(move.san)
 
   // highlight black's move
@@ -63,7 +63,7 @@ function makeRandomMove () {
 
 function onDrop (source, target) {
   // see if the move is legal
-  var move = game.move({
+  const move = game.move({
     from: source,
     to: target,
     promotion: 'q' // NOTE: always promote to a queen for example simplicity
@@ -92,12 +92,12 @@ function onSnapEnd () {
   board.position(game.fen())
 }
 
-var config = {
+const config = {
   draggable: true,
   position: 'start',
-  onDragStart: onDragStart,
-  onDrop: onDrop,
-  onMoveEnd: onMoveEnd,
-  onSnapEnd: onSnapEnd
+  onDragStart,
+  onDrop,
+  onMoveEnd,
+  onSnapEnd
 }
 const board = Chessboard2('myBoard', config)

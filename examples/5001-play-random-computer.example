@@ -33,10 +33,10 @@ const game = new Chess()
 // - handles input events from users
 const boardConfig = {
   draggable: true, // FIXME: <-- need to implement this
-  onDragStart: onDragStart,
-  onTouchSquare: onTouchSquare,
-  onDrop: onDrop,
-  onSnapEnd: onSnapEnd,
+  onDragStart,
+  onTouchSquare,
+  onDrop,
+  onSnapEnd,
   position: game.fen(),
   touchMove: true
 }
@@ -54,7 +54,7 @@ let pendingMove = null
 // - do nothing
 function onTouchSquare (square, piece, boardInfo) {
   // ask chess.js what legal moves are available from this square
-  const legalMoves = game.moves({ square: square, verbose: true })
+  const legalMoves = game.moves({ square, verbose: true })
 
   // Option 1: start a pending move
   if (!pendingMove && legalMoves.length > 0) {
@@ -69,7 +69,7 @@ function onTouchSquare (square, piece, boardInfo) {
   } else if (pendingMove && pendingMove === square) {
     pendingMove = null
     board.clearCircles()
-  
+
   // Option 3: clear a pending move and start a new pending move
   } else if (pendingMove) {
     // ask chess.js to make a move
@@ -92,7 +92,7 @@ function onTouchSquare (square, piece, boardInfo) {
         // wait a smidge, then make a random move for Black
         window.setTimeout(makeRandomMove, 250)
       })
-    
+
     // if the move was not legal, then start a new pendingMove from this square
     } else if (piece) {
       pendingMove = square
@@ -104,7 +104,7 @@ function onTouchSquare (square, piece, boardInfo) {
       legalMoves.forEach(m => {
         board.addCircle(m.to)
       })
-    
+
     // else clear pendingMove
     } else {
       pendingMove = null
@@ -141,7 +141,7 @@ function updateStatus () {
 
 function updatePGN () {
   const pgnEl = document.getElementById('gamePGN')
-  pgnEl.innerHTML = game.pgn({max_width: 5, newline_char: '<br />'})
+  pgnEl.innerHTML = game.pgn({ max_width: 5, newline_char: '<br />' })
 }
 
 function onDragStart (source, piece, position, orientation) {
@@ -168,7 +168,7 @@ function makeRandomMove () {
 
 function onDrop (source, target) {
   // see if the move is legal
-  var move = game.move({
+  const move = game.move({
     from: source,
     to: target,
     promotion: 'q' // NOTE: always promote to a queen for example simplicity
