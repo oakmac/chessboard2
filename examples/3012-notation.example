@@ -31,15 +31,15 @@ const board = Chessboard2('myBoard', {
   position: { e3: 'wK', d5: 'bK', c4: 'bR' }
 })
 
-$('#showCoordinatesBtn').on('click', function () {
+attachEvent('showCoordinatesBtn', 'click', function () {
   board.showCoordinates()
 })
 
-$('#hideCoordinatesBtn').on('click', function () {
+attachEvent('hideCoordinatesBtn', 'click', function () {
   board.hideCoordinates()
 })
 
-$('#toggleCoordinatesBtn').on('click', function () {
+attachEvent('toggleCoordinatesBtn', 'click', function () {
   board.toggleCoordinates()
 })
 

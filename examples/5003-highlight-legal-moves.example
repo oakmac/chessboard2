@@ -14,17 +14,16 @@ Use the <code class="js plain"><a href="docs.html#config:onMouseoverSquare">onMo
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
 
-var board = null
 var game = new Chess()
 var whiteSquareGrey = '#a9a9a9'
 var blackSquareGrey = '#696969'
 
 function removeGreySquares () {
-  $('#myBoard .square-55d63').css('background', '')
+  document.querySelector('#myBoard .square-55d63').style.background = ''
 }
 
 function greySquare (square) {
-  var $square = $('#myBoard .square-' + square)
+  var $square = document.querySelector('#myBoard .square-' + square)
 
   var background = whiteSquareGrey
   if ($square.hasClass('black-3c85d')) {
@@ -95,4 +94,4 @@ var config = {
   onMouseoverSquare: onMouseoverSquare,
   onSnapEnd: onSnapEnd
 }
-board = Chessboard2('myBoard', config)
+const board = Chessboard2('myBoard', config)

@@ -22,35 +22,35 @@ that removing pieces from the board changes the board's position.
 ===== JS
 const board = Chessboard2('myBoard', 'start')
 
-$('#btn1').on('click', function () {
+attachEvent('btn1', 'click', function () {
   board.removePiece('a1')
 })
 
-$('#btn2').on('click', function () {
+attachEvent('btn2', 'click', function () {
   board.removePiece('d1', 'e1', 'f1')
 })
 
-$('#btn3').on('click', function () {
+attachEvent('btn3', 'click', function () {
   // pass false to disable animations
   board.removePiece('c7', false)
 })
 
-$('#addBtn1').on('click', function () {
+attachEvent('addBtn1', 'click', function () {
   board.addPiece('e4', 'wR')
 })
 
-$('#addBtn2').on('click', function () {
+attachEvent('addBtn2', 'click', function () {
   // pass false to disable animations
   board.addPiece('d5', 'bN', false)
 })
 
-$('#addBtn3').on('click', function () {
+attachEvent('addBtn3', 'click', function () {
   board.addPiece({
     piece: 'wQ',
     square: 'a5'
   })
 })
 
-$('#btnStart').on('click', function () {
+attachEvent('btnStart', 'click', function () {
   board.start()
 })

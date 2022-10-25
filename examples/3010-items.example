@@ -19,7 +19,7 @@ TODO: write me :)
 ===== JS
 const board = Chessboard2('myBoard', 'start')
 
-$('#addArrowsBtn').on('click', function () {
+attachEvent('addArrowsBtn', 'click', function () {
   board.addArrow('e2-e4')
   board.addArrow('c7-c5', 'small')
   board.addArrow('a3-c3', 'medium')
@@ -27,15 +27,15 @@ $('#addArrowsBtn').on('click', function () {
   board.addArrow('g1-h3', 'large')
 })
 
-$('#itemsBtn1').on('click', function () {
+attachEvent('itemsBtn1', 'click', function () {
   console.log(board.items())
 })
 
-$('#itemsBtn2').on('click', function () {
+attachEvent('itemsBtn2', 'click', function () {
   console.log(board.getItems())
 })
 
-$('#itemsBtn3').on('click', function () {
+attachEvent('itemsBtn3', 'click', function () {
   console.log('Items Array:')
   console.log(board.getItems())
 
@@ -48,5 +48,5 @@ $('#itemsBtn3').on('click', function () {
   console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 })
 
-$('#flipBoardBtn').on('click', board.flip)
-$('#clearArrowsBtn').on('click', board.clearArrows)
+attachEvent('flipBoardBtn', 'click', board.flip)
+attachEvent('clearArrowsBtn', 'click', board.clearArrows)

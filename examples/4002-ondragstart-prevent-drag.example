@@ -28,4 +28,4 @@ var config = {
 }
 var board = Chessboard2('myBoard', config)
 
-$('#flipOrientationBtn').on('click', board.flip)
+attachEvent('flipOrientationBtn', 'click', board.flip)

@@ -14,4 +14,4 @@ Use the <a href="docs.html#methods:destroy"><code class="js plain">destroy</code
 ===== JS
 var board = Chessboard2('myBoard', 'start')
 
-$('#destroyBtn').on('click', board.destroy)
+attachEvent('destroyBtn', 'click', board.destroy)

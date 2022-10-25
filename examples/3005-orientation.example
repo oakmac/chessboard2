@@ -21,21 +21,21 @@ const board = Chessboard2('myBoard', ruyLopez)
 board.addArrow('a7-a6', 'small')
 board.addCircle('a4')
 
-$('#flipOrientationBtn').on('click', function () {
+attachEvent('flipOrientationBtn', 'click', function () {
   const newOrientation = board.flip()
   console.log('New board orientation is:', newOrientation)
 })
 
-$('#whiteOrientationBtn').on('click', function () {
+attachEvent('whiteOrientationBtn', 'click', function () {
   const newOrientation = board.orientation('white')
   console.log('New board orientation is:', newOrientation)
 })
 
-$('#blackOrientationBtn').on('click', function () {
+attachEvent('blackOrientationBtn', 'click', function () {
   const newOrientation = board.orientation('black')
   console.log('New board orientation is:', newOrientation)
 })
 
-$('#showOrientationBtn').on('click', function () {
+attachEvent('showOrientationBtn', 'click', function () {
   console.log('Current board orientation is:', board.orientation())
 })

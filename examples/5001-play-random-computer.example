@@ -64,14 +64,14 @@ function onTouchSquare (square, piece, boardInfo) {
     legalMoves.forEach(move => {
       board.addCircle(move.to)
     })
-  }
+
   // Option 2: clear a pending move if the user selects the same square twice
-  else if (pendingMove && pendingMove === square) {
+  } else if (pendingMove && pendingMove === square) {
     pendingMove = null
     board.clearCircles()
-  }
+  
   // Option 3: clear a pending move and start a new pending move
-  else if (pendingMove) {
+  } else if (pendingMove) {
     // ask chess.js to make a move
     const moveResult = game.move({
       from: pendingMove,
@@ -92,9 +92,9 @@ function onTouchSquare (square, piece, boardInfo) {
         // wait a smidge, then make a random move for Black
         window.setTimeout(makeRandomMove, 250)
       })
-    }
+    
     // if the move was not legal, then start a new pendingMove from this square
-    else if (piece) {
+    } else if (piece) {
       pendingMove = square
 
       // remove any previous circles
@@ -104,9 +104,9 @@ function onTouchSquare (square, piece, boardInfo) {
       legalMoves.forEach(m => {
         board.addCircle(m.to)
       })
-    }
+    
     // else clear pendingMove
-    else {
+    } else {
       pendingMove = null
       board.clearCircles()
     }

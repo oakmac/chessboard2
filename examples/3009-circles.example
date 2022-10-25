@@ -26,23 +26,26 @@ let circle1Id = null
 let circle2Id = null
 let circle3Id = null
 let circle4Id = null
+let circle5Id = null
 
 attachEvent('addCircle1Btn', 'click', () => {
   circle1Id = board.addCircle('d4')
+  console.log('added Circle 1 with id:', circle1Id)
 })
 
 attachEvent('addCircle2Btn', 'click', () => {
   circle2Id = board.addCircle('e4', 'orange', 'large')
-  // console.log('added "small" Circle 2 with id:', circle2Id)
+  console.log('added "small" Circle 2 with id:', circle2Id)
 })
 
 attachEvent('addCircle3Btn', 'click', () => {
   circle3Id = board.addCircle('e4', 'purple', 'small')
+  console.log('added "small" Circle 3 with id:', circle3Id)
 })
 
 attachEvent('addCircle4Btn', 'click', () => {
   circle4Id = board.addCircle('d5', '#8e8e8e', 'medium')
-  // console.log('added "large" Circle 4 with id:', circle4Id)
+  console.log('added "large" Circle 4 with id:', circle4Id)
 })
 
 attachEvent('addCircle5Btn', 'click', () => {
