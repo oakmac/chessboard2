@@ -146,11 +146,13 @@
 (defn- add-events!
   "Attach DOM events."
   [root-el board-state]
+  ;; FIXME: we need to detach (or ignore) this event when the board is destroyed
   (.addEventListener js/window "resize" (partial debounced-on-window-resize board-state))
   (.addEventListener root-el "mousedown" (partial on-mouse-down board-state))
   (.addEventListener root-el "touchstart" (partial on-touch-start board-state))
   (.addEventListener root-el "transitionend" (partial on-transition-end board-state)))
 
+;; TODO: move this to util ns
 (defn toggle-orientation [o]
   (if (= o "white") "black" "white"))
 
