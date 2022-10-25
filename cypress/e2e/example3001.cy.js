@@ -1,6 +1,6 @@
 describe('Example 3001', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3232/examples/3001.html')
+    cy.visit('http://localhost:3232/examples/3001-set-position.html')
       .get('#myBoard')
       .should('have.length', 1)
       .get('#myBoard .piece-349f8')

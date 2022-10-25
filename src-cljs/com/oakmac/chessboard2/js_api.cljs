@@ -2,6 +2,7 @@
   "Functions that handle the JS API for Chessboard2"
   (:require
     [com.oakmac.chessboard2.api :as api]
+    [com.oakmac.chessboard2.config :as config]
     [com.oakmac.chessboard2.constants :refer [animate-speed-strings animate-speed-strings->times start-position]]
     [com.oakmac.chessboard2.util.data-transforms :refer [clj->js-map js-map->clj]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
@@ -18,19 +19,21 @@
     [com.oakmac.chessboard2.util.string :refer [lower-case-if-string safe-lower-case]]
     [goog.object :as gobj]))
 
-(def valid-config-keys
-  #{"draggable"
-    "onTouchSquare"
-    ;; "onDragStart"
-    ;; "onDrop"
-    ;; "onSnapEnd"
-    "position"
-    "touchMove"})
+(defn valid-orientation?
+  [o]
+  (or (= o "white")
+      (= o "black")))
+
+(defn set-default-orientation
+  [o]
+  (if (= (safe-lower-case o) "black")
+    "black"
+    "white"))
 
 (defn parse-constructor-second-arg
   "expands shorthand versions of the second argument to the Chessboard2 constructor"
   [js-opts]
-  (let [opts (js->clj js-opts)]
+  (let [opts (js->clj js-opts :keywordize-keys true)]
     (cond
       (start-string? opts)
       {:position start-position}
@@ -42,22 +45,13 @@
       {:position opts}
 
       (map? opts)
-      (let [opts2 (select-keys opts valid-config-keys)
-            their-pos (get opts2 "position")]
-        (cond-> {}
+      (let [opts2 (select-keys opts config/valid-config-keys)
+            their-pos (:position opts2)]
+        (cond-> opts2
           ;; set initial position
           (start-string? their-pos)   (assoc :position start-position)
           (valid-fen? their-pos)      (assoc :position (fen->position their-pos))
-          (valid-position? their-pos) (assoc :position their-pos)
-
-          ;; booleans
-          (true? (get opts2 "draggable")) (assoc-in [:config :draggable] true)
-          (true? (get opts2 "touchMove")) (assoc-in [:config :touchMove] true)
-
-          ;; event functions
-          (fn? (get opts2 "onTouchSquare")) (assoc-in [:config :onTouchSquare] (get opts2 "onTouchSquare"))))
-
-          ;; FIXME: add other configs values here
+          (valid-position? their-pos) (assoc :position their-pos)))
 
       :else
       {})))

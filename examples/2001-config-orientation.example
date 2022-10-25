@@ -4,8 +4,9 @@
 ===== Name
 Orientation
 
-===== Description
-Use the <a href="docs.html#config:orientation"><code class="js plain">orientation</code></a> property to set board orientation.
+===== DescriptionMD
+
+Use the [orientation](docs.html#config:orientation) property to set board orientation.
 
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>

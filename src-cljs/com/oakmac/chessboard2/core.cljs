@@ -2,11 +2,12 @@
   (:require
     [clojure.set :as set]
     [clojure.string :as str]
+    [com.oakmac.chessboard2.api :as api]
+    [com.oakmac.chessboard2.config :as config]
     [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.html :as html]
-    [com.oakmac.chessboard2.api :as api]
     [com.oakmac.chessboard2.js-api :as js-api]
     [com.oakmac.chessboard2.util.board :refer [start-position]]
     [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
@@ -68,8 +69,7 @@
   [board-state js-evt]
   ;; prevent "double-tap to zoom"
   (dom-util/safe-prevent-default js-evt)
-  (let [{:keys [config orientation position root-el square->piece-id square->square-ids]} @board-state
-        {:keys [onTouchSquare touchMove]} config
+  (let [{:keys [onTouchSquare orientation position root-el square->piece-id square->square-ids touchMove]} @board-state
         target-el (gobj/get js-evt "target")
         js-first-touch (aget (gobj/get js-evt "touches") 0)
         clientX (gobj/get js-first-touch "clientX")
@@ -105,8 +105,7 @@
   "This function fires on every 'mousedown' event inside the root DOM element"
   [board-state js-evt]
   (dom-util/safe-prevent-default js-evt)
-  (let [{:keys [config orientation position root-el square->piece-id square->square-ids]} @board-state
-        {:keys [onTouchSquare touchMove]} config
+  (let [{:keys [onTouchSquare orientation position root-el square->piece-id square->square-ids touchMove]} @board-state
         target-el (gobj/get js-evt "target")
         clientX (gobj/get js-evt "clientX")
         clientY (gobj/get js-evt "clientY")
@@ -649,19 +648,6 @@
    :right  {:position "outside", :show? false, :type "numbers"}
    :top    {:position "outside", :show? false, :type "letters"}})
 
-(def default-board-config
-  {:coords default-coords
-   :items {}
-   :num-cols 8
-   :num-rows 8
-   :orientation "white"
-   :position {}
-   :show-coords? true}) ;; are the Coordinates showing?
-
-(def default-config
-  {:draggable false
-   :touchMove false})
-
 (def default-animate-speed-ms 80)
 ; (def default-animate-speed-ms 2500)
 
@@ -687,26 +673,25 @@
 
         root-width (dom-util/get-width root-el)
 
-        ;; TODO: refactor all of this config / opts code
-        their-opts (js-api/parse-constructor-second-arg js-opts)
-        their-config (:config their-opts)
-        starting-config (merge default-config their-config)
-        square->square-ids (square-util/create-random-square-ids (:num-rows default-board-config)
-                                                                 (:num-cols default-board-config))
-        opts2 (merge default-board-config
-                {:config starting-config}
-                (when (:position their-opts)
-                  {:position (:position their-opts)}))
-        opts3 (assoc opts2 :animate-speed-ms default-animate-speed-ms
-                           :animation-end-callbacks {}
-                           :container-id container-id
-                           :items {}
-                           :items-container-id items-container-id
-                           :piece-square-pct 0.9
-                           :root-el root-el
-                           :square->piece-id {}
-                           :square->square-ids square->square-ids
-                           :squares-container-id squares-container-id)
+        their-config (js-api/parse-constructor-second-arg js-opts)
+        starting-config (config/merge-config their-config)
+        default-num-cols 8
+        square->square-ids (square-util/create-random-square-ids default-num-cols default-num-cols)
+        opts3 (assoc starting-config
+                :animate-speed-ms default-animate-speed-ms
+                :animation-end-callbacks {}
+                :container-id container-id
+                :coords default-coords
+                :items {}
+                :items-container-id items-container-id
+                :num-cols default-num-cols
+                :num-rows default-num-cols
+                :piece-square-pct 0.9
+                :root-el root-el
+                :show-coords? true ;; are the Coordinates showing?
+                :square->piece-id {}
+                :square->square-ids square->square-ids
+                :squares-container-id squares-container-id)
         ;; create an atom to track the state of the board
         board-state (atom opts3)]
 
