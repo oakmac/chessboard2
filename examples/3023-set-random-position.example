@@ -1,0 +1,65 @@
+===== id
+3023-set-random-position
+
+===== Name
+Set Random Position
+
+===== DescriptionMD
+A fun example of setting a random position using the [.start()], [.getPosition()],
+and [.setPosition()] methods.
+
+[.start()]:docs.html#methods:start
+[.getPosition()]:docs.html#methods:getPosition
+[.setPosition()]:docs.html#methods:setPosition
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+<button id="setStartBtn">Start Position</button>
+<button id="setRandomBtn">Random!</button>
+
+===== JS
+const board = Chessboard2('myBoard', 'start')
+
+attachEvent('setStartBtn', 'click', board.start)
+attachEvent('setRandomBtn', 'click', setRandomPosition)
+
+function setRandomPosition () {
+  const currentPosition = board.getPosition('map')
+  const newPosition = new Map()
+
+  const randomSquares = shuffleArray(allSquares())
+  let idx = 0
+  currentPosition.forEach((piece, _square) => {
+    newPosition.set(randomSquares[idx], piece)
+    idx = idx + 1
+  })
+
+  board.setPosition(newPosition)
+}
+
+const files = 'abcdefgh'.split('')
+const ranks = '12345678'.split('')
+
+// returns an Array of all the squares on the board
+function allSquares () {
+  const squares = []
+  for (let i = 0; i < files.length; i++) {
+    for (let j = 0; j < ranks.length; j++) {
+      squares.push(files[i] + ranks[j])
+    }
+  }
+  return squares
+}
+
+// Randomize array using Durstenfeld shuffle algorithm
+// https://stackoverflow.com/a/12646864
+function shuffleArray (array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
+  }
+  return array
+}

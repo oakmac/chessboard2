@@ -16,14 +16,15 @@ set the board position.
 
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
+
 <button id="setStartBtn">Start Position</button>
 <button id="setRuyLopezBtn">Ruy Lopez</button>
 <button id="setRookCheckmateBtn">Rook Checkmate</button>
+<br />
 <button id="pawnAttackBtn">Pawn Attack!</button>
-
 <button id="clearBoardBtn">Clear Board</button>
 <button id="setPawns3">Pawn Attack 2!</button>
-
+<br />
 <button id="setWithCallback">Set Position with Callback</button>
 <button id="setWithAnimateSpeed">Queen's Gambit (Set Position with Animate Speed)</button>
 <button id="setWithPromise">Queen's Gambit Accepted (Set Position returns a Promise)</button>
