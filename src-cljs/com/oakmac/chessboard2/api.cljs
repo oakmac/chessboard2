@@ -11,7 +11,7 @@
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.logging :refer [warn-log]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
-    [com.oakmac.chessboard2.util.predicates :refer [valid-square? valid-position?]]
+    [com.oakmac.chessboard2.util.predicates :refer [arrow-item? valid-square? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [square->dimensions]]
     [goog.object :as gobj]))
 
@@ -39,6 +39,24 @@
     (valid-square? (:to m))
     (when-let [f (:onComplete m)]
       (fn? f))))
+
+(defn clear-arrows
+  "Removes all Analysis Arrows from the board"
+  [board-state]
+  (let [arrow-ids (->> @board-state
+                       :items
+                       vals
+                       (filter arrow-item?)
+                       (map :id))
+        dom-ops (map
+                  (fn [id]
+                    {:remove-el id})
+                  arrow-ids)]
+    (dom-ops/apply-ops! board-state dom-ops)
+    (swap! board-state update-in [:items]
+           (fn [items]
+             (apply dissoc items arrow-ids)))
+    nil))
 
 (defn move-pieces
   "Executes a collection of Moves on the board. Modifies the position.

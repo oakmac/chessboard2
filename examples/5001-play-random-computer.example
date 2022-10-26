@@ -133,7 +133,7 @@ function updateStatus () {
   } else if (game.insufficient_material()) {
     statusHTML = 'Game is drawn by insufficient material.'
   } else if (game.in_draw()) {
-    statusHTML = 'Game is drawn.'
+    statusHTML = 'Game is drawn by fifty-move rule.'
   }
 
   document.getElementById('gameStatus').innerHTML = statusHTML

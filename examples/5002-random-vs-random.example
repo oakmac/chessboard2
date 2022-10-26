@@ -1,20 +1,29 @@
 ===== id
-5002
+5002-random-vs-random
 
 ===== Name
 Random vs Random
 
-===== Description
-Who will win in this riveting game of <code class="js plain">Math.random()</code> vs <code class="js plain">Math.random()</code>?
+===== DescriptionMD
+Who will win in this riveting game of <code>Math.random()</code> vs <code>Math.random()</code>?
 
 ===== HTML
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.12.1/chess.js"
+  integrity="sha384-8sJV/krC8iV2g7t0PolQxFVckDtxhfM5gNHNAFPG2ZS/bScudOjfsB8ewhG2xle8"
+  crossorigin="anonymous"></script>
 <div id="myBoard" style="width: 400px"></div>
+<p id="gameStatus"></p>
 
 ===== JS
 // NOTE: this example uses the chess.js library:
 // https://github.com/jhlywa/chess.js
 
-const game = new Chess()
+const game = new window.Chess()
+const board = window.Chessboard2('myBoard', 'start')
+
+updateStatus()
+
+window.setTimeout(makeRandomMove, 500)
 
 function makeRandomMove () {
   const possibleMoves = game.moves()
@@ -24,11 +33,29 @@ function makeRandomMove () {
 
   const randomIdx = Math.floor(Math.random() * possibleMoves.length)
   game.move(possibleMoves[randomIdx])
-  board.position(game.fen())
+  board.position(game.fen()).then(updateStatus)
 
   window.setTimeout(makeRandomMove, 500)
 }
 
-const board = Chessboard2('myBoard', 'start')
+function updateStatus () {
+  let statusHTML = ''
 
-window.setTimeout(makeRandomMove, 500)
+  if (game.in_checkmate() && game.turn() === 'w') {
+    statusHTML = 'Game over: white is in checkmate. Black wins!'
+  } else if (game.in_checkmate() && game.turn() === 'b') {
+    statusHTML = 'Game over: black is in checkmate. White wins!'
+  } else if (game.in_stalemate() && game.turn() === 'w') {
+    statusHTML = 'Game is drawn. White is stalemated.'
+  } else if (game.in_stalemate() && game.turn() === 'b') {
+    statusHTML = 'Game is drawn. Black is stalemated.'
+  } else if (game.in_threefold_repetition()) {
+    statusHTML = 'Game is drawn by threefold repetition rule.'
+  } else if (game.insufficient_material()) {
+    statusHTML = 'Game is drawn by insufficient material.'
+  } else if (game.in_draw()) {
+    statusHTML = 'Game is drawn by fifty-move rule.'
+  }
+
+  document.getElementById('gameStatus').innerHTML = statusHTML
+}

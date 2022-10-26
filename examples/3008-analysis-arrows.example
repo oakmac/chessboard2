@@ -1,0 +1,85 @@
+===== id
+3008-analysis-arrows
+
+===== Name
+Analysis Arrows
+
+===== DescriptionMD
+You can add analysis arrows to the board with the [.addArrow()] function.
+
+Use the [.removeArrow()] and [.clearArrows()] functions to remove arrows.
+
+See the current arrows on the board with the [.arrows()] and [.getArrows()] functions.
+
+[.addArrow()]:docs#methods:addArrow
+[.removeArrow()]:docs#methods:removeArrow
+[.clearArrows()]:docs#methods:clearArrows
+[.arrows()]:docs#methods:arrows
+[.getArrows()]:docs#methods:getArrows
+
+===== HTML
+<div id="myBoard" style="width:400px"></div>
+
+<button id="addArrow1Btn">Add e2-e4</button>
+<button id="addArrow2Btn">Add c7-c5</button>
+<button id="addArrow3Btn">Add a1-a7</button>
+<button id="addArrow4Btn">Add g1-f3</button>
+<br />
+<button id="removeArrow2Btn">Remove c7-c5</button>
+<button id="removeArrow4Btn">Remove g1-f3</button>
+<button id="clearArrowsBtn">Clear All Arrows</button>
+<br />
+<button id="logArrowsBtn">console.log Arrows</button>
+
+===== JS
+const board = Chessboard2('myBoard', 'start')
+
+let arrow2Id = null
+let arrow4Id = null
+
+attachEvent('addArrow1Btn', 'click', () => {
+  board.addArrow('e2-e4')
+})
+
+attachEvent('addArrow2Btn', 'click', () => {
+  arrow2Id = board.addArrow('c7-c5', 'small')
+})
+
+attachEvent('addArrow3Btn', 'click', () => {
+  board.addArrow('a1-a7', 'blue', 'large')
+})
+
+attachEvent('addArrow4Btn', 'click', () => {
+  arrow4Id = board.addArrow({
+    color: 'orange',
+    end: 'f3',
+    opacity: 100,
+    size: 'large',
+    start: 'g1'
+  })
+})
+
+attachEvent('removeArrow2Btn', 'click', () => {
+  board.removeArrow(arrow2Id)
+})
+
+attachEvent('removeArrow4Btn', 'click', () => {
+  board.removeArrow(arrow4Id)
+})
+
+attachEvent('logArrowsBtn', 'click', () => {
+  console.log('Arrows Array:')
+  console.log(board.getArrows())
+
+  console.log('Arrows Object:')
+  console.log(board.getArrows('object'))
+
+  console.log('Arrows Map:')
+  console.log(board.getArrows('map'))
+
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+})
+
+attachEvent('clearArrowsBtn', 'click', () => {
+  board.clearArrows()
+})

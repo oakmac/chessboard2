@@ -108,6 +108,7 @@ const examplesGroups = [
       '3023-set-random-position',
       '3003',
       '3004-move-pieces',
+      '3008-analysis-arrows',
       '3005',
       '3006-destroy',
       '3007'
@@ -132,7 +133,7 @@ const examplesGroups = [
     examples: [
       '5000',
       '5001',
-      '5002',
+      '5002-random-vs-random',
       '5003',
       '5004',
       '5005'

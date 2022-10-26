@@ -19,7 +19,6 @@
     [com.oakmac.chessboard2.util.string :refer [lower-case-if-string safe-lower-case]]
     [goog.object :as gobj]))
 
-;; TODO: good candidate for unit tests
 (defn parse-constructor-second-arg
   "expands shorthand versions of the second argument to the Chessboard2 constructor"
   [js-opts]

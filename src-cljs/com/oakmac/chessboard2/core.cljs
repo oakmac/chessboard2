@@ -219,8 +219,6 @@
 ;; -----------------------------------------------------------------------------
 ;; API Methods
 
-
-
 (defn get-circles-by-square
   "Returns a Map of Circles with their square as the key."
   [board-state]
@@ -481,24 +479,6 @@
   [board-state return-fmt]
   (map->js-return-format (get-items board-state) (safe-lower-case return-fmt)))
 
-(defn clear-arrows
-  "Removes all Analysis Arrows from the board"
-  [board-state]
-  (let [arrow-ids (->> @board-state
-                       :items
-                       vals
-                       (filter arrow-item?)
-                       (map :id))
-        dom-ops (map
-                  (fn [id]
-                    {:remove-el id})
-                  arrow-ids)]
-    (dom-ops/apply-ops! board-state dom-ops)
-    (swap! board-state update-in [:items]
-           (fn [items]
-             (apply dissoc items arrow-ids)))
-    nil))
-
 (defn set-white-orientation!
   [board]
   (let [squares-selector (str "#" (:container-id @board) " ." css/squares)
@@ -665,12 +645,12 @@
         items-container-id (random-id "items-container")
         squares-container-id (random-id "squares-container")
 
-        root-width (dom-util/get-width root-el)
-
         their-config (js-api/parse-constructor-second-arg js-opts)
         starting-config (config/merge-config their-config)
+
         default-num-cols 8
         square->square-ids (square-util/create-random-square-ids default-num-cols default-num-cols)
+
         opts3 (assoc starting-config
                 :animate-speed-ms default-animate-speed-ms
                 :animation-end-callbacks {}
@@ -686,6 +666,7 @@
                 :square->piece-id {}
                 :square->square-ids square->square-ids
                 :squares-container-id squares-container-id)
+
         ;; create an atom to track the state of the board
         board-state (atom opts3)]
 
@@ -699,16 +680,11 @@
 
     ;; return a JS object that implements the API
     (js-obj
-      ;; TODO: do we need to animate arrows from square to square?
-      ;;       I think this might be worth prototyping at least to see the effect
-      ;; TODO: do we need to allow a method for setting multiple arrows in one call?
       "addArrow" (partial js-add-arrow board-state)
       "arrows" (partial js-get-arrows board-state)
-      "clearArrows" (partial clear-arrows board-state)
+      "clearArrows" (partial api/clear-arrows board-state)
       "getArrows" (partial js-get-arrows board-state)
       "removeArrow" (partial js-remove-arrow board-state)
-      ;; TODO: should this method exist? would be neat to prototype it and see the effect
-      ; "moveArrow" (partial js-move-arrow board-state)
 
       "addCircle" (partial js-add-circle board-state)
       "circles" (partial js-get-circles board-state)
@@ -767,10 +743,10 @@
       "getOrientation" (partial orientation board-state nil)
       "setOrientation" (partial orientation board-state)
 
-      "animatePiece" #() ;; FIXME:
-      "bouncePiece" #() ;; FIXME
-      "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
-      "pulsePiece" #() ;; FIXME
+      ; "animatePiece" #() ;; FIXME:
+      ; "bouncePiece" #() ;; FIXME
+      ; "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
+      ; "pulsePiece" #() ;; FIXME
 
       "resize" (partial api/resize! board-state)
 
