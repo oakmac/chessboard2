@@ -153,66 +153,66 @@
   [board-state new-pos opts]
   (when flags/runtime-checks?
     (assert (valid-position? new-pos) "Invalid Position Map passed to set-position"))
-  (let [current-pos (get-position board-state)
-        default-animate-speed-ms (:animate-speed-ms @board-state)
-        animations (calculate-animations current-pos new-pos)
-        options-animate-speed (:animateSpeed opts)
+  (let [{:keys [animate-speed-ms items-container-id]} @board-state
+        items-container-el (dom-util/get-element items-container-id)]
+    ;; do nothing if the items-container-el does not exist
+    (when items-container-el
+      (let [current-pos (get-position board-state)
+            animations (calculate-animations current-pos new-pos)
+            options-animate-speed (:animateSpeed opts)
 
-        ;; TODO: combine this with convert-animate-speed function
-        animate-speed-ms (cond
-                           (false? (:animate opts)) 0
-                           (number? options-animate-speed) options-animate-speed
-                           (get animate-speed-strings->times options-animate-speed) (get animate-speed-strings->times options-animate-speed)
-                           :else default-animate-speed-ms)
+            ;; TODO: combine this with convert-animate-speed function
+            animate-speed-ms2 (cond
+                                (false? (:animate opts)) 0
+                                (number? options-animate-speed) options-animate-speed
+                                (get animate-speed-strings->times options-animate-speed) (get animate-speed-strings->times options-animate-speed)
+                                :else animate-speed-ms)
 
-        ;; add duration times to the animations
-        animations2 (map
-                      (fn [{:keys [source] :as animation}]
-                        (cond-> animation
-                          true (assoc :duration-ms animate-speed-ms)
-                          (false? (:animate opts)) (assoc :instant? true)))
-                      animations)
+            ;; add duration times to the animations
+            animations2 (map
+                          (fn [{:keys [source] :as animation}]
+                            (cond-> animation
+                              true (assoc :duration-ms animate-speed-ms2)
+                              (false? (:animate opts)) (assoc :instant? true)))
+                          animations)
 
-        ;; create an Object that will store our Promise callback function
-        js-resolve-fns (js-obj)
-        return-promise (js/Promise.
-                         (fn [resolve-fn reject-fn]
-                           (gobj/set js-resolve-fns "$" resolve-fn)))
+            ;; create an Object that will store our Promise callback function
+            js-resolve-fns (js-obj)
+            return-promise (js/Promise.
+                             (fn [resolve-fn reject-fn]
+                               (gobj/set js-resolve-fns "$" resolve-fn)))
 
-        js-before-position (clj->js current-pos)
-        js-after-position (clj->js new-pos)
-        js-position-info (js-obj "afterPosition" js-after-position
-                                 "beforePosition" js-before-position
-                                 "duration" animate-speed-ms)
+            js-before-position (clj->js current-pos)
+            js-after-position (clj->js new-pos)
+            js-position-info (js-obj "afterPosition" js-after-position
+                                     "beforePosition" js-before-position
+                                     "duration" animate-speed-ms2)
 
-        ; _ (js/console.log (pr-str animations2))
-        ; _ (js/console.log "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            animation-finished-callback (fn []
+                                          ;; call their callback if provided
+                                          (when-let [f (:onComplete opts)]
+                                            (when (fn? f)
+                                              (f js-position-info)))
+                                          ;; call the resolve-fn for the return Promise
+                                          (when-let [f (gobj/get js-resolve-fns "$")]
+                                            (f js-position-info)))
 
-        animation-finished-callback (fn []
-                                      ;; call their callback if provided
-                                      (when-let [f (:onComplete opts)]
-                                        (when (fn? f)
-                                          (f js-position-info)))
-                                      ;; call the resolve-fn for the return Promise
-                                      (when-let [f (gobj/get js-resolve-fns "$")]
-                                        (f js-position-info)))
-
-        ;; create the DOM operations we need in order to get to the new position
-        dom-ops (map-indexed
-                  (fn [idx anim]
-                    ;; attach a callback-fn to the first operation
-                    (if (zero? idx)
-                      (-> anim
-                        (assoc :on-finish animation-finished-callback)
-                        (animation->dom-op board-state))
-                      (animation->dom-op anim board-state)))
-                  animations2)]
-    ;; apply the DOM operations to the board
-    (dom-ops/apply-ops! board-state dom-ops)
-    ;; update the board position
-    (swap! board-state assoc :position new-pos)
-    ;; return the Promise object
-    return-promise))
+            ;; create the DOM operations we need in order to get to the new position
+            dom-ops (map-indexed
+                      (fn [idx anim]
+                        ;; attach a callback-fn to the first operation
+                        (if (zero? idx)
+                          (-> anim
+                            (assoc :on-finish animation-finished-callback)
+                            (animation->dom-op board-state))
+                          (animation->dom-op anim board-state)))
+                      animations2)]
+        ;; apply the DOM operations to the board
+        (dom-ops/apply-ops! board-state dom-ops)
+        ;; update the board position
+        (swap! board-state assoc :position new-pos)
+        ;; return the Promise object
+        return-promise))))
 
 ;; TODO: do we need this?
 ; (defn set-position-instant!

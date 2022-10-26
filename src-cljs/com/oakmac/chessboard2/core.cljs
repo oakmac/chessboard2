@@ -614,8 +614,6 @@
       ;; update the Squares container height to fill the space
       (dom-util/set-style-prop! squares-container-id "height" (str inner-width "px")))))
 
-;; :coords true => default
-
 ;; recommend they style the coordinate text using CSS
 ;; the chessboard API can support the "on/off" and position stuff
 (def default-coords

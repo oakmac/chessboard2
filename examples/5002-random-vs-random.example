@@ -33,7 +33,7 @@ function makeRandomMove () {
 
   const randomIdx = Math.floor(Math.random() * possibleMoves.length)
   game.move(possibleMoves[randomIdx])
-  board.position(game.fen()).then(updateStatus)
+  board.position(game.fen(), updateStatus)
 
   window.setTimeout(makeRandomMove, 500)
 }
