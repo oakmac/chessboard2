@@ -106,7 +106,7 @@ const examplesGroups = [
       '3001-set-position',
       '3002-set-position-instant',
       '3023-set-random-position',
-      '3003',
+      '3003-clear',
       '3004-move-pieces',
       '3008-analysis-arrows',
       '3005',
