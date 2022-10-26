@@ -149,14 +149,21 @@ examplesGroups.forEach((group) => {
 })
 
 const homepageExample2 = `
-const board2 = Chessboard2('board2', {
-  draggable: true,
-  dropOffBoard: 'trash',
-  sparePieces: true
-})
+const game = new Chess()
+const board = Chessboard2('board2', 'start')
 
-$('#startBtn').on('click', board2.start)
-$('#clearBtn').on('click', board2.clear)`.trim()
+window.setTimeout(makeRandomMove, 500)
+
+function makeRandomMove () {
+  if (game.game_over()) return
+
+  const legalMoves = game.moves()
+  const randomIdx = Math.floor(Math.random() * legalMoves.length)
+  game.move(legalMoves[randomIdx])
+  board.position(game.fen())
+
+  window.setTimeout(makeRandomMove, 500)
+}`.trim()
 
 function writeSrcFiles () {
   fs.writeFileSync('website/js/chessboard2.js', latestChessboardJS, encoding)
@@ -164,13 +171,17 @@ function writeSrcFiles () {
 }
 
 function writeHomepage () {
-  const headHTML = mustache.render(headTemplate, { pageTitle: 'Homepage' })
+  const headHTML = mustache.render(headTemplate, {
+    chessboard2CSSLink: cssLink,
+    includeHighlightjsCSS: true,
+    pageTitle: 'Homepage'
+  })
 
   const html = mustache.render(homepageTemplate, {
-    jsScript,
-    example2: homepageExample2,
+    example2JS: homepageExample2,
     footer: footerTemplate,
-    head: headHTML
+    head: headHTML,
+    jsScript
   })
   const filename = 'website/index.html'
   fs.writeFileSync(filename, html, encoding)
@@ -180,6 +191,7 @@ function writeHomepage () {
 function writeExamplesPage () {
   const headHTML = mustache.render(headTemplate, {
     chessboard2CSSLink: cssLink,
+    includeHighlightjsCSS: true,
     pageTitle: 'Examples'
   })
   const headerHTML = mustache.render(headerTemplate, { examplesActive: true })
@@ -250,7 +262,10 @@ function writeDocsPage () {
 }
 
 function writeDownloadPage () {
-  const headHTML = mustache.render(headTemplate, { pageTitle: 'Download' })
+  const headHTML = mustache.render(headTemplate, {
+    includeHighlightjsCSS: true,
+    pageTitle: 'Download'
+  })
   const headerHTML = mustache.render(headerTemplate, { downloadActive: true })
 
   const html = mustache.render(downloadTemplate, {

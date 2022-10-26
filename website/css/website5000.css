@@ -550,121 +550,27 @@ main {
 }
 
 /*------------------------------------------------------------------------------
- * prettyPrint
+ * highlight.js tweaks
  *----------------------------------------------------------------------------*/
 
-.pln {
-  color: #c5c8c6;
-}
-
-@media screen {
-  .str {
-    color: #b5bd68;
-  }
-  .kwd {
-    color: #b294bb;
-  }
-  .com {
-    color: #969896;
-  }
-  .typ {
-    color: #81a2be;
-  }
-  .lit {
-    color: #de935f;
-  }
-  .pun {
-    color: #c5c8c6;
-  }
-  .opn {
-    color: #c5c8c6;
-  }
-  .clo {
-    color: #c5c8c6;
-  }
-  .tag {
-    color: #cc6666;
-  }
-  .atn {
-    color: #de935f;
-  }
-  .atv {
-    color: #8abeb7;
-  }
-  .dec {
-    color: #de935f;
-  }
-  .var {
-    color: #cc6666;
-  }
-  .fun {
-    color: #81a2be;
-  }
-}
-@media print,projection {
-  .str {
-    color: #060;
-  }
-  .kwd {
-    color: #006;
-    font-weight: bold;
-  }
-  .com {
-    color: #600;
-    font-style: italic;
-  }
-  .typ {
-    color: #404;
-    font-weight: bold;
-  }
-  .lit {
-    color: #044;
-  }
-  .pun,
-  .opn,
-  .clo {
-    color: #440;
-  }
-  .tag {
-    color: #006;
-    font-weight: bold;
-  }
-  .atn {
-    color: #404;
-  }
-  .atv {
-    color: #060;
-  }
-}
-
-pre.prettyprint {
+pre {
   background: #1d1f21;
-  font-family: 'Roboto Mono', Consolas, monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  border: 1px solid #ccc;
-  padding: 10px;
+  font-family: 'Roboto Mono', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 17px;
 }
 
-ol.linenums {
-  margin-top: 0;
-  margin-bottom: 0;
+.hljs-keyword,
+.hljs-title {
+  font-weight: 400;
 }
 
-code {
-  font-family: 'Roboto Mono', Consolas, monospace;
-  font-size: 14px;
+.hljs-tag,
+.hljs-tag .hljs-name {
+  color: #cc6666;
+  font-weight: 400;
 }
 
-code.string {
-  color: blue;
-}
-
-code.keyword {
-  color: #0066cc;
-}
-
-code.plain {
-  color: #d94d3a;
-  text-decoration-color: #d94d3a;
+.hljs-tag .hljs-attr {
+  color: #de935f;
 }
