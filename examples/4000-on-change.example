@@ -1,29 +1,23 @@
 ===== id
-4000
+4000-on-change
 
 ===== Name
 onChange
 
-===== Description
-The <a href="docs.html#config:onChange"><code class="js plain">onChange</code></a> event fires when the board position changes.
+===== DescriptionMD
+The [onChange](docs.html#config:onChange) event fires when the board position changes.
 
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
 <button id="ruyLopezBtn">Ruy Lopez</button>
 <button id="startPositionBtn">Start Position</button>
+<button id="clearBtn">Clear</button>
 
 ===== JS
-function onChange (oldPos, newPos) {
-  console.log('Position changed:')
-  console.log('Old position: ' + Chessboard.objToFen(oldPos))
-  console.log('New position: ' + Chessboard.objToFen(newPos))
-  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-}
-
 const config = {
   draggable: true,
   position: 'start',
-  onChange
+  onChange: logPositionChange
 }
 const board = Chessboard2('myBoard', config)
 
@@ -31,5 +25,11 @@ attachEvent('ruyLopezBtn', 'click', function () {
   const ruyLopez = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
   board.position(ruyLopez)
 })
-
 attachEvent('startPositionBtn', 'click', board.start)
+attachEvent('clearBtn', 'click', board.clear)
+
+function logPositionChange (oldPos, newPos) {
+  console.log('Old position:', oldPos)
+  console.log('New position:', newPos)
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+}

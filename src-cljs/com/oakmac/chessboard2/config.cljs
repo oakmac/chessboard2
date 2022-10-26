@@ -29,6 +29,9 @@
    {:default-val false
     :valid-fn boolean?}
 
+   :onChange
+   {:valid-fn fn?}
+
    :onDragStart
    {:valid-fn fn?}
 

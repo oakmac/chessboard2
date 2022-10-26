@@ -117,7 +117,7 @@ const examplesGroups = [
   {
     name: 'Events',
     examples: [
-      '4000',
+      '4000-on-change',
       '4001',
       '4002',
       '4003',

@@ -634,7 +634,14 @@
     (when-not (= (:show-coords? old-state) (:show-coords? new-state))
       (if (:show-coords? new-state)
          (remove-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71")
-         (add-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71")))))
+         (add-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71")))
+    ;; fire their onChange event
+    (let [on-change-fn (:onChange new-state)
+          old-position (:position old-state)
+          new-position (:position new-state)]
+      (when (and (fn? on-change-fn)
+                 (not= old-position new-position))
+        (on-change-fn (clj->js old-position) (clj->js new-position))))))
 
 (defn constructor2
   [root-el js-opts]
