@@ -31,12 +31,32 @@
          {:center-left 50
           :center-top 50
           :left 0
-          :top 0}))
+          :top 0
+
+          :center-left-pct 6.25
+          :center-top-pct 6.25
+          :left-pct 0
+          :top-pct 0}))
+  (is (= (square->dimensions "d4" 400 "white")
+         {:center-left 175
+          :center-top 225
+          :left 150
+          :top 200
+
+          :center-left-pct 43.75
+          :center-top-pct 56.25
+          :left-pct 37.5
+          :top-pct 50}))
   (is (= (square->dimensions "a8" 800 "black")
          {:center-left 750
           :center-top 750
           :left 700
-          :top 700})))
+          :top 700
+
+          :center-left-pct 93.75
+          :center-top-pct 93.75
+          :left-pct 87.5
+          :top-pct 87.5})))
 
 (deftest squares->rect-dimensions-test
   (is (= (squares->rect-dimensions "a1" "a2" 800)

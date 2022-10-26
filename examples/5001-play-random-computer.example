@@ -11,7 +11,8 @@ You can integrate chessboard2 with the [chess.js library](https://github.com/jhl
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.12.1/chess.js"
   integrity="sha384-8sJV/krC8iV2g7t0PolQxFVckDtxhfM5gNHNAFPG2ZS/bScudOjfsB8ewhG2xle8"
   crossorigin="anonymous"></script>
-<div id="myBoard" style=""></div>
+
+<div id="myBoard" style="width: 400px"></div>
 <p id="gameStatus"></p>
 <h4>Game PGN:</h4>
 <div id="gamePGN" style="font-family: monospace"></div>
