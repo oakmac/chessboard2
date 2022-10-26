@@ -57,18 +57,17 @@
     if (!EXAMPLES[exampleId]) return
 
     window.location.hash = exampleId
-    loadExampleFromHash()
   }
 
   const defaultExampleId = '1000-empty-board'
 
   function loadExampleFromHash () {
-    let exampleId = window.location.hash.replace('#', '')
+    const exampleId = window.location.hash.replace('#', '')
     if (!EXAMPLES[exampleId]) {
-      exampleId = defaultExampleId
-      window.location.hash = exampleId
+      window.location.hash = defaultExampleId
+    } else {
+      showExample(exampleId)
     }
-    showExample(exampleId)
   }
 
   function clickGroupHeader () {
