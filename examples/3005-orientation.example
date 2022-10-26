@@ -1,11 +1,13 @@
 ===== id
-3005
+3005-orientation
 
 ===== Name
 Orientation
 
-===== Description
-Use the <a href="docs.html#methods:orientation"><code class="js plain">orientation</code></a> method to retrieve and set the orientation. Use the <a href="docs.html#methods:flip"><code class="js plain">flip</code></a> method to flip orientation.
+===== DescriptionMD
+Use the [.orientation()](docs.html#methods:orientation) method to retrieve or set the orientation.
+
+Use the [.flip()](docs.html#methods:flip) method to flip the orientation.
 
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
@@ -13,6 +15,7 @@ Use the <a href="docs.html#methods:orientation"><code class="js plain">orientati
 <button id="flipOrientationBtn">Flip orientation</button>
 <button id="whiteOrientationBtn">White orientation</button>
 <button id="blackOrientationBtn">Black orientation</button>
+<br />
 <button id="showOrientationBtn">Show orientation in console</button>
 
 ===== JS

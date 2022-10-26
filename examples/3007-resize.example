@@ -1,16 +1,50 @@
 ===== id
-3007
+3007-resize
 
 ===== Name
 Resize
 
-===== Description
-Use the <a href="docs.html#methods:resize"><code class="js plain">resize</code></a> method to recalculate and redraw the board based on the size of it's parent element. See the full effect of this example in a <a href="examples/3007" target="_new">new window</a>.
+===== DescriptionMD
+Chessboard2 takes the width of the container element when it is initialized.
+
+If the width of the container element changes after the board has been
+initialized, call the [`.resize()`](docs.html#methods:resize) method to
+recalculate and adjust the board to the container element's new width.
+
+Note that a debounced `.resize()` event is attached to the [browser window resize event]
+when the board is initialized. You can disable this event or change the debounce
+firing threshold by using the `FIXME` and `FIXME` config properties.
+
+[browser window resize event]:https://developer.mozilla.org/en-US/docs/Web/API/Window/resize_event
 
 ===== HTML
-<div id="myBoard" style="width: 60%"></div>
+<div id="myBoard" style="border: 4px solid blue; width: 300px"></div>
+
+<button id="setWidth1">set width to 500px</button>
+<button id="setWidth2">set width to 100%</button>
+<button id="setWidth3">set width to 300px</button>
+<br />
+<button id="resizeBtn">resize()</button>
 
 ===== JS
-// NOTE: click "View example in new window." to see the full effect of this example
 const board = Chessboard2('myBoard', 'start')
-window.addEventListener('resize', board.resize)
+
+attachEvent('setWidth1', 'click', () => {
+  byId('myBoard').style.width = '500px'
+})
+
+attachEvent('setWidth2', 'click', () => {
+  byId('myBoard').style.width = '100%'
+})
+
+attachEvent('setWidth3', 'click', () => {
+  byId('myBoard').style.width = '300px'
+})
+
+attachEvent('resizeBtn', 'click', () => {
+  board.resize()
+})
+
+function byId (id) {
+  return document.getElementById(id)
+}

@@ -339,22 +339,32 @@
 (defn resize!
   "Takes measurements from the DOM and updates height / width values if necessary"
   [board-state]
-  (let [{:keys [items-container-id orientation position squares-container-id items]} @board-state
+  (let [{:keys [container-id items-container-id orientation position squares-container-id items]} @board-state
+        container-el (dom-util/get-element container-id)
         items-container-el (dom-util/get-element items-container-id)]
-    ;; do nothing if the items-container-el does not exist
-    (when items-container-el
-      (let [inner-width (dom-util/get-width items-container-el)
-            arrows (get-items-by-type board-state "CHESSBOARD_ARROW")]
+    ;; do nothing if the DOM elements do not exist
+    (when (and container-el items-container-el)
+      ;; remove the fixed width of the container element
+      ;; NOTE: this will cause the divs to resize relative to the root-el
+      (dom-util/set-style-prop! container-el "width" "")
+
+      ;; grab the new width measurements
+      (let [container-width (dom-util/get-width container-el)
+            inner-width (dom-util/get-width items-container-el)]
+
         ;; update height / width values in board-state
         ;; FIXME: this will need to adjust based on number of rows / columns
         (swap! board-state assoc :board-width inner-width
                                  :board-height inner-width)
         ;; set Squares container height
-        (dom-util/set-style-prop! squares-container-id "height" (str inner-width "px")))
+        (dom-util/set-style-prop! squares-container-id "height" (str inner-width "px"))
 
         ;; FIXME: adjust Custom Items here
-      ;; return null
-      nil)))
+
+        ;; re-fix the width of the container-el
+        (dom-util/set-style-prop! container-el "width" (str container-width "px"))))
+    ;; return null
+    nil))
 
 (defn destroy!
   "Removes the board from the DOM"

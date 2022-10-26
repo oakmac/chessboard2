@@ -600,19 +600,11 @@
 
 (defn init-dom!
   [board-state]
-  (let [{:keys [items-container-id root-el squares-container-id] :as board-cfg} @board-state]
+  (let [{:keys [container-id items-container-id root-el squares-container-id] :as board-cfg} @board-state]
     ;; write the container <div>s to the DOM
     (dom-util/set-inner-html! root-el (html/BoardContainer board-cfg))
-    ;; NOTE: I think we could just call api/resize! here
-    ;; take some measurements
-    (let [items-container-el (dom-util/get-element items-container-id)
-          inner-width (dom-util/get-width items-container-el)]
-      ;; update the inner height / width
-      ;; FIXME: this will need to adjust based on number of rows / columns
-      (swap! board-state assoc :board-width inner-width
-                               :board-height inner-width)
-      ;; update the Squares container height to fill the space
-      (dom-util/set-style-prop! squares-container-id "height" (str inner-width "px")))))
+    ;; calculate width / height
+    (api/resize! board-state)))
 
 ;; recommend they style the coordinate text using CSS
 ;; the chessboard API can support the "on/off" and position stuff
