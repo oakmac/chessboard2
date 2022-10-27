@@ -45,10 +45,20 @@ npm run local-dev
 In order to create and publish a release:
 
 ```sh
-## update package.json version, add git tag
+## 1) update CHANGELOG
+## 2) make sure flags/runtime-checks? is set to false
+## 3) update package.json version
+## 4) create a git commit
+## 5) create git tag: "git tag -a v1.4 -m "my version 1.4" "
+## 6) push git tag to GitHub: git push origin <tagname>
 
+## 7) create fresh build
 npm run release
 
+## 8) sanity-check the result files
+npm publish --dry-run
+
+## 9) publish
 npm publish --access=public
 ```
 
@@ -69,27 +79,20 @@ npm run cypress
   - are these separate from Circles or just an added config value?
 - [ ] custom Items
   - add Duck to board, add toaster SVG
-- [ ] notation should be configurable
 - [ ] version the position? increment by 1 every time the position changes
 - [ ] review the speed shorthand times. ie: what should "slow" and "superslow" feel like?
-- [ ] draggable pieces on the board
-- [ ] tap-to-move should work great
 
 ## API
 
-- everything that chessboardjs v1 has
 - `getItems()` return all items
 - "pulse" a piece with some simple animations
 - "bounce" a piece?
 - animate an arrow
-- `isAnimating` boolean
-- `arrows()` returns array of the arrows on the board
-- `addArrow(src, dest, '#color')`
-- `addArrow({src, dest, color})`
 - `removeArrow(<arrowId>, <arrowId>, etc)`
-- use a `data-chessboard-draggable` property to allow items to be dropped to the board
 
 ## HTML / DOM Design
+
+> TODO: **27 Oct 2022** this is currently inaccurate. Need to fix and create accurate write-up of how it works
 
 - the board-container has CSS `position: relative` and known `width` and `height` values
 - the board contains DOM elements (called "items"), all of which have `position: absolute`
@@ -101,10 +104,6 @@ npm run cypress
   - your custom element!
 - chessboard keeps an internal register of the location of these elements on the board
   and will update their position in response to a change
-
-## Notes
-
-- [duck chess](https://duckchess.com/) should be implementable
 
 ## License
 
