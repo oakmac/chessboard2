@@ -87,7 +87,7 @@
        :top (- (:center-top square-dims) (half itm-height))
        :width itm-width})))
 
-(defn ArrowCSS
+(defn Arrow
   [{:keys [color id opacity] :as cfg}]
   (let [position-info (arrow-util/position cfg)]
     (template
@@ -120,52 +120,6 @@
         {:color color
          :id id
          :opacity opacity}))))
-
-;; TODO: deprecate this approach
-(defn ArrowSVG
-  [{:keys [board-width color end id opacity _size start]}]
-  (let [{:keys [height width left top]} (squares->rect-dimensions start end board-width)
-        start-dims (square->dimensions start board-width)
-        end-dims (square->dimensions end board-width)
-        start-x (- (:center-left start-dims) left)
-        start-y (- (:center-top start-dims) top)
-        end-x (- (:center-left end-dims) left)
-        end-y (- (:center-top end-dims) top)
-        marker-id (random-id "marker")]
-    (template
-      (str
-        "<div class='item-18a5b arrow-bc3c7' id='{id}'"
-            " style='left:{left}px; top:{top}px;'>"
-        "<svg width='{width}' height='{height}'>"
-          "<defs>"
-            "<marker id='{marker-id}' viewBox='0 0 10 10' refX='5' refY='5'"
-                   " markerWidth='6' markerHeight='3'"
-                   " orient='auto-start-reverse'>"
-               "<path d='M 0 0 L 10 5 L 0 10 z' fill='{color}'></path>"
-            "</marker>"
-          "</defs>"
-          "<line x1='{start-x}' y1='{start-y}' x2='{end-x}' y2='{end-y}'"
-             " stroke='{color}' stroke-opacity='{opacity}' stroke-width='10'"
-             " stroke-linecap='round' marker-end='url(#{marker-id})'></line>"
-        "</svg>"
-        "</div>")
-      {:color color
-       :end-x end-x
-       :end-y end-y
-       :height height
-       :id id
-       :marker-id marker-id
-       :left left
-       :opacity opacity
-       :start-x start-x
-       :start-y start-y
-       :top top
-       :width width})))
-
-(defn Arrow [arrow-config]
-  (if flags/use-css-arrow?
-    (ArrowCSS arrow-config)
-    (ArrowSVG arrow-config)))
 
 ;; TODO: they need the ability to override this
 ;; should be able to put random things on the board, like a toaster SVG
