@@ -344,22 +344,27 @@
    :opacity 0.8
    :size "large"})
 
+;; TODO: move to predicates ns
 (defn- looks-like-a-js-arrow-config? [js-cfg]
   (and (object? js-cfg)
        (valid-square? (gobj/get js-cfg "start"))
        (valid-square? (gobj/get js-cfg "end"))))
 
+;; TODO: move to util ns
 (def tshirt-sizes
   #{"small" "medium" "large"})
 
+;; TODO: move to predicates ns
 (defn percent? [n]
   (and (number? n)
        (>= n 0)))
 
+;; TODO: move to predicates ns
 (defn valid-arrow-size? [s]
   (or (contains? tshirt-sizes s)
       (percent? s)))
 
+;; TODO: move to util ns
 (defn size-string->number
   "Converts a size string to a number. Does nothing if s is already a number."
   [s]
@@ -720,14 +725,18 @@
       "destroy" (partial api/destroy! board-state)
       "fen" (partial js-api/fen board-state)
 
-      "clearSquareHighlights" #() ;; FIXME - should this just be "clearSquares" ?
-      ;; would also be nice if this returned x,y coordinates of the squares, for custom
-      ;; integrations
-      "getSquares" #() ;; FIXME: squares can have colors, ids, properties like "black" and "white"
-                       ;;        whether they are highlighted or not
-      "setSquare" #() ;; FIXME ;; .setSquare('e2', 'blue')
-      "squares" #() ;; FIXME
+      ;; FIXME: implement these
+      ;; https://github.com/oakmac/chessboard2/issues/27
+      ;; - should this just be "clearSquares()"?
+      ;; - would also be nice if this returned x,y coordinates of the squares, for custom integrations
+      ; "clearSquareHighlights" #()
+      ; "getSquares" #() ;; squares can have colors, ids, properties like "black" and "white"
+      ;                  ;; whether they are highlighted or not
+      ; "setSquare" #() ;; .setSquare('e2', 'blue')
+      ; "squares" #()
 
+      ;; FIXME: implement these
+      ;; https://github.com/oakmac/chessboard2/issues/25
       "coordinates" #() ;; FIXME: returns the current state with 0 arg, allows changing with other args
       "getCoordinates" #() ;; FIXME: returns the config object
       "hideCoordinates" (partial hide-coordinates! board-state)
@@ -740,10 +749,12 @@
       "getOrientation" (partial orientation board-state nil)
       "setOrientation" (partial orientation board-state)
 
-      ; "animatePiece" #() ;; FIXME:
-      ; "bouncePiece" #() ;; FIXME
-      ; "flipPiece" #() ;; FIXME: rotate a piece upside down with animation
-      ; "pulsePiece" #() ;; FIXME
+      ;; FIXME: implement these
+      ;; https://github.com/oakmac/chessboard2/issues/28
+      ; "animatePiece" #()
+      ; "bouncePiece" #()
+      ; "flipPiece" #() ;; rotate a piece upside down with animation
+      ; "pulsePiece" #()
 
       "resize" (partial api/resize! board-state)
 

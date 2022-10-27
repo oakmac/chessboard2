@@ -204,6 +204,7 @@
        (when hidden? "opacity:0;")
        "'>"
      ;; FIXME: this needs to be customizable for the user
+     ;; https://github.com/oakmac/chessboard2/issues/26
      "<img src='data:image/svg+xml;base64," (piece->imgsrc piece) "' alt='' style='height:" piece-pct "%;width:" piece-pct "%;' />"
      "</div>")))
 
