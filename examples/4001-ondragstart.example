@@ -1,5 +1,5 @@
 ===== id
-4001
+4001-ondragstart
 
 ===== Name
 onDragStart
@@ -10,20 +10,18 @@ The <a href="docs.html#config:onDragStart"><code class="js plain">onDragStart</c
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
 
-===== JS
-function onDragStart (source, piece, position, orientation) {
-  console.log('Drag started:')
-  console.log('Source: ' + source)
-  console.log('Piece: ' + piece)
-  console.log('Position: ' + Chessboard.objToFen(position))
-  console.log('Orientation: ' + orientation)
-  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-}
+<button id="startBtn">Start Position</button>
 
+===== JS
 const config = {
   draggable: true,
-  position: 'start',
-  onDragStart,
-  sparePieces: true
+  onDragStart: logDragStart,
+  position: 'start'
 }
 const board = Chessboard2('myBoard', config)
+
+attachEvent('startBtn', 'click', board.start)
+
+function logDragStart (dragInfo) {
+  console.log('Drag started:', dragInfo)
+}
