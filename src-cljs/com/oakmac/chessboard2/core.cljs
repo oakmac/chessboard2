@@ -783,7 +783,10 @@
                 :items-container-id items-container-id
                 :num-cols default-num-cols
                 :num-rows default-num-cols
-                :piece-square-pct 0.9
+                ;; the percent that piece images fill in the Item container
+                ;; ie: what percent of the square should be filled with the image of the piece
+                ;; TODO: make this configurable
+                :piece-square-pct 0.95
                 :root-el root-el
                 :show-coords? true ;; are the Coordinates showing?
                 :square->piece-id {}
