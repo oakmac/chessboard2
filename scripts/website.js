@@ -117,8 +117,8 @@ const examplesGroups = [
   {
     name: 'Events',
     examples: [
-      '4000-on-change',
-      '4001',
+      '4000-onchange',
+      '4001-ondragstart',
       '4002-ondragstart-prevent-drag',
       '4003',
       '4004',
