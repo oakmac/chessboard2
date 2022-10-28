@@ -132,3 +132,8 @@
 .rank-3d54c {
   flex: 1;
 }
+
+.dragging-4a6c1 {
+  position: fixed;
+  transform: translate(-50%, -50%);
+}

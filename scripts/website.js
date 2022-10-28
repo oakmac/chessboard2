@@ -91,7 +91,7 @@ const examplesGroups = [
       '2063',
       '2001-config-orientation',
       '2002-config-notation',
-      '2003',
+      '2003-draggable-snapback',
       '2082',
       '2004',
       '2030',
@@ -119,7 +119,7 @@ const examplesGroups = [
     examples: [
       '4000-on-change',
       '4001',
-      '4002',
+      '4002-ondragstart-prevent-drag',
       '4003',
       '4004',
       '4005',

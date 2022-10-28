@@ -64,6 +64,42 @@
       nil
       square-els)))
 
+(defn begin-dragging!
+  "initialize dragging a piece"
+  [board-state square piece x y]
+  (let [{:keys [dragging-piece-id onDragStart orientation position]} @board-state
+        ;; call their onDragStart function if provided
+        on-drag-start-result (when (fn? onDragStart)
+                               (let [js-board-position (clj->js position)]
+                                 ;; source, piece, position, orientation
+                                 ;; FIXME: need "source" here
+                                 ;; could be an arbitrary data-chessboard2-draggable element
+                                 ;; TODO: pass in a timestamp of their event
+                                 (onDragStart (js-obj "orientation" orientation
+                                                      "piece" piece
+                                                      "position" js-board-position
+                                                      "source" "FIXME"
+                                                      "square" square))))]
+    ;; do nothing if they return false from onDragStart
+    (when-not (false? on-drag-start-result)
+      ;; create dragging piece if necessary
+      (when-not (dom-util/get-element dragging-piece-id)
+        (dom-util/append-html!
+          js/window.document.body
+          (html/DraggingPiece {:id dragging-piece-id
+                               :x x
+                               :y y})))
+      ;; flag that we are actively dragging
+      (swap! board-state assoc :dragging? true
+                               :dragging-el (dom-util/get-element dragging-piece-id)
+                               :dragging-starting-square square
+                               :dragging-starting-piece piece))))
+
+      ;; TODO: hide (or delete?) the piece on the source square
+      ;;       or leave it on there and fade it somewhat
+      ;; TODO: they could return an object from their onDragStart function to control what happens
+      ;;       to the source piece
+
 (defn on-touch-start
   "This function fires on every 'touchstart' event inside the root DOM element"
   [board-state js-evt]
@@ -106,7 +142,7 @@
   "This function fires on every 'mousedown' event inside the root DOM element"
   [board-state js-evt]
   (dom-util/safe-prevent-default js-evt)
-  (let [{:keys [onTouchSquare orientation position root-el square->piece-id square->square-ids touchMove]} @board-state
+  (let [{:keys [draggable onTouchSquare orientation position root-el square->piece-id square->square-ids touchMove]} @board-state
         target-el (gobj/get js-evt "target")
         clientX (gobj/get js-evt "clientX")
         clientY (gobj/get js-evt "clientY")
@@ -125,6 +161,12 @@
                                 (let [js-board-info (js-obj "orientation" orientation
                                                             "position" (clj->js position))]
                                   (onTouchSquare square piece js-board-info)))]
+
+    ;; begin dragging if configured
+    (when (and piece
+               (true? draggable))
+      (begin-dragging! board-state square piece clientX clientY))
+
     ;; highlight the square and queue a move if touchmove is enabled
     (when (and (true? touchMove)
                (not (false? on-touchsquare-result))
@@ -137,9 +179,74 @@
     ;; return null
     nil))
 
+(defn on-mousemove
+  [board-state js-evt]
+  (let [{:keys [dragging? dragging-el]} @board-state]
+    ;; do nothing if we are not actively dragging
+    (when dragging?
+      (let [x (gobj/get js-evt "clientX")
+            y (gobj/get js-evt "clientY")]
+        (dom-util/set-style-prop! dragging-el "left" (str x "px"))
+        (dom-util/set-style-prop! dragging-el "top" (str y "px"))))))
+
+(defn on-mouseup
+  [board-state js-evt]
+  (let [{:keys [dragging? dragging-el dragging-starting-square dragging-starting-piece
+                onDrop orientation position square->square-ids]}
+        @board-state]
+    ;; do nothing if we are not actively dragging
+    (when dragging?
+      (let [x (gobj/get js-evt "clientX")
+            y (gobj/get js-evt "clientY")
+            dropped-square (xy->square x y square->square-ids)
+            target (if dropped-square dropped-square "offboard")
+            ;; call their onDrop function if provided
+            on-drop-result (when (fn? onDrop)
+                             (let []
+                               ;; NOTE: they can calculate what element the piece was dropped
+                               ;; onto by using elementFromPoint
+                               ;; https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
+                               (onDrop (js-obj "orientation" orientation
+                                               "piece" dragging-starting-piece
+                                               "source" dragging-starting-square
+                                               "target" target
+                                               "x" x
+                                               "y" y))))]
+        ;; TODO: need to extract this into a separate "stop-dragging" function
+        (cond
+          ;; piece was dropped onto a square
+          (and dropped-square)
+          (do ;; destroy the dragging piece
+              (dom-util/remove-element! dragging-el)
+              ;; perform an instant move
+              (api/move-pieces board-state [{:animate false
+                                             :from dragging-starting-square
+                                             :to dropped-square}])
+              ;; update board state
+              (swap! board-state dissoc :dragging?
+                                        :dragging-el
+                                        :dragging-starting-piece
+                                        :dragging-starting-square))
+
+          ;; piece was dropped outside of the board
+          (= target "offboard")
+          (let [updated-position (dissoc position dragging-starting-square)]
+            (dom-util/remove-element! dragging-el)
+            ;; perform an instant position adjustment
+            (api/set-position! board-state updated-position {:animate false})
+            ;; update board state
+            (swap! board-state dissoc :dragging?
+                                      :dragging-el
+                                      :dragging-starting-piece
+                                      :dragging-starting-square))
+
+          :else (when flags/runtime-checks? (error-log "mouseup case not handled")))))))
+
 (defn- add-events!
   "Attach DOM events."
   [root-el board-state]
+  (.addEventListener js/window "mouseup" (fn [js-evt] (on-mouseup board-state js-evt)))
+  (.addEventListener js/window "mousemove" (fn [js-evt] (on-mousemove board-state js-evt)))
   (.addEventListener js/window "resize" (gfunctions/debounce
                                           (fn [] (api/resize! board-state))
                                           10)) ;; TODO: make this debounce value configurable
@@ -646,6 +753,7 @@
         container-id (random-id "container")
         items-container-id (random-id "items-container")
         squares-container-id (random-id "squares-container")
+        dragging-piece-id (random-id "dragging-piece")
 
         their-config (js-api/parse-constructor-second-arg js-opts)
         starting-config (config/merge-config their-config)
@@ -658,6 +766,7 @@
                 :animation-end-callbacks {}
                 :container-id container-id
                 :coords default-coords
+                :dragging-piece-id dragging-piece-id
                 :items {}
                 :items-container-id items-container-id
                 :num-cols default-num-cols
@@ -744,7 +853,7 @@
       "showCoordinates" (partial show-coordinates! board-state)
       "toggleCoordinates" (partial toggle-coordinates! board-state)
 
-      "flip" (partial orientation board-state "flip")
+      "flip" #(orientation board-state "flip")
       "orientation" (partial orientation board-state)
       "getOrientation" (partial orientation board-state nil)
       "setOrientation" (partial orientation board-state)

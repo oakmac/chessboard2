@@ -1,5 +1,5 @@
 ===== id
-4002
+4002-ondragstart-prevent-drag
 
 ===== Name
 onDragStart Prevent Drag
@@ -9,18 +9,11 @@ Prevent the drag action by returning <code class="js keyword">false</code> from 
 
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
+
 <button id="flipOrientationBtn">Flip Orientation</button>
+<button id="startBtn">Start Position</button>
 
 ===== JS
-// only allow pieces to be dragged when the board is oriented
-// in their direction
-function onDragStart (source, piece, position, orientation) {
-  if ((orientation === 'white' && piece.search(/^w/) === -1) ||
-      (orientation === 'black' && piece.search(/^b/) === -1)) {
-    return false
-  }
-}
-
 const config = {
   draggable: true,
   position: 'start',
@@ -29,3 +22,13 @@ const config = {
 const board = Chessboard2('myBoard', config)
 
 attachEvent('flipOrientationBtn', 'click', board.flip)
+attachEvent('startBtn', 'click', board.start)
+
+// only allow pieces to be dragged when the board is oriented in their direction
+function onDragStart (dragInfo) {
+  if (dragInfo.orientation === 'white' && !isWhitePiece(dragInfo.piece)) return false
+  if (dragInfo.orientation === 'black' && !isBlackPiece(dragInfo.piece)) return false
+}
+
+function isWhitePiece (piece) { return /^w/.test(piece) }
+function isBlackPiece (piece) { return /^b/.test(piece) }
