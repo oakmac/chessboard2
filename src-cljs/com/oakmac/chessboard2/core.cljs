@@ -29,7 +29,6 @@
 
 ;; TODO
 ;; - need to write a Cypress test for calling .move() while an animation is happening
-;; - [ ] .move('0-0') and .move('0-0-0') should work as expected (GitHub Issue #6)
 
 ;; NOTE: the transitionend event fires for every CSS property that is transitioned
 ;; This function fires twice for most (but not all) piece moves (css props 'left' and 'top')
