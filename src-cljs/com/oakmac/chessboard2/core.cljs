@@ -45,6 +45,10 @@
       ;; remove callback from the cache
       (swap! board-state update-in [:animation-end-callbacks] dissoc el-id))))
 
+;; TODO:
+;; could we simplify this by using elementsFromPoint?
+;; which approach is faster?
+;; https://developer.mozilla.org/en-US/docs/Web/API/Document/elementsFromPoint
 (defn xy->square
   "Returns the square from the provided X, Y Viewport coordinates.
   Returns nil if no square was found."
