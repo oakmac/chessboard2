@@ -11,6 +11,8 @@
     [com.oakmac.chessboard2.util.template :refer [template]]
     [goog.crypt.base64 :as base64]))
 
+(declare piece->imgsrc)
+
 (defn NotationFiles
   [_cfg]
   (let [num-files 8
@@ -32,15 +34,21 @@
       (apply str))))
 
 (defn DraggingPiece
-  [{:keys [id x y]}]
-  (template
-    (str
-      "<div id='{id}' class='dragging-4a6c1' style='background-color: blue; left: {left}px; top: {top}px; height: 60px; width: 60px;'>"
-        "<p>Drg</p>"
-      "</div>")
-    {:id id
-     :left x
-     :top y}))
+  [{:keys [height id piece piece-square-pct width x y]}]
+  (let [piece-pct (* 100 piece-square-pct)]
+    (template
+      (str
+        "<div id='{id}' class='dragging-4a6c1' style='left:{left}px;top:{top}px;height:{height}px;width:{width}px;'>"
+         ;; FIXME: this needs to be customizable for the user
+         ;; https://github.com/oakmac/chessboard2/issues/26
+         ;; FIXME: need alt text here for the image
+         "<img src='data:image/svg+xml;base64," (piece->imgsrc piece) "' alt='' style='height:" piece-pct "%;width:" piece-pct "%;' />"
+        "</div>")
+      {:height height
+       :id id
+       :left x
+       :top y
+       :width width})))
 
 (defn Circle
   [{:keys [board-width color id opacity orientation size square] :as _cfg}]

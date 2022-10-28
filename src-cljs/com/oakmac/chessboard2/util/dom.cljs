@@ -43,6 +43,11 @@
          (>= y top)
          (< y (+ top height)))))
 
+(defn get-height
+  [el]
+  (-> (.getBoundingClientRect el)
+      (gobj/get "height")))
+
 (defn get-width
   [el]
   (-> (.getBoundingClientRect el)
