@@ -59,12 +59,25 @@ infoLog('Loaded ' + examplesArr.length + ' examples')
 // convert Descriptions in Markdown to HTML
 examplesArr = examplesArr.map(ex => {
   if (ex.descriptionmd) {
-    const parsed = cmReader.parse(ex.descriptionmd)
+    const tweakedMarkdown = tweakExampleMarkdown(ex.descriptionmd)
+    const parsed = cmReader.parse(tweakedMarkdown)
     if (!parsed) assert('Example ' + ex.id + ' has bad Markdown.')
     ex.description = cmWriter.render(parsed)
   }
   return ex
 })
+
+// make some slight adjustments to the Examples Markdown before it is parsed
+// NOTE: I am pretty sure this can be done using the AST from CommonMark instead
+// of string replacement
+function tweakExampleMarkdown (md) {
+  return md
+    .replaceAll('`true`', '<code class="js keyword">true</code>')
+    .replaceAll(/`("|')[a-zA-Z]+("|')`/g, (str) => {
+      return str.replace('`', '<code class="js string">')
+        .replace('`', '</code>')
+    })
+}
 
 const examplesMap = new Map()
 examplesArr.forEach((example) => {
@@ -91,8 +104,7 @@ const examplesGroups = [
       '2063',
       '2001-config-orientation',
       '2002-config-notation',
-      '2003-draggable-snapback',
-      '2082',
+      '2003-draggable-pieces',
       '2004',
       '2030',
       '2005',

@@ -1,0 +1,63 @@
+===== id
+2003-draggable-pieces
+
+===== Name
+Draggable Pieces
+
+===== DescriptionMD
+Set [mouseDraggable] to `true` to allow drag and drop of pieces using the mouse.
+
+Set [touchDraggable] to `true` to allow drag and drop of pieces using a touch
+device.
+
+Or you can set [draggable] to `true` to allow drag and drop of pieces with both
+mouse and touch devices.
+
+#### Dropping Pieces Outside the Board
+
+By default, pieces will return to their source square when dropped outside of
+the board. You can control this behavior with the [dropOffBoard] property:
+
+- `"snapback"` will cause pieces to animate back to their source square (this is the default)
+- `"remove"` will remove the piece from the board and trigger a position change
+- `"donothing"` will cause the piece to instantly disappear (and no position change)
+
+[mouseDraggable]:docs.html#config:mouseDraggable
+[touchDraggable]:docs.html#config:touchDraggable
+[draggable]:docs.html#config:draggable
+[dropOffBoard]:docs.html#config:dropOffBoard
+
+===== HTML
+<div id="board1" class="small-board"></div>
+<div id="board2" class="small-board"></div>
+<div id="board3" class="small-board"></div>
+
+<button id="startBtn">Start Position</button>
+
+===== JS
+const config1 = {
+  draggable: true,
+  dropOffBoard: 'snapback', // this is the default
+  position: 'start'
+}
+const board1 = Chessboard2('board1', config1)
+
+const config2 = {
+  draggable: true,
+  dropOffBoard: 'remove',
+  position: 'start'
+}
+const board2 = Chessboard2('board2', config2)
+
+const config3 = {
+  draggable: true,
+  dropOffBoard: 'donothing',
+  position: 'start'
+}
+const board3 = Chessboard2('board3', config3)
+
+// attachEvent('startBtn', 'click', board.start)
+
+function logOnDrop (dropEvt) {
+  console.log('Piece was dropped:', dropEvt)
+}

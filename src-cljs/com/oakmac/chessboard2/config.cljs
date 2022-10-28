@@ -37,6 +37,10 @@
    {:default-val "snapback"
     :valid-fn valid-drop-off-board?}
 
+   :mouseDraggable
+   {:default-val false
+    :valid-fn boolean?}
+
    :onChange
    {:valid-fn fn?}
 
@@ -59,6 +63,10 @@
    :position
    {:default-val {}
     :valid-fn valid-position?}
+
+   :touchDraggable
+   {:default-val false
+    :valid-fn boolean?}
 
    :touchMove
    {:default-val false

@@ -419,6 +419,14 @@ main {
   margin-bottom: 20px;
 }
 
+.examples-body-9af4d ul {
+  padding-left: 1rem;
+}
+
+.examples-body-9af4d li {
+  line-height: 1.5rem;
+}
+
 .examples-body-9af4d button {
   background: #2ba6cb;
   border-radius: 3px;
@@ -452,7 +460,16 @@ main {
 .small-board {
   display: inline-block;
   margin-right: 5px;
-  width: 200px;
+  width: 220px;
+}
+
+.js.keyword {
+  color: #695;
+  font-weight: 700;
+}
+
+.js.string {
+  color: #3333f9;
 }
 
 /*------------------------------------------------------------------------------

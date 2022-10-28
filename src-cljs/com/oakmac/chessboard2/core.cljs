@@ -160,7 +160,7 @@
   "This function fires on every 'mousedown' event inside the root DOM element"
   [board-state js-evt]
   (dom-util/safe-prevent-default js-evt)
-  (let [{:keys [draggable onTouchSquare orientation position root-el square->piece-id square->square-ids touchMove]} @board-state
+  (let [{:keys [draggable mouseDraggable onTouchSquare orientation position root-el square->piece-id square->square-ids touchMove]} @board-state
         target-el (gobj/get js-evt "target")
         clientX (gobj/get js-evt "clientX")
         clientY (gobj/get js-evt "clientY")
@@ -182,7 +182,7 @@
 
     ;; begin dragging if configured
     (when (and piece
-               (true? draggable))
+               (or (true? draggable) (true? mouseDraggable)))
       (begin-dragging! board-state square piece clientX clientY))
 
     ;; highlight the square and queue a move if touchmove is enabled
