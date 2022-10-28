@@ -1,11 +1,14 @@
 ===== id
-2003
+2003-draggable-snapback
 
 ===== Name
 Draggable Snapback
 
-===== Description
-Set <a href="docs.html#config:draggable"><code class="js plain">draggable</code></a> to <code class='js keyword'>true</code> to allow drag and drop of pieces. Pieces will return to their original square when dropped off the board (ie: the default for <a href="docs.html#config:dropOffBoard"><code class="js plain">dropOffBoard</code></a> is <code class="js string">'snapback'</code>).
+===== DescriptionMD
+Set [draggable](docs.html#config:draggable) to `true` to allow drag and drop of
+pieces. Pieces will return to their original square when dropped off the board
+(ie: the default for [dropOffBoard](docs.html#config:dropOffBoard) is
+`"snapback"`).
 
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
@@ -14,6 +17,18 @@ Set <a href="docs.html#config:draggable"><code class="js plain">draggable</code>
 const config = {
   draggable: true,
   dropOffBoard: 'snapback', // this is the default
+  onChange: logPositionChange,
+  onDrop: logOnDrop,
   position: 'start'
 }
 const board = Chessboard2('myBoard', config)
+
+function logOnDrop (dropInfo) {
+  console.log('Piece was dropped:', dropInfo)
+}
+
+function logPositionChange (oldPos, newPos) {
+  console.log('Old position:', oldPos)
+  console.log('New position:', newPos)
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+}

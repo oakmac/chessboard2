@@ -31,6 +31,17 @@
           (str "<div class='rank-3d54c'>" r "</div>")))
       (apply str))))
 
+(defn DraggingPiece
+  [{:keys [id x y]}]
+  (template
+    (str
+      "<div id='{id}' class='dragging-4a6c1' style='background-color: blue; left: {left}px; top: {top}px; height: 60px; width: 60px;'>"
+        "<p>Drg</p>"
+      "</div>")
+    {:id id
+     :left x
+     :top y}))
+
 (defn Circle
   [{:keys [board-width color id opacity orientation size square] :as _cfg}]
   (let [square-dims (square->dimensions square board-width orientation)
