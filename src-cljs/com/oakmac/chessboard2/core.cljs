@@ -77,12 +77,16 @@
                                (let [js-board-position (clj->js position)]
                                  ;; could be an arbitrary data-chessboard2-draggable element
                                  ;; TODO: pass in a timestamp of their event
-                                 (onDragStart (js-obj "orientation" orientation
-                                                      "piece" piece
-                                                      "position" js-board-position
-                                                      ;; FIXME: need "source" here
-                                                      ;; "source" "FIXME"
-                                                      "square" square))))]
+                                 (try
+                                   (onDragStart (js-obj "orientation" orientation
+                                                        "piece" piece
+                                                        "position" js-board-position
+                                                        ;; FIXME: need "source" here
+                                                        ;; "source" "FIXME"
+                                                        "square" square))
+                                   (catch js/Error err
+                                     (error-log "Runtime error with provided onDragStart function:" err)
+                                     nil))))]
     ;; do nothing if they return false from onDragStart
     (when-not (false? on-drag-start-result)
       (let [piece-id (get square->piece-id square)
@@ -207,7 +211,7 @@
 (defn on-mouseup
   [board-state js-evt]
   (let [{:keys [dragging? dragging-el dragging-starting-square dragging-starting-piece
-                onDrop orientation position square->square-ids]}
+                dropOffBoard onDrop orientation position square->square-ids]}
         @board-state]
     ;; do nothing if we are not actively dragging
     (when dragging?
@@ -221,16 +225,42 @@
                                ;; NOTE: they can calculate what element the piece was dropped
                                ;; onto by using elementFromPoint
                                ;; https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
-                               (onDrop (js-obj "orientation" orientation
-                                               "piece" dragging-starting-piece
-                                               "source" dragging-starting-square
-                                               "target" target
-                                               "x" x
-                                               "y" y))))]
+                               (try
+                                 (onDrop (js-obj "orientation" orientation
+                                                 "piece" dragging-starting-piece
+                                                 "source" dragging-starting-square
+                                                 "target" target
+                                                 "x" x
+                                                 "y" y))
+                                 (catch js/Error err
+                                   (error-log "Runtime error with provided onDrop function:" err)
+                                   nil))))]
         ;; TODO: need to extract this into a separate "stop-dragging" function
+        ;; TODO: refactor to reduce code here
         (cond
+          (= on-drop-result "snapback")
+          (do ;; destroy the dragging piece
+              (dom-util/remove-element! dragging-el)
+              ;; TODO: perform snapback animation here
+              ;; update board state
+              (swap! board-state dissoc :dragging?
+                                        :dragging-el
+                                        :dragging-starting-piece
+                                        :dragging-starting-square))
+
+          (= on-drop-result "remove")
+          (let [updated-position (dissoc position dragging-starting-square)]
+            (dom-util/remove-element! dragging-el)
+            ;; perform an instant position adjustment
+            (api/set-position! board-state updated-position {:animate false})
+            ;; update board state
+            (swap! board-state dissoc :dragging?
+                                      :dragging-el
+                                      :dragging-starting-piece
+                                      :dragging-starting-square))
+
           ;; piece was dropped onto a square
-          (and dropped-square)
+          dropped-square
           (do ;; destroy the dragging piece
               (dom-util/remove-element! dragging-el)
               ;; perform an instant move
@@ -243,8 +273,19 @@
                                         :dragging-starting-piece
                                         :dragging-starting-square))
 
-          ;; piece was dropped outside of the board
-          (= target "offboard")
+          ;; piece was dropped outside of the board: snapback
+          (and (= target "offboard") (= dropOffBoard "snapback"))
+          (do ;; destroy the dragging piece
+              (dom-util/remove-element! dragging-el)
+              ;; TODO: perform snapback animation here
+              ;; update board state
+              (swap! board-state dissoc :dragging?
+                                        :dragging-el
+                                        :dragging-starting-piece
+                                        :dragging-starting-square))
+
+          ;; piece was dropped outside of the board: remove
+          (and (= target "offboard") (= dropOffBoard "remove"))
           (let [updated-position (dissoc position dragging-starting-square)]
             (dom-util/remove-element! dragging-el)
             ;; perform an instant position adjustment

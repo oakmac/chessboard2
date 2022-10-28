@@ -145,13 +145,15 @@ function updatePGN () {
   pgnEl.innerHTML = game.pgn({ max_width: 5, newline_char: '<br />' })
 }
 
-function onDragStart (source, piece, position, orientation) {
+function onDragStart (dragInfo) {
   // do not pick up pieces if the game is over
   if (game.game_over()) return false
 
   // only pick up pieces for White
-  if (piece.search(/^b/) !== -1) return false
+  if (!isWhitePiece(dragInfo.piece)) return false
 }
+
+function isWhitePiece (piece) { return /^w/.test(piece) }
 
 function makeRandomMove () {
   const possibleMoves = game.moves()
@@ -167,19 +169,38 @@ function makeRandomMove () {
   })
 }
 
-function onDrop (source, target) {
+function onDrop (dropEvt) {
   // see if the move is legal
   const move = game.move({
-    from: source,
-    to: target,
+    from: dropEvt.source,
+    to: dropEvt.target,
     promotion: 'q' // NOTE: always promote to a queen for example simplicity
   })
 
-  // illegal move
-  if (move === null) return 'snapback'
+  // the move was legal
+  if (move) {
+    board.clearCircles()
 
-  // make random legal move for black
-  window.setTimeout(makeRandomMove, 250)
+    // reset the pending move
+    pendingMove = null
+
+    // update the board position
+    board.fen(game.fen(), () => {
+      updateStatus()
+      updatePGN()
+
+      // make a random legal move for black
+      window.setTimeout(makeRandomMove, 250)
+    })
+  } else {
+    board.clearCircles()
+
+    // reset the pending move
+    pendingMove = null
+
+    // return the piece to the source square if the move was illegal
+    return 'snapback'
+  }
 }
 
 // update the board position after the piece snap

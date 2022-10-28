@@ -2,25 +2,25 @@
 4006
 
 ===== Name
-onDrop Trash
+onDrop Remove
 
 ===== Description
-If <code class="js string">'trash'</code> is returned from the <a href="docs.html#config:onDrop"><code class="js plain">onDrop</code></a> function, the dragged piece will be removed.
+If <code class="js string">'remove'</code> is returned from the <a href="docs.html#config:onDrop"><code class="js plain">onDrop</code></a> function, the dragged piece will be removed.
 
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
 
 ===== JS
-// trash black pieces when they are dropped
-function onDrop (source, target, piece, newPos, oldPos, orientation) {
-  if (piece.search(/b/) !== -1) {
-    return 'trash'
-  }
-}
-
 const config = {
   draggable: true,
   position: 'start',
   onDrop
 }
 const board = Chessboard2('myBoard', config)
+
+function onDrop (dropEvt) {
+  // remove black pieces when they are dropped
+  if (isBlackPiece(dropEvt.piece)) return 'remove'
+}
+
+function isBlackPiece (piece) { return /^b/.test(piece) }

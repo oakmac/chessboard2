@@ -22,6 +22,6 @@ const config = {
 }
 const board = Chessboard2('myBoard', config)
 
-function logOnDrop (dropInfo) {
-  console.log('Piece was dropped:', dropInfo)
+function logOnDrop (dropEvt) {
+  console.log('Piece was dropped:', dropEvt)
 }

@@ -13,6 +13,10 @@
                                                     valid-square?]]
     [com.oakmac.chessboard2.util.string :refer [lower-case-if-string safe-lower-case]]))
 
+(defn valid-drop-off-board?
+  [s]
+  (contains? #{"snapback" "remove"} s))
+
 (defn valid-orientation?
   [o]
   (or (= o "white")
@@ -28,6 +32,10 @@
   {:draggable
    {:default-val false
     :valid-fn boolean?}
+
+   :dropOffBoard
+   {:default-val "snapback"
+    :valid-fn valid-drop-off-board?}
 
    :onChange
    {:valid-fn fn?}
