@@ -1,0 +1,18 @@
+===== id
+9004-draggable-test
+
+===== Name
+Draggable test
+
+===== DescriptionMD
+This file exists for testing
+
+===== HTML
+<div id="myBoard"></div>
+
+===== JS
+const config = {
+  draggable: true,
+  position: "start"
+}
+const board1 = Chessboard2("myBoard", config)

@@ -123,7 +123,9 @@
   [board-state js-evt]
   ;; prevent "double-tap to zoom"
   (dom-util/safe-prevent-default js-evt)
-  (let [{:keys [onTouchSquare orientation position root-el square->piece-id square->square-ids touchMove]} @board-state
+  (let [{:keys [draggable onTouchSquare orientation position root-el square->piece-id
+                square->square-ids touchDraggable touchMove]}
+        @board-state
         target-el (gobj/get js-evt "target")
         js-first-touch (aget (gobj/get js-evt "touches") 0)
         clientX (gobj/get js-first-touch "clientX")
@@ -143,6 +145,12 @@
                                 (let [js-board-info (js-obj "orientation" orientation
                                                             "position" (clj->js position))]
                                   (onTouchSquare square piece js-board-info)))]
+
+    ;; begin dragging if configured
+    (when (and piece
+               (or (true? draggable) (true? touchDraggable)))
+      (begin-dragging! board-state square piece clientX clientY))
+
     ;; highlight the square and queue a move if touchmove is enabled
     (when (and (true? touchMove)
                (not (false? on-touchsquare-result))
@@ -197,6 +205,14 @@
     ;; return null
     nil))
 
+(defn update-dragging-piece-position!
+  "Update the x, y coordinates of the dragging piece on the next animationFrame"
+  [dragging-el x y]
+  (.requestAnimationFrame js/window
+    (fn []
+      (dom-util/set-style-prop! dragging-el "left" (str x "px"))
+      (dom-util/set-style-prop! dragging-el "top" (str y "px")))))
+
 (defn on-mousemove
   [board-state js-evt]
   (let [{:keys [dragging? dragging-el]} @board-state]
@@ -204,107 +220,140 @@
     (when dragging?
       (let [x (gobj/get js-evt "clientX")
             y (gobj/get js-evt "clientY")]
-        (dom-util/set-style-prop! dragging-el "left" (str x "px"))
-        (dom-util/set-style-prop! dragging-el "top" (str y "px"))))))
+        (update-dragging-piece-position! dragging-el x y)))))
+
+(defn on-touchmove
+  [board-state js-evt]
+  (let [{:keys [dragging? dragging-el]} @board-state
+        js-first-touch (some-> (gobj/get js-evt "touches")
+                               (aget 0))]
+    ;; do nothing if we are not actively dragging
+    (when (and dragging? js-first-touch)
+      (let [x (gobj/get js-first-touch "clientX")
+            y (gobj/get js-first-touch "clientY")]
+        (update-dragging-piece-position! dragging-el x y)))))
+
+(defn drop-piece!
+  [board-state x y]
+  (let [{:keys [dragging-el dragging-starting-piece dragging-starting-square dropOffBoard
+                onDrop orientation position square->square-ids]}
+        @board-state
+        dropped-square (xy->square x y square->square-ids)
+        target (if dropped-square dropped-square "offboard")
+        ;; call their onDrop function if provided
+        on-drop-result (when (fn? onDrop)
+                         (let []
+                           ;; NOTE: they can calculate what element the piece was dropped
+                           ;; onto by using elementFromPoint
+                           ;; https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
+                           (try
+                             (onDrop (js-obj "orientation" orientation
+                                             "piece" dragging-starting-piece
+                                             "source" dragging-starting-square
+                                             "target" target
+                                             "x" x
+                                             "y" y))
+                             (catch js/Error err
+                               (error-log "Runtime error with provided onDrop function:" err)
+                               nil))))]
+    ;; TODO: refactor to reduce code here
+    (cond
+      (= on-drop-result "snapback")
+      (do ;; destroy the dragging piece
+          (dom-util/remove-element! dragging-el)
+          ;; TODO: perform snapback animation here
+          ;; update board state
+          (swap! board-state dissoc :dragging?
+                                    :dragging-el
+                                    :dragging-starting-piece
+                                    :dragging-starting-square))
+
+      (= on-drop-result "remove")
+      (let [updated-position (dissoc position dragging-starting-square)]
+        (dom-util/remove-element! dragging-el)
+        ;; perform an instant position adjustment
+        (api/set-position! board-state updated-position {:animate false})
+        ;; update board state
+        (swap! board-state dissoc :dragging?
+                                  :dragging-el
+                                  :dragging-starting-piece
+                                  :dragging-starting-square))
+
+      ;; TODO: add "donothing" here
+
+      ;; piece was dropped onto a square
+      dropped-square
+      (do ;; destroy the dragging piece
+          (dom-util/remove-element! dragging-el)
+          ;; perform an instant move
+          (api/move-pieces board-state [{:animate false
+                                         :from dragging-starting-square
+                                         :to dropped-square}])
+          ;; update board state
+          (swap! board-state dissoc :dragging?
+                                    :dragging-el
+                                    :dragging-starting-piece
+                                    :dragging-starting-square))
+
+      ;; piece was dropped outside of the board: snapback
+      (and (= target "offboard") (= dropOffBoard "snapback"))
+      (do ;; destroy the dragging piece
+          (dom-util/remove-element! dragging-el)
+          ;; TODO: perform snapback animation here
+          ;; update board state
+          (swap! board-state dissoc :dragging?
+                                    :dragging-el
+                                    :dragging-starting-piece
+                                    :dragging-starting-square))
+
+      ;; piece was dropped outside of the board: remove
+      (and (= target "offboard") (= dropOffBoard "remove"))
+      (let [updated-position (dissoc position dragging-starting-square)]
+        (dom-util/remove-element! dragging-el)
+        ;; perform an instant position adjustment
+        (api/set-position! board-state updated-position {:animate false})
+        ;; update board state
+        (swap! board-state dissoc :dragging?
+                                  :dragging-el
+                                  :dragging-starting-piece
+                                  :dragging-starting-square))
+
+      :else
+      (when flags/runtime-checks? (error-log "mouseup case not handled")))))
+
+(defn on-touchend
+  [board-state js-evt]
+  (let [{:keys [dragging?]} @board-state
+        js-touch (some-> (gobj/get js-evt "changedTouches")
+                         (aget 0))]
+    ;; do nothing if we are not actively dragging
+    (when (and dragging? js-touch)
+      (let [x (gobj/get js-touch "clientX")
+            y (gobj/get js-touch "clientY")]
+        (drop-piece! board-state x y)))))
 
 (defn on-mouseup
   [board-state js-evt]
-  (let [{:keys [dragging? dragging-el dragging-starting-square dragging-starting-piece
-                dropOffBoard onDrop orientation position square->square-ids]}
-        @board-state]
+  (let [{:keys [dragging?]} @board-state]
     ;; do nothing if we are not actively dragging
     (when dragging?
       (let [x (gobj/get js-evt "clientX")
-            y (gobj/get js-evt "clientY")
-            dropped-square (xy->square x y square->square-ids)
-            target (if dropped-square dropped-square "offboard")
-            ;; call their onDrop function if provided
-            on-drop-result (when (fn? onDrop)
-                             (let []
-                               ;; NOTE: they can calculate what element the piece was dropped
-                               ;; onto by using elementFromPoint
-                               ;; https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
-                               (try
-                                 (onDrop (js-obj "orientation" orientation
-                                                 "piece" dragging-starting-piece
-                                                 "source" dragging-starting-square
-                                                 "target" target
-                                                 "x" x
-                                                 "y" y))
-                                 (catch js/Error err
-                                   (error-log "Runtime error with provided onDrop function:" err)
-                                   nil))))]
-        ;; TODO: need to extract this into a separate "stop-dragging" function
-        ;; TODO: refactor to reduce code here
-        (cond
-          (= on-drop-result "snapback")
-          (do ;; destroy the dragging piece
-              (dom-util/remove-element! dragging-el)
-              ;; TODO: perform snapback animation here
-              ;; update board state
-              (swap! board-state dissoc :dragging?
-                                        :dragging-el
-                                        :dragging-starting-piece
-                                        :dragging-starting-square))
-
-          (= on-drop-result "remove")
-          (let [updated-position (dissoc position dragging-starting-square)]
-            (dom-util/remove-element! dragging-el)
-            ;; perform an instant position adjustment
-            (api/set-position! board-state updated-position {:animate false})
-            ;; update board state
-            (swap! board-state dissoc :dragging?
-                                      :dragging-el
-                                      :dragging-starting-piece
-                                      :dragging-starting-square))
-
-          ;; piece was dropped onto a square
-          dropped-square
-          (do ;; destroy the dragging piece
-              (dom-util/remove-element! dragging-el)
-              ;; perform an instant move
-              (api/move-pieces board-state [{:animate false
-                                             :from dragging-starting-square
-                                             :to dropped-square}])
-              ;; update board state
-              (swap! board-state dissoc :dragging?
-                                        :dragging-el
-                                        :dragging-starting-piece
-                                        :dragging-starting-square))
-
-          ;; piece was dropped outside of the board: snapback
-          (and (= target "offboard") (= dropOffBoard "snapback"))
-          (do ;; destroy the dragging piece
-              (dom-util/remove-element! dragging-el)
-              ;; TODO: perform snapback animation here
-              ;; update board state
-              (swap! board-state dissoc :dragging?
-                                        :dragging-el
-                                        :dragging-starting-piece
-                                        :dragging-starting-square))
-
-          ;; piece was dropped outside of the board: remove
-          (and (= target "offboard") (= dropOffBoard "remove"))
-          (let [updated-position (dissoc position dragging-starting-square)]
-            (dom-util/remove-element! dragging-el)
-            ;; perform an instant position adjustment
-            (api/set-position! board-state updated-position {:animate false})
-            ;; update board state
-            (swap! board-state dissoc :dragging?
-                                      :dragging-el
-                                      :dragging-starting-piece
-                                      :dragging-starting-square))
-
-          :else (when flags/runtime-checks? (error-log "mouseup case not handled")))))))
+            y (gobj/get js-evt "clientY")]
+        (drop-piece! board-state x y)))))
 
 (defn- add-events!
   "Attach DOM events."
   [root-el board-state]
-  (.addEventListener js/window "mouseup" (fn [js-evt] (on-mouseup board-state js-evt)))
+  ;; global window events
   (.addEventListener js/window "mousemove" (fn [js-evt] (on-mousemove board-state js-evt)))
+  (.addEventListener js/window "mouseup" (fn [js-evt] (on-mouseup board-state js-evt)))
+  (.addEventListener js/window "touchend" (fn [js-evt] (on-touchend board-state js-evt)))
+  (.addEventListener js/window "touchmove" (fn [js-evt] (on-touchmove board-state js-evt)))
   (.addEventListener js/window "resize" (gfunctions/debounce
                                           (fn [] (api/resize! board-state))
                                           10)) ;; TODO: make this debounce value configurable
+
+  ;; events on the root element
   (.addEventListener root-el "mousedown" (partial on-mouse-down board-state))
   (.addEventListener root-el "touchstart" (partial on-touch-start board-state))
   (.addEventListener root-el "transitionend" (partial on-transition-end board-state)))
