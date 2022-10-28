@@ -71,14 +71,13 @@
         ;; call their onDragStart function if provided
         on-drag-start-result (when (fn? onDragStart)
                                (let [js-board-position (clj->js position)]
-                                 ;; source, piece, position, orientation
-                                 ;; FIXME: need "source" here
                                  ;; could be an arbitrary data-chessboard2-draggable element
                                  ;; TODO: pass in a timestamp of their event
                                  (onDragStart (js-obj "orientation" orientation
                                                       "piece" piece
                                                       "position" js-board-position
-                                                      "source" "FIXME"
+                                                      ;; FIXME: need "source" here
+                                                      ;; "source" "FIXME"
                                                       "square" square))))]
     ;; do nothing if they return false from onDragStart
     (when-not (false? on-drag-start-result)
