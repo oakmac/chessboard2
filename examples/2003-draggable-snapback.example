@@ -17,7 +17,6 @@ pieces. Pieces will return to their original square when dropped off the board
 const config = {
   draggable: true,
   dropOffBoard: 'snapback', // this is the default
-  onChange: logPositionChange,
   onDrop: logOnDrop,
   position: 'start'
 }
@@ -25,10 +24,4 @@ const board = Chessboard2('myBoard', config)
 
 function logOnDrop (dropInfo) {
   console.log('Piece was dropped:', dropInfo)
-}
-
-function logPositionChange (oldPos, newPos) {
-  console.log('Old position:', oldPos)
-  console.log('New position:', newPos)
-  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 }
