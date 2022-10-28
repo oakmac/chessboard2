@@ -59,6 +59,15 @@
   color: #f0d9b5;
 }
 
+.dragging-4a6c1 {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: fixed;
+  transform: translate(-50%, -50%);
+}
+
 .piece-349f8 {
   align-items: center;
   display: flex;
@@ -131,9 +140,4 @@
 
 .rank-3d54c {
   flex: 1;
-}
-
-.dragging-4a6c1 {
-  position: fixed;
-  transform: translate(-50%, -50%);
 }
