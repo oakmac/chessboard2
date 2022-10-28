@@ -22,10 +22,19 @@ the board. You can control this behavior with the [dropOffBoard] property:
 - `"remove"` will remove the piece from the board and trigger a position change
 - `"donothing"` will cause the piece to instantly disappear (and no position change)
 
+#### Drag Events
+
+Use the [onDragStart], [onDragMove], and [onDrop] events for more control over
+board behavior related to dragging pieces.
+
 [mouseDraggable]:docs.html#config:mouseDraggable
 [touchDraggable]:docs.html#config:touchDraggable
 [draggable]:docs.html#config:draggable
 [dropOffBoard]:docs.html#config:dropOffBoard
+
+[onDragStart]:#FIXME-drag-events-link
+[onDragMove]:#FIXME-drag-events-link
+[onDrop]:#FIXME-drag-events-link
 
 ===== HTML
 <div id="board1" class="small-board"></div>
