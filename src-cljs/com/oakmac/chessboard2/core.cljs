@@ -67,7 +67,7 @@
 (defn begin-dragging!
   "initialize dragging a piece"
   [board-state square piece x y]
-  (let [{:keys [dragging-piece-id onDragStart orientation position]} @board-state
+  (let [{:keys [dragging-piece-id onDragStart orientation piece-square-pct position square->piece-id]} @board-state
         ;; call their onDragStart function if provided
         on-drag-start-result (when (fn? onDragStart)
                                (let [js-board-position (clj->js position)]
@@ -82,23 +82,35 @@
                                                       "square" square))))]
     ;; do nothing if they return false from onDragStart
     (when-not (false? on-drag-start-result)
-      ;; create dragging piece if necessary
-      (when-not (dom-util/get-element dragging-piece-id)
-        (dom-util/append-html!
-          js/window.document.body
-          (html/DraggingPiece {:id dragging-piece-id
-                               :x x
-                               :y y})))
-      ;; flag that we are actively dragging
-      (swap! board-state assoc :dragging? true
-                               :dragging-el (dom-util/get-element dragging-piece-id)
-                               :dragging-starting-square square
-                               :dragging-starting-piece piece))))
+      (let [piece-id (get square->piece-id square)
+            _ (when flags/runtime-checks?
+                (when-not piece-id
+                  (error-log "Unable to find piece-id in begin-dragging!")))
+            piece-el (dom-util/get-element piece-id)
+            ;; NOTE: these two calls could be combined for a quick perf improvement
+            piece-height (dom-util/get-height piece-el)
+            piece-width (dom-util/get-width piece-el)]
+        ;; create dragging piece if necessary
+        (when-not (dom-util/get-element dragging-piece-id)
+          (dom-util/append-html!
+            js/window.document.body
+            (html/DraggingPiece {:height piece-height
+                                 :id dragging-piece-id
+                                 :piece piece
+                                 :piece-square-pct piece-square-pct
+                                 :width piece-width
+                                 :x x
+                                 :y y})))
+        ;; flag that we are actively dragging
+        (swap! board-state assoc :dragging? true
+                                 :dragging-el (dom-util/get-element dragging-piece-id)
+                                 :dragging-starting-square square
+                                 :dragging-starting-piece piece)))))
 
-      ;; TODO: hide (or delete?) the piece on the source square
-      ;;       or leave it on there and fade it somewhat
-      ;; TODO: they could return an object from their onDragStart function to control what happens
-      ;;       to the source piece
+        ;; TODO: hide (or delete?) the piece on the source square
+        ;;       or leave it on there and fade it somewhat
+        ;; TODO: they could return an object from their onDragStart function to control what happens
+        ;;       to the source piece
 
 (defn on-touch-start
   "This function fires on every 'touchstart' event inside the root DOM element"
