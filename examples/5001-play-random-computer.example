@@ -33,7 +33,7 @@ const game = new Chess()
 // - reflects the current position
 // - handles input events from users
 const boardConfig = {
-  draggable: true, // FIXME: <-- need to implement this
+  draggable: true,
   onDragStart,
   onTouchSquare,
   onDrop,
