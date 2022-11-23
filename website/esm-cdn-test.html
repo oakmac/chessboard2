@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>chessboard2 esm cdn test</title>
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboard2@0.3.0/dist/chessboard2.min.css" integrity="sha384-5cxVYodq78gDJaWQIc5iBCUhFERY+VjHOszl2K7BTbZwBbrzQH2IYhOliWHJy6X3" crossorigin="anonymous">
+</head>
+<body>
+
+<p>This file exists to test chessboard2 as an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules">ES Module</a> loaded from a CDN.</p>
+
+<div id="myBoard" style="width: 400px"></div>
+
+<script src="https://unpkg.com/@chrisoakman/chessboard2@0.3.0/dist/chessboard2.min.mjs" integrity="sha384-1yHocjOlRFtt1hT94ytsOQ/8eylPRk9Gj/DLNca1faolxec6F7k4c+f3S3FS60Rf" crossorigin="anonymous" type="module"></script>
+<script type="module">
+import { Chessboard2 } from 'https://unpkg.com/@chrisoakman/chessboard2@0.3.0/dist/chessboard2.min.mjs';
+const board = Chessboard2('myBoard', 'start')
+</script>
+</body>
+</html>
