@@ -3,7 +3,7 @@
   "description": "JavaScript Chessboard Component v2",
   "license": "ISC",
   "name": "@chrisoakman/chessboard2",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "homepage": "https://chessboardjs.com/v2",
   "repository": {
     "type": "git",
