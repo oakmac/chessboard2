@@ -9,7 +9,7 @@ You can add analysis arrows to the board with the [.addArrow()] function.
 
 Use the [.removeArrow()] and [.clearArrows()] functions to remove arrows.
 
-See the current arrows on the board with the [.arrows()] and [.getArrows()] functions.
+See the current arrows on the board with the [.arrows()] or [.getArrows()] functions.
 
 [.addArrow()]:docs#methods:addArrow
 [.removeArrow()]:docs#methods:removeArrow

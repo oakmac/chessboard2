@@ -463,7 +463,9 @@
 ;; FIXME: this should be variadic as well as accept an array of circle ids
 (defn js-remove-circle
   [board-state item-id-or-square]
-  ;; TODO: validation here, warn if item-id is not valid
+  ;; TODO:
+  ;; - input validation here
+  ;; - log.warn if item-id is not valid
   (remove-circle board-state item-id-or-square))
 
 ;; TODO: this function could be combined with clear-arrows

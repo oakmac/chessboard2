@@ -121,6 +121,7 @@ const examplesGroups = [
       '3003-clear',
       '3004-move-pieces',
       '3008-analysis-arrows',
+      '3009-circles',
       '3005-orientation',
       '3006-destroy',
       '3007-resize'

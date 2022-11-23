@@ -1,27 +1,40 @@
 ===== id
-3009
+3009-circles
 
 ===== Name
 Circles
 
-===== Description
-TODO: write me :)
+===== DescriptionMD
+You can add circles to the board with the [.addCircle()] function.
+
+Use the [.removeCircle()] and [.clearCircles()] functions to remove circles.
+
+See the current circles on the board with the [.circles()] or [.getCircles()] functions.
+
+[.addCircle()]:docs#methods:addCircle
+[.removeCircle()]:docs#methods:removeCircle
+[.clearCircles()]:docs#methods:clearCircles
+[.circles()]:docs#methods:circles
+[.getCircles()]:docs#methods:getCircles
 
 ===== HTML
-<div id="myBoard"></div>
+<div id="myBoard" style="width:400px"></div>
+
 <button id="addCircle1Btn">Default Circle at d4</button>
 <button id="addCircle2Btn">Large, Orange Circle at e4</button>
-<button id="addCircle3Btn">Small, Purple Circle at e4</button>
-<button id="addCircle4Btn">Add Circle 4</button>
+<button id="addCircle3Btn">Small, Purple Circle at f3</button>
+<br />
 <button id="addCircle5Btn">Add Circle with Config Object</button>
 <br />
-<button id="removeCircle1Btn">Remove Circle at e4</button>
-<button id="removeCircle2Btn">Remove Circle 2</button>
+<button id="removeCircleAtE4Btn">Remove Circle at e4</button>
+<button id="removeCircle3Btn">Remove Circle using id</button>
+<br />
 <button id="logCirclesBtn">console.log Circles</button>
 <button id="clearCirclesBtn">Clear Circles</button>
 
 ===== JS
 const board = Chessboard2('myBoard', 'start')
+
 let circle1Id = null
 let circle2Id = null
 let circle3Id = null
@@ -39,13 +52,8 @@ attachEvent('addCircle2Btn', 'click', () => {
 })
 
 attachEvent('addCircle3Btn', 'click', () => {
-  circle3Id = board.addCircle('e4', 'purple', 'small')
+  circle3Id = board.addCircle('f3', '#800080', 'small')
   console.log('added "small" Circle 3 with id:', circle3Id)
-})
-
-attachEvent('addCircle4Btn', 'click', () => {
-  circle4Id = board.addCircle('d5', '#8e8e8e', 'medium')
-  console.log('added "large" Circle 4 with id:', circle4Id)
 })
 
 attachEvent('addCircle5Btn', 'click', () => {
@@ -58,17 +66,14 @@ attachEvent('addCircle5Btn', 'click', () => {
   console.log('added Circle 5 with id:', circle5Id)
 })
 
-attachEvent('removeCircle1Btn', 'click', () => {
-  // board.removeCircle('e4')
-
-  // FIXME: make variadic work
-  board.removeCircle('e4', 'e5', 'e6', 'e7')
+attachEvent('removeCircleAtE4Btn', 'click', () => {
+  // you can remove circles by the square they are on
+  board.removeCircle('e4')
 })
 
-attachEvent('removeCircle2Btn', 'click', () => {
-  if (circle4Id) {
-    board.removeCircle(circle4Id)
-  }
+attachEvent('removeCircle3Btn', 'click', () => {
+  // or you can remove using the circleId directly
+  board.removeCircle(circle3Id)
 })
 
 attachEvent('logCirclesBtn', 'click', () => {
