@@ -145,12 +145,12 @@ function updatePGN () {
   pgnEl.innerHTML = game.pgn({ max_width: 5, newline_char: '<br />' })
 }
 
-function onDragStart (dragInfo) {
+function onDragStart (dragStartEvt) {
   // do not pick up pieces if the game is over
   if (game.game_over()) return false
 
   // only pick up pieces for White
-  if (!isWhitePiece(dragInfo.piece)) return false
+  if (!isWhitePiece(dragStartEvt.piece)) return false
 }
 
 function isWhitePiece (piece) { return /^w/.test(piece) }

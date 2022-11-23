@@ -44,6 +44,9 @@
    :onChange
    {:valid-fn fn?}
 
+   :onDragMove
+   {:valid-fn fn?}
+
    :onDragStart
    {:valid-fn fn?}
 
