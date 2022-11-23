@@ -10,6 +10,7 @@ tmp/
 website/css/chessboard2.css
 website/examples/
 website/js/chessboard2.js
+website/js/chessboard2.mjs
 website/build-report.html
 website/docs.html
 website/download.html

@@ -8,6 +8,12 @@
    :output-dir "target/"
    :modules {:chessboard2 {:entries [com.oakmac.chessboard2.core]}}}
 
+  :chessboard2-esm
+  {:target :esm
+   :output-dir "target/"
+   :modules {:chessboard2-esm {:exports {Chessboard2 com.oakmac.chessboard2.core/constructor}}}
+   :closure-defines {com.oakmac.chessboard2.core/ES_MODULE true}}
+
   :node-tests
   {:target :node-test
    :output-to "tests.js"

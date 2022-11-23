@@ -990,13 +990,18 @@
        (error-log "Unable to find DOM element:" el)
        (constructor2 root-el js-opts)))))
 
+;; Export / Module
+(goog-define ES_MODULE false)
+
 ;; put Chessboard2 on the window object
-(when (and (exists? js/window)
+(when (and (not ES_MODULE)
+           (exists? js/window)
            (not (fn? (gobj/get js/window "Chessboard2"))))
   (gobj/set js/window "Chessboard2" constructor))
 
 ;; common JS export
-(when (and (exists? js/exports)
+(when (and (not ES_MODULE)
+           (exists? js/exports)
            (not= (type (gobj/get js/exports "nodeName")) "string"))
   (gobj/set js/exports "Chessboard2" constructor))
 

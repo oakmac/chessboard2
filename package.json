@@ -15,10 +15,11 @@
   "scripts": {
     "build-report": "shadow-cljs run shadow.cljs.build-report chessboard2 website/build-report.html",
     "build": "shadow-cljs release chessboard2 && ./scripts/website.js",
+    "build-esm": "shadow-cljs release chessboard2-esm && ./scripts/website.js",
     "cypress": "cypress open",
     "lint-js": "standard --fix scripts/ website/js/examples.js && node scripts/lint-examples.js",
     "local-dev": "serve website/ -p 3232",
-    "release": "shadow-cljs release chessboard2 && ./scripts/release.js",
+    "release": "shadow-cljs release chessboard2 && shadow-cljs release chessboard2-esm && ./scripts/release.js",
     "test": "shadow-cljs compile node-tests"
   },
   "devDependencies": {

@@ -42,9 +42,11 @@ const headerTemplate = fs.readFileSync('templates/_header.mustache', encoding)
 const footerTemplate = fs.readFileSync('templates/_footer.mustache', encoding)
 
 const latestChessboardJS = fs.readFileSync(path.join(__dirname, '../target/chessboard2.js'), encoding)
+const latestChessboardESM = fs.readFileSync(path.join(__dirname, '../target/chessboard2-esm.js'), encoding)
 const latestChessboardCSS = fs.readFileSync(path.join(__dirname, '../src-css/chessboard2.css'), encoding)
 
 assert(typeof latestChessboardJS === 'string' && latestChessboardJS !== '')
+assert(typeof latestChessboardESM === 'string' && latestChessboardESM !== '')
 assert(typeof latestChessboardCSS === 'string' && latestChessboardCSS !== '')
 
 // grab the examples
@@ -180,6 +182,7 @@ function makeRandomMove () {
 
 function writeSrcFiles () {
   fs.writeFileSync('website/js/chessboard2.js', latestChessboardJS, encoding)
+  fs.writeFileSync('website/js/chessboard2.mjs', latestChessboardESM, encoding)
   fs.writeFileSync('website/css/chessboard2.css', latestChessboardCSS, encoding)
 }
 

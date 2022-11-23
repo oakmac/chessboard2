@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>chessboard2 esm test</title>
+    <link rel="stylesheet" href="css/chessboard2.css">
+</head>
+<body>
+
+<p>This file exists to test chessboard2 as an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules">ES Module</a>.</p>
+
+<div id="myBoard" style="width: 400px"></div>
+
+<script type="module">
+import { Chessboard2 } from './js/chessboard2.mjs';
+const board = Chessboard2('myBoard', 'start')
+</script>
+</body>
+</html>

@@ -15,8 +15,15 @@ const copyrightYear = '2021'
 const packageJSON = JSON.parse(fs.readFileSync('package.json', encoding))
 const version = packageJSON.version
 const cssSrc = fs.readFileSync('src-css/chessboard2.css', encoding)
+  .trim()
   .replace('@VERSION', version)
 const jsSrc = fs.readFileSync('target/chessboard2.js', encoding)
+  .trim()
+  .replace('@VERSION', version)
+  .replace('var shadow$provide = {};\n', '')
+  .replace('\n/*\n\n Copyright The Closure Library Authors.\n SPDX-License-Identifier: Apache-2.0\n*/\n', '')
+const esmSrc = fs.readFileSync('target/chessboard2-esm.js', encoding)
+  .trim()
   .replace('@VERSION', version)
   .replace('var shadow$provide = {};\n', '')
   .replace('\n/*\n\n Copyright The Closure Library Authors.\n SPDX-License-Identifier: Apache-2.0\n*/\n', '')
@@ -28,6 +35,7 @@ infoLog('Creating dist/ folder for version ' + version)
 // sanity checks
 assert(cssSrc && typeof cssSrc === 'string' && cssSrc !== '', 'Failed to release: chessboard2.css does not exist')
 assert(jsSrc && typeof jsSrc === 'string' && jsSrc !== '', 'Failed to release: chessboard2.js does not exist')
+assert(esmSrc && typeof esmSrc === 'string' && esmSrc !== '', 'Failed to release: chessboard2-min.js does not exist')
 
 // minify CSS
 const minifiedCSS = csso.minify(cssSrc).css
@@ -35,6 +43,7 @@ assert(minifiedCSS && typeof minifiedCSS === 'string' && minifiedCSS !== '', 'Fa
 
 // add license to the top of minified files
 const minifiedJSWithBanner = banner() + jsSrc
+const minifiedESMWithBanner = banner() + esmSrc
 
 // copy lib files to dist/
 const distCssFile = 'dist/chessboard2.css'
@@ -48,6 +57,10 @@ infoLog('Wrote ' + distCssMinFile)
 const distJsFile = 'dist/chessboard2.min.js'
 fs.writeFileSync(distJsFile, minifiedJSWithBanner, encoding)
 infoLog('Wrote ' + distJsFile)
+
+const distEsmFile = 'dist/chessboard2.min.mjs'
+fs.writeFileSync(distEsmFile, minifiedESMWithBanner, encoding)
+infoLog('Wrote ' + distEsmFile)
 
 infoLog('Success 👍')
 process.exit(0)
