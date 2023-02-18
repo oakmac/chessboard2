@@ -273,3 +273,18 @@
     (if (= 1 (count moves))
       (clj->js (first moves))
       (clj->js moves))))
+
+(defn get-config
+  "Returns the current board config as a JS Object"
+  [board-state]
+  (clj->js (config/state->config@board-state)))
+
+(defn config
+  "Get or Set the board config"
+  [board-state]
+  (let [js-args (array)]
+    (copy-arguments js-args)
+    (.shift js-args)
+    (let [arg1 (aget js-args 0)
+          arg2 (aget js-args 1)]
+      ())))

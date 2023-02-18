@@ -912,11 +912,9 @@
       "getCircles" (partial js-get-circles board-state)
       "removeCircle" (partial js-remove-circle board-state)
 
-      ;; FIXME: implement these
-      ; https://github.com/oakmac/chessboard2/issues/7
-      ; "config" #()
-      ; "getConfig" #()
-      ; "setConfig" #()
+      "config" #(partial js-api/config board-state)
+      ; "getConfig" #(partial js-api/get-config board-state)
+      ; "setConfig" #(partial js-api/set-config board-state)
 
       ;; FIXME: allow adding custom items
       ;; https://github.com/oakmac/chessboard2/issues/9
