@@ -9,8 +9,9 @@ An updated version of [chessboard.js].
 
 ## Development Status
 
-**October 2022**: Development in progress. Not recommended using for anything public-facing,
-but getting close!
+**February 2023**: Development in progress. Getting close to an initial v2 release.
+
+In-progress documentation available at [https://chessboardjs.com/v2/examples](https://chessboardjs.com/v2/examples)
 
 ## Naming and Versioning
 

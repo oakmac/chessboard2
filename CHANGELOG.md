@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- add `.config()`, `.setConfig()`, `.getConfig()` methods ([Issue #7](https://github.com/oakmac/chessboard2/issues/7))
+
 ## [0.3.0] - 2022-11-23
 ### Added
 - support ES Module format ([Issue #17](https://github.com/oakmac/chessboard2/issues/17))
