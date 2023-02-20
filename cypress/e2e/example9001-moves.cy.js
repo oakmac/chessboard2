@@ -20,11 +20,15 @@ describe('Example 9001: moves', () => {
   })
 
   it('test1: e2 - e4', () => {
-    cy.get('#test1move1Btn').click()
+    cy.get('#test1StartBtn').click()
+      .get('#test1Container').should('be.visible')
+      .get('#test1move1Btn').should('be.visible')
+      .get('#test1move1Btn').click()
       .window().then(win => {
         assert.exists(win.test1move)
         assert.isTrue(isPromise(win.test1move))
       })
+      .get('#test1results').should('be.visible')
       .get('#test1move1finished').should('be.visible')
       .window().then(win => {
         assert.exists(win.board1)
@@ -34,7 +38,8 @@ describe('Example 9001: moves', () => {
   })
 
   it('test2: multiple moves', () => {
-    cy.get('#test2move1Btn').click()
+    cy.get('#test2StartBtn').click()
+      .get('#test2move1Btn').click()
       .window().then(win => {
         assert.exists(win.test2move1)
         assert.exists(win.test2move2)
@@ -48,7 +53,8 @@ describe('Example 9001: moves', () => {
   })
 
   it('test3: set position callback', () => {
-    cy.get('#test3step1Btn').click()
+    cy.get('#test3StartBtn').click()
+      .get('#test3step1Btn').click()
       .window().then(win => {
         assert.exists(win.test3step1)
         assert.isTrue(isPromise(win.test3step1))
@@ -61,7 +67,8 @@ describe('Example 9001: moves', () => {
   })
 
   it('test4: set position Promise', () => {
-    cy.get('#test4step1Btn').click()
+    cy.get('#test4StartBtn').click()
+      .get('#test4step1Btn').click()
       .get('#test4step1finished').should('not.exist')
       // wait for animation to finish ...
       .get('#test4step1finished').should('be.visible')
@@ -75,8 +82,10 @@ describe('Example 9001: moves', () => {
   })
 
   it('test5: orientation', () => {
+    cy.get('#test5StartBtn').click()
+
     // step1: add Arrows
-    cy.get('#test5step1Btn').click()
+      .get('#test5step1Btn').click()
       .get('#myBoard .arrow-bc3c7').should('have.length', 3)
       .get('#myBoard .circle-a0266').should('have.length', 0)
       .get('#myBoard .item-18a5b').should('have.length', 3)
