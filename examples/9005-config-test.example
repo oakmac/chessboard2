@@ -31,8 +31,7 @@ const board1 = Chessboard2('myBoard', 'start')
 window.board1 = board1
 
 const config2 = {
-  onChange: onChange2,
-  position: ''
+  onChange: onChange2
 }
 
 function byId (id) {
@@ -56,8 +55,10 @@ function onChange2 () {
 }
 
 attachEvent('setConfig1Btn', 'click', () => {
-  board1.config('orientation', 'banana') // NOTE: should warn that "banana" is not a valid value for "orientation"
-  board1.config('foo', 'bar') // NOTE: should warn-log that "foo" is not a valid config property
+  // should warn that "banana" is not a valid value for "orientation"
+  board1.config('orientation', 'banana')
+  // should warn-log that "foo" is not a valid config property
+  board1.config('foo', 'bar')
 
   board1.config('orientation', 'black')
   board1.config('onChange', onChange1)

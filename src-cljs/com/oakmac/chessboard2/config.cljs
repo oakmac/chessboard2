@@ -104,3 +104,8 @@
          (assoc new-config config-key default-val))))
    {}
    config-props))
+
+(defn state->config
+  "Given the board-state, return the public config object"
+  [board-state]
+  (select-keys board-state valid-config-keys))

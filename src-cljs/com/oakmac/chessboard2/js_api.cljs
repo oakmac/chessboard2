@@ -277,32 +277,22 @@
 (defn get-config
   "Returns the current board config as a JS Object"
   [board-state]
-  ; (clj->js (config/state->config @board-state)))
-  (js/console.log "get config 22222")
-  nil)
+  (clj->js (config/state->config @board-state)))
 
 ;; TODO: would be nice to unit test the warning logs here via mocks
 (defn set-config
   "Set the config."
   [board-state arg1 arg2]
   (cond
+    ;; set a single config value
     (contains? config/valid-config-strings arg1)
-    (let [cfg-prop (keyword arg1)
-          validation-fn (get-in config/config-props [cfg-prop :valid-fn])
-          valid-value? (validation-fn arg2)]
-      (if valid-value?
-        ;; set the new value and return the new config object
-        (do (swap! board-state assoc cfg-prop arg2)
-            (get-config board-state))
-        ;; else warn
-        (warn-log (str "Invalid value for config property \"" arg1 "\": " arg2))))
+    (do (api/update-config! board-state {(keyword arg1) arg2})
+        (get-config board-state))
 
+    ;; set multiple values via object
     (goog/isObject arg1)
-    (do ;; FIXME: strip any bad keys
-      ;; verify values
-      ;; merge with current config
-      ;; return new config value
-      (js/console.log "FIXME: write this! set config via JS object"))
+    (do (api/update-config! board-state (js->clj arg1 :keywordize-keys true))
+        (get-config board-state))
 
     :else (warn-log "Invalid args passed to setConfig():" arg1 arg2)))
 
