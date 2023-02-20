@@ -8,41 +8,43 @@ Move Pieces Test
 This file exists for Cypress testing
 
 ===== HTML
-<div id="myBoard" style="width: 400px"></div>
+<div id="myBoard" style="width: 300px"></div>
 
-<section>
+<br />
+
+<button id="test1StartBtn">Start Test 1</button>
+<button id="test2StartBtn">Start Test 2</button>
+<button id="test3StartBtn">Start Test 3</button>
+<button id="test4StartBtn">Start Test 4</button>
+<button id="test5StartBtn">Start Test 5</button>
+
+<hr />
+
+<section id="test1Container" style="display:none">
   <h1>test1: e2 - e4</h1>
   <button id="test1move1Btn">e2-e4</button>
   <div id="test1results"></div>
 </section>
 
-<hr />
-
-<section>
+<section id="test2Container" style="display:none">
   <h1>test2: multiple moves</h1>
   <button id="test2move1Btn">step1</button>
   <div id="test2results"></div>
 </section>
 
-<hr />
-
-<section>
+<section id="test3Container" style="display:none">
   <h1>test3: set position callback</h1>
   <button id="test3step1Btn">step1</button>
   <div id="test3results"></div>
 </section>
 
-<hr />
-
-<section>
+<section id="test4Container" style="display:none">
   <h1>test4: set position promise</h1>
   <button id="test4step1Btn">step1</button>
   <div id="test4results"></div>
 </section>
 
-<hr />
-
-<section>
+<section id="test5Container" style="display:none">
   <h1>test5: orientation</h1>
   <button id="test5step1Btn">step1: add arrows</button>
   <button id="test5step2Btn">step2: add circles</button>
@@ -51,16 +53,40 @@ This file exists for Cypress testing
   <div id="test5results"></div>
 </section>
 
-<hr />
-
 ===== JS
 const board1 = Chessboard2('myBoard', 'start')
 window.board1 = board1
 
+function byId (id) {
+  return document.getElementById(id)
+}
+
 function appendHtml (id, html) {
-  const el = document.getElementById(id)
+  const el = byId(id)
   el.innerHTML = el.innerHTML + html
 }
+
+function hideEl (id) {
+  byId(id).style.display = 'none'
+}
+
+function hideAllSections () {
+  hideEl('test1Container')
+  hideEl('test2Container')
+  hideEl('test3Container')
+  hideEl('test4Container')
+  hideEl('test5Container')
+}
+
+function showSection (id) {
+  byId(id).style.display = ''
+}
+
+attachEvent('test1StartBtn', 'click', () => { hideAllSections(); showSection('test1Container') })
+attachEvent('test2StartBtn', 'click', () => { hideAllSections(); showSection('test2Container') })
+attachEvent('test3StartBtn', 'click', () => { hideAllSections(); showSection('test3Container') })
+attachEvent('test4StartBtn', 'click', () => { hideAllSections(); showSection('test4Container') })
+attachEvent('test5StartBtn', 'click', () => { hideAllSections(); showSection('test5Container') })
 
 // -----------------------------------------------------------------------------
 // Test 1

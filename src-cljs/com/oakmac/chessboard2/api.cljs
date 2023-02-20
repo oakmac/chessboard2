@@ -1,19 +1,32 @@
 (ns com.oakmac.chessboard2.api
   "Functions that represent the CLJS API for Chessboard2"
   (:require
+    [clojure.string :as str]
     [com.oakmac.chessboard2.animations :refer [animation->dom-op calculate-animations]]
-    [com.oakmac.chessboard2.constants :refer [animate-speed-strings->times]]
+    [com.oakmac.chessboard2.config :as config]
+    [com.oakmac.chessboard2.constants :refer [animate-speed-strings->times start-position]]
     [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.util.arrows :as arrow-util]
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [get-element set-inner-html! set-style-prop!]]
+    [com.oakmac.chessboard2.util.fen :refer [fen->position valid-fen?]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.logging :refer [warn-log]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
-    [com.oakmac.chessboard2.util.predicates :refer [arrow-item? valid-square? valid-position?]]
+    [com.oakmac.chessboard2.util.predicates :refer [arrow-item? fen-string? start-string? valid-square? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [square->dimensions]]
     [goog.object :as gobj]))
+
+;; TODO: move this to a util namespace
+; (defn coerce-to-position-map
+;   "Does it's best to coerce p into a position map if possible"
+;   [p]
+;   (cond
+;     (start-string? p) start-position
+;     (valid-fen? p) (fen->position p)
+;     (valid-position? p) p
+;     :else nil))
 
 (defn get-items-by-type
   "Returns a map of <type> Items on the board"
@@ -376,3 +389,28 @@
     (reset! board-state nil))
   ;; return null
   nil)
+
+(defn update-config!
+  "Update the board config with new values."
+  [board-state new-config]
+  (let [;; do not allow them to update the position via this method
+        cfg2 (dissoc new-config :position)
+        validated-config (reduce
+                           (fn [cfg3 [prop val]]
+                             (if-not (contains? config/valid-config-keys prop)
+                                   ;; Google Closure adds these keys to Objects for some reason ¯\_(ツ)_/¯
+                                   ;; do not log and confuse the end user
+                               (do (when-not (str/starts-with? (name prop) "closure_uid")
+                                     (warn-log "Invalid config property:" (name prop)))
+                                   cfg3)
+                               (let [validation-fn (get-in config/config-props [prop :valid-fn])
+                                     valid-value? (validation-fn val)]
+                                 (if-not valid-value?
+                                   (do (warn-log (str "Invalid value for config property \"" (name prop) "\": "
+                                                      val))
+                                       cfg3)
+                                   (assoc cfg3 prop val)))))
+                           {}
+                           cfg2)]
+    (swap! board-state merge validated-config)
+    nil))

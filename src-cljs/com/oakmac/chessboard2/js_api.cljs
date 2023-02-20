@@ -273,3 +273,39 @@
     (if (= 1 (count moves))
       (clj->js (first moves))
       (clj->js moves))))
+
+(defn get-config
+  "Returns the current board config as a JS Object"
+  [board-state]
+  (clj->js (config/state->config @board-state)))
+
+;; TODO: would be nice to unit test the warning logs here via mocks
+(defn set-config
+  "Set the config."
+  [board-state arg1 arg2]
+  (cond
+    ;; set a single config value
+    (contains? config/valid-config-strings arg1)
+    (do (api/update-config! board-state {(keyword arg1) arg2})
+        (get-config board-state))
+
+    ;; set multiple values via object
+    (goog/isObject arg1)
+    (do (api/update-config! board-state (js->clj arg1 :keywordize-keys true))
+        (get-config board-state))
+
+    :else (warn-log "Invalid args passed to setConfig():" arg1 arg2)))
+
+(defn config
+  "Get or Set the board config"
+  [board-state]
+  (let [js-args (array)]
+    (copy-arguments js-args)
+    (.shift js-args)
+    (let [arg1 (aget js-args 0)
+          arg2 (aget js-args 1)]
+      (cond
+        (not arg1) (get-config board-state)
+        (string? arg1) (set-config board-state arg1 arg2)
+        (goog/isObject arg1) (set-config board-state arg1 nil)
+        :else (warn-log "Invalid args passed to config():" arg1 arg2)))))
