@@ -1,7 +1,3 @@
-function isPromise (p) {
-  return !!p && typeof p.then === 'function'
-}
-
 describe('Example 9005: config', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3232/examples/9005.html')
