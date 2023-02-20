@@ -71,22 +71,22 @@ function hideEl (id) {
 }
 
 function hideAllSections () {
-  hideEl("test1Container")
-  hideEl("test2Container")
-  hideEl("test3Container")
-  hideEl("test4Container")
-  hideEl("test5Container")
+  hideEl('test1Container')
+  hideEl('test2Container')
+  hideEl('test3Container')
+  hideEl('test4Container')
+  hideEl('test5Container')
 }
 
 function showSection (id) {
   byId(id).style.display = ''
 }
 
-attachEvent("test1StartBtn", 'click', () => { hideAllSections(); showSection("test1Container"); })
-attachEvent("test2StartBtn", 'click', () => { hideAllSections(); showSection("test2Container"); })
-attachEvent("test3StartBtn", 'click', () => { hideAllSections(); showSection("test3Container"); })
-attachEvent("test4StartBtn", 'click', () => { hideAllSections(); showSection("test4Container"); })
-attachEvent("test5StartBtn", 'click', () => { hideAllSections(); showSection("test5Container"); })
+attachEvent('test1StartBtn', 'click', () => { hideAllSections(); showSection('test1Container') })
+attachEvent('test2StartBtn', 'click', () => { hideAllSections(); showSection('test2Container') })
+attachEvent('test3StartBtn', 'click', () => { hideAllSections(); showSection('test3Container') })
+attachEvent('test4StartBtn', 'click', () => { hideAllSections(); showSection('test4Container') })
+attachEvent('test5StartBtn', 'click', () => { hideAllSections(); showSection('test5Container') })
 
 // -----------------------------------------------------------------------------
 // Test 1

@@ -38,7 +38,7 @@ const board = Chessboard2('myBoard', 'start')
 let circle1Id = null
 let circle2Id = null
 let circle3Id = null
-let circle4Id = null
+const circle4Id = null
 let circle5Id = null
 
 attachEvent('addCircle1Btn', 'click', () => {

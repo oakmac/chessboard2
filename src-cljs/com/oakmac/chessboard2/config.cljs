@@ -3,6 +3,7 @@
     [com.oakmac.chessboard2.constants :refer [animate-speed-strings animate-speed-strings->times start-position]]
     [com.oakmac.chessboard2.util.data-transforms :refer [clj->js-map js-map->clj]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
+    [com.oakmac.chessboard2.util.logging :refer [warn-log]]
     [com.oakmac.chessboard2.util.predicates :refer [fen-string?
                                                     map-string?
                                                     start-string?
@@ -85,6 +86,11 @@
 
 (def valid-config-keys
   (set (keys config-props)))
+
+(def valid-config-strings
+  (->> valid-config-keys
+    (map name)
+    set))
 
 ;; TODO: Good candidate for unit tests
 (defn merge-config

@@ -1,0 +1,80 @@
+===== id
+9005
+
+===== Name
+Config Test
+
+===== DescriptionMD
+This file exists for testing config settings.
+
+===== HTML
+<div id="myBoard" style="width: 300px"></div>
+
+<br />
+
+<button id="test1StartBtn">Start Test 1</button>
+
+<hr />
+
+<section id="test1Container">
+  <button id="setConfig1Btn">set config 1</button>
+  <button id="setConfig2Btn">set config 2</button>
+  <button id="setStartBtn">set start position</button>
+  <button id="setRuyLopezBtn">set ruy lopez</button>
+  <button id="setKingPawnEndgameBtn">set king and pawn endgame</button>
+  <pre id="configValues"></pre>
+  <div id="onChangeTarget"></div>
+</section>
+
+===== JS
+const board1 = Chessboard2('myBoard', 'start')
+window.board1 = board1
+
+const config2 = {
+  onChange: onChange2,
+  position: ''
+}
+
+function byId (id) {
+  return document.getElementById(id)
+}
+
+function appendHtml (id, html) {
+  const el = byId(id)
+  el.innerHTML = el.innerHTML + html
+}
+
+// -----------------------------------------------------------------------------
+// Test 1
+
+function onChange1 () {
+  byId('onChangeTarget').innerHTML = 'change1'
+}
+
+function onChange2 () {
+  byId('onChangeTarget').innerHTML = 'change2'
+}
+
+attachEvent('setConfig1Btn', 'click', () => {
+  board1.config('orientation', 'banana') // NOTE: should warn that "banana" is not a valid value for "orientation"
+  board1.config('foo', 'bar') // NOTE: should warn-log that "foo" is not a valid config property
+
+  board1.config('orientation', 'black')
+  board1.config('onChange', onChange1)
+})
+
+attachEvent('setConfig2Btn', 'click', () => {
+  board1.setConfig(config2)
+})
+
+attachEvent('setStartBtn', 'click', () => {
+  board1.start()
+})
+
+attachEvent('setRuyLopezBtn', 'click', () => {
+  board1.position('r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R')
+})
+
+attachEvent('setKingPawnEndgameBtn', 'click', () => {
+  board1.position('8/8/8/3pk3/8/4K3/8/8')
+})

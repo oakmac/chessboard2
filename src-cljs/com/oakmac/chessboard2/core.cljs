@@ -14,6 +14,7 @@
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element!]]
     [com.oakmac.chessboard2.util.fen :refer [fen->position valid-fen?]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
+    [com.oakmac.chessboard2.util.lang :refer [atom?]]
     [com.oakmac.chessboard2.util.logging :refer [error-log warn-log]]
     [com.oakmac.chessboard2.util.moves :refer [move->map]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
@@ -703,7 +704,6 @@
         squares-el (dom-util/get-element squares-selector)]
     (remove-class! squares-el css/orientation-black)
     (add-class! squares-el css/orientation-white)
-    (swap! board assoc :orientation "white")
     (draw-items-instant! board)))
 
 (defn set-black-orientation!
@@ -712,7 +712,6 @@
         squares-el (dom-util/get-element squares-selector)]
     (remove-class! squares-el css/orientation-white)
     (add-class! squares-el css/orientation-black)
-    (swap! board assoc :orientation "black")
     (draw-items-instant! board)))
 
 (defn orientation
@@ -721,15 +720,15 @@
  ([board arg]
   (let [lc-arg (safe-lower-case arg)]
     (cond
-      (= lc-arg "white") (do (set-white-orientation! board)
+      (= lc-arg "white") (do (swap! board assoc :orientation "white")
                              "white")
-      (= lc-arg "black") (do (set-black-orientation! board)
+      (= lc-arg "black") (do (swap! board assoc :orientation "black")
                              "black")
       (= lc-arg "flip") (do (swap! board update :orientation toggle-orientation)
                             (let [new-orientation (:orientation @board)]
                               (if (= new-orientation "white")
-                                (set-white-orientation! board)
-                                (set-black-orientation! board))
+                                (swap! board assoc :orientation "white")
+                                (swap! board assoc :orientation "black"))
                               new-orientation))
       :else (:orientation @board)))))
 
@@ -836,9 +835,13 @@
 ; (def default-animate-speed-ms 2500)
 
 (defn board-state-change
-  [_key _atom old-state new-state]
+  [_key board-atom old-state new-state]
   (when new-state
-    ;; FIXME: board orientation
+    ;; board orientation
+    (when-not (= (:orientation old-state) (:orientation new-state))
+      (if (= "white" (:orientation new-state))
+        (set-white-orientation! board-atom)
+        (set-black-orientation! board-atom)))
     ;; FIXME: coordinate config change
     ;; show / hide coordinates
     (when-not (= (:show-coords? old-state) (:show-coords? new-state))
@@ -912,9 +915,9 @@
       "getCircles" (partial js-get-circles board-state)
       "removeCircle" (partial js-remove-circle board-state)
 
-      "config" #(partial js-api/config board-state)
-      ; "getConfig" #(partial js-api/get-config board-state)
-      ; "setConfig" #(partial js-api/set-config board-state)
+      "config" (partial js-api/config board-state)
+      "getConfig" (partial js-api/get-config board-state)
+      "setConfig" (partial js-api/set-config board-state)
 
       ;; FIXME: allow adding custom items
       ;; https://github.com/oakmac/chessboard2/issues/9
