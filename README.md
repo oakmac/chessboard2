@@ -1,4 +1,4 @@
-# chessboard2 javascript library
+# chessboard2 JavaScript Library [![npm](https://img.shields.io/npm/v/@chrisoakman/chessboard2)](https://www.npmjs.com/package/@chrisoakman/chessboard2) [![ISC License](https://img.shields.io/npm/l/@chrisoakman/chessboard2)](https://github.com/oakmac/chessboard2/blob/master/LICENSE.md)
 
 An updated version of [chessboard.js].
 
@@ -9,9 +9,30 @@ An updated version of [chessboard.js].
 
 ## Development Status
 
-**February 2023**: Development in progress. Getting close to an initial v2 release.
+**March 2023**: Development in progress. Getting close to an initial v2 release. Pretty usable for most projects in it's current state.
 
 In-progress documentation available at [https://chessboardjs.com/v2/examples](https://chessboardjs.com/v2/examples)
+
+## Download and Install
+
+Instructions are available [here](https://chessboardjs.com/v2/download).
+
+[@chrisoakman/chessboard2 on npm](https://www.npmjs.com/package/@chrisoakman/chessboard2)
+
+Or use via [CDN](https://en.wikipedia.org/wiki/Content_delivery_network):
+
+```html
+<!-- add stylesheet via CDN: -->
+<link rel="stylesheet"
+      href="https://unpkg.com/@chrisoakman/chessboard2@0.3.0/dist/chessboard2.min.css"
+      integrity="sha384-5cxVYodq78gDJaWQIc5iBCUhFERY+VjHOszl2K7BTbZwBbrzQH2IYhOliWHJy6X3"
+      crossorigin="anonymous">
+
+<!-- add JS via CDN: -->
+<script src="https://unpkg.com/@chrisoakman/chessboard2@0.3.0/dist/chessboard2.min.js"
+        integrity="sha384-v+CI0A3P1tu1MDM6cJaBosdhRHCfZlJrhHUFWBGtckCzH/ChKw9EhDHEWGmPkp8t"
+        crossorigin="anonymous"></script>
+```
 
 ## Naming and Versioning
 
