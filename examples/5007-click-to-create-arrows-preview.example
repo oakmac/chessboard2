@@ -1,0 +1,79 @@
+===== id
+5007-click-to-create-arrows-preview
+
+===== Name
+Click to Create Arrows Preview on Square
+
+===== DescriptionMD
+Click on squares to create analysis arrows. Show a preview of the arrow using the onMouseenterSquare event.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+<button id="clearArrowsBtn">Clear Arrows</button>
+<button id="logArrowsBtn">console.log Arrows</button>
+
+===== JS
+let pendingArrow = null
+let tmpArrowId = null
+
+const board = window.Chessboard2('myBoard', {
+  onMousedownSquare: onMousedownSquare,
+  onMouseenterSquare: onMouseenterSquare
+})
+
+function onMousedownSquare (evt, domEvt) {
+  // clear any circles that may be on the board
+  board.clearCircles()
+
+  // do we have a pending arrow?
+  if (pendingArrow) {
+    // add an arrow to the board
+    board.addArrow({
+      start: pendingArrow,
+      end: evt.square
+    })
+
+    // clear the pending and tmp arrows
+    pendingArrow = null
+    board.removeArrow(tmpArrowId)
+    tmpArrowId = null
+  } else {
+    // store the pending arrow info
+    pendingArrow = evt.square
+
+    // put a circle on the starting square
+    board.addCircle(evt.square)
+  }
+}
+
+function onMouseenterSquare (evt, domEvt) {
+  // do nothing if we are not pending an Arrow
+  if (!pendingArrow) return
+
+  if (tmpArrowId) {
+    board.removeArrow(tmpArrowId)
+  }
+
+  tmpArrowId = board.addArrow({
+    start: pendingArrow,
+    end: evt.square
+  })
+}
+
+attachEvent('clearArrowsBtn', 'click', () => {
+  board.clearArrows()
+})
+
+attachEvent('logArrowsBtn', 'click', () => {
+  console.log('Arrows Array:')
+  console.log(board.getArrows())
+
+  console.log('Arrows Object:')
+  console.log(board.getArrows('object'))
+
+  console.log('Arrows Map:')
+  console.log(board.getArrows('map'))
+
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+})
