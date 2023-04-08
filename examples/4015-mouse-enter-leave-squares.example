@@ -1,0 +1,28 @@
+===== id
+4015-mouse-enter-leave-squares
+
+===== Name
+Mouseenter / Mouseleave Squares
+
+===== DescriptionMD
+Use the `onMouseenterSquare` and `onMouseleaveSquare` events to track
+when the mouse leaves or enters a square on the board.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+===== JS
+const config = {
+  onMouseenterSquare: logMouseenterSquare,
+  onMouseleaveSquare: logMouseleaveSquare,
+  position: 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
+}
+const board = Chessboard2('myBoard', config)
+
+function logMouseenterSquare (evt, domEvt) {
+  console.log('onMouseenterSquare:', evt)
+}
+
+function logMouseleaveSquare (evt, domEvt) {
+  console.log('onMouseleaveSquare:', evt)
+}

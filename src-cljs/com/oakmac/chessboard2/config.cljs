@@ -64,9 +64,8 @@
    :onMouseenterSquare
    {:valid-fn fn?}
 
-   ;; TODO: implement me
-   ; :onMouseleaveSquare
-   ; {:valid-fn fn?}
+   :onMouseleaveSquare
+   {:valid-fn fn?}
 
    :onSnapEnd
    {:valid-fn fn?}

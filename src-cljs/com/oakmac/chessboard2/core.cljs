@@ -160,8 +160,7 @@
     ;; return null
     nil))
 
-;; TODO: we should only fire their onMousedownSquare event when they mousedown on a square element
-(defn on-mouse-down
+(defn on-mousedown-root-el
   "This function fires on every 'mousedown' event inside the root DOM element"
   [board-state js-evt]
   (dom-util/safe-prevent-default js-evt)
@@ -221,29 +220,46 @@
             y (gobj/get js-evt "clientY")]
         (update-dragging-piece-position! dragging-el x y)))))
 
-;; NOTE: this has the potential to be a major perf bottleneck
-;; need to benchmark and optimize this function
+;; NOTE: this function has the potential to be a perf bottleneck
+;;       need to benchmark and optimize this function
 (defn on-mousemove-root-el
   [board-state js-evt]
   (let [target-el (gobj/get js-evt "target")
         clientX (gobj/get js-evt "clientX")
         clientY (gobj/get js-evt "clientY")
-        {:keys [orientation onMouseenterSquare position square->square-ids square-mouse-is-currently-hovering-over]} @board-state
+        {:keys [orientation onMouseenterSquare onMouseleaveSquare position
+                square->square-ids square-mouse-is-currently-hovering-over]}
+        @board-state
         prev-square square-mouse-is-currently-hovering-over
-        square (xy->square clientX clientY square->square-ids)]
-    (when-not (= square square-mouse-is-currently-hovering-over)
+        new-square (xy->square clientX clientY square->square-ids)]
+    (when-not (= new-square square-mouse-is-currently-hovering-over)
       ;; update mouse position
-      (swap! board-state assoc :square-mouse-is-currently-hovering-over square)
-      ;; call their onMouseenterSquare function if provided
-      (when (and square (fn? onMouseenterSquare))
-        (let [piece (get position square)
+      (swap! board-state assoc :square-mouse-is-currently-hovering-over new-square)
+
+      ;; call their onMouseleaveSquare function if provided
+      (when (and prev-square (fn? onMouseleaveSquare))
+        (let [piece (get position prev-square)
               js-board-info (js-obj "orientation" orientation
                                     "piece" piece
                                     "position" (clj->js position)
-                                    "square" square
+                                    "square" prev-square
+                                    "toSquare" (if new-square new-square "off-board"))]
+          (onMouseleaveSquare js-board-info js-evt)))
+
+      ;; call their onMouseenterSquare function if provided
+      (when (and new-square (fn? onMouseenterSquare))
+        (let [piece (get position new-square)
+              js-board-info (js-obj "orientation" orientation
+                                    "piece" piece
+                                    "position" (clj->js position)
+                                    "square" new-square
                                     "fromSquare" (if prev-square prev-square "off-board"))]
           (onMouseenterSquare js-board-info js-evt))))))
-      ;; FIXME: we have everything we need here in order to call onMouseleaveSquare too
+
+(defn on-mouseleave-root-el
+  "Clear the current mouse position when the cursor leaves the board."
+  [board-state]
+  (swap! board-state assoc :square-mouse-is-currently-hovering-over nil))
 
 (defn on-touchmove
   [board-state js-evt]
@@ -376,8 +392,9 @@
                                           10)) ;; TODO: make this debounce value configurable
 
   ;; events on the root element
+  (.addEventListener root-el "mouseleave" (fn [_js-evt] (on-mouseleave-root-el board-state)))
   (.addEventListener root-el "mousemove" (fn [js-evt] (on-mousemove-root-el board-state js-evt)))
-  (.addEventListener root-el "mousedown" (partial on-mouse-down board-state))
+  (.addEventListener root-el "mousedown" (partial on-mousedown-root-el board-state))
   (.addEventListener root-el "touchstart" (partial on-touch-start board-state))
   (.addEventListener root-el "transitionend" (partial on-transition-end board-state)))
 

@@ -36,6 +36,7 @@
 
       (map? opts-with-strings)
       (let [;; remove any invalid config keys
+            ;; FIXME: we should warn here when they pass in an invalid config key
             opts2 (select-keys opts-with-keywords config/valid-config-keys)
             their-pos (get opts-with-strings "position")]
         (cond-> opts2
