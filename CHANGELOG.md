@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - add `.config()`, `.setConfig()`, `.getConfig()` methods ([Issue #7](https://github.com/oakmac/chessboard2/issues/7))
 - added `onMouseenterSquare`, `onMouseleaveSquare` events and examples ([Issue #40](https://github.com/oakmac/chessboard2/issues/40)), ([PR #41](https://github.com/oakmac/chessboard2/pull/41))
+- added `onMousedownSquare`, `onMouseupSquare` events and examples ([Commit #88043432c1](https://github.com/oakmac/chessboard2/commit/88043432c15196e3c8a2621f807f6231df78a26a))
 
 ## [0.3.0] - 2022-11-23
 ### Added
