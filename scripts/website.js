@@ -19,10 +19,16 @@ const cmReader = new commonmark.Parser()
 const cmWriter = new commonmark.HtmlRenderer()
 
 // toggle development version
-const useLocalDevFiles = true
-const jsCDNScript = '<script src="https://unpkg.com/@chrisoakman/chessboard2@0.3.0/dist/chessboard2.min.js" integrity="sha384-v+CI0A3P1tu1MDM6cJaBosdhRHCfZlJrhHUFWBGtckCzH/ChKw9EhDHEWGmPkp8t" crossorigin="anonymous"></script>'
+const useLocalDevFiles = false
+const jsCDNUrl = 'https://unpkg.com/@chrisoakman/chessboard2@0.4.0/dist/chessboard2.min.js'
+const jsCDNIntegrity = 'sha384-zl6zz0W4cEX3M2j9+bQ2hv9af6SF5pTFrnm/blYYjBmqSS3tdJChVrY9nenhLyNg'
+const jsCDNScript = '<script src="' + jsCDNUrl + '" integrity="' + jsCDNIntegrity + '" crossorigin="anonymous"></script>'
+
 // const esmCDNScript = '<script src="https://unpkg.com/@chrisoakman/chessboard2@0.3.0/dist/chessboard2.min.mjs" integrity="sha384-1yHocjOlRFtt1hT94ytsOQ/8eylPRk9Gj/DLNca1faolxec6F7k4c+f3S3FS60Rf" crossorigin="anonymous"></script>'
-const cssCDNLink = '<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboard2@0.3.0/dist/chessboard2.min.css" integrity="sha384-5cxVYodq78gDJaWQIc5iBCUhFERY+VjHOszl2K7BTbZwBbrzQH2IYhOliWHJy6X3" crossorigin="anonymous">'
+
+const cssCDNUrl = 'https://unpkg.com/@chrisoakman/chessboard2@0.4.0/dist/chessboard2.min.css'
+const cssCDNIntegrity = 'sha384-MZONbGYADvdl4hLalNF4d+E/6BVdYIty2eSgtkCbjG7iQJAe35a7ujTk1roZIdJ+'
+const cssCDNLink = '<link rel="stylesheet" href="' + cssCDNUrl + '" integrity="' + cssCDNIntegrity + '" crossorigin="anonymous">'
 
 let jsScript = jsCDNScript
 let cssLink = cssCDNLink
@@ -290,9 +296,13 @@ function writeDownloadPage () {
   const headerHTML = mustache.render(headerTemplate, { downloadActive: true })
 
   const html = mustache.render(downloadTemplate, {
+    cssCDNIntegrity,
+    cssCDNUrl,
     footer: footerTemplate,
     head: headHTML,
-    header: headerHTML
+    header: headerHTML,
+    jsCDNIntegrity,
+    jsCDNScript
   })
   const filename = 'website/download.html'
   fs.writeFileSync(filename, html, encoding)
