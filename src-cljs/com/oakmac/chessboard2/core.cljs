@@ -1,6 +1,5 @@
 (ns com.oakmac.chessboard2.core
   (:require
-    [clojure.set :as set]
     [clojure.string :as str]
     [com.oakmac.chessboard2.api :as api]
     [com.oakmac.chessboard2.config :as config]
@@ -9,16 +8,13 @@
     [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.html :as html]
     [com.oakmac.chessboard2.js-api :as js-api]
-    [com.oakmac.chessboard2.util.board :refer [start-position]]
     [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element!]]
-    [com.oakmac.chessboard2.util.fen :refer [fen->position valid-fen?]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
-    [com.oakmac.chessboard2.util.lang :refer [atom?]]
     [com.oakmac.chessboard2.util.logging :refer [error-log warn-log]]
     [com.oakmac.chessboard2.util.moves :refer [move->map]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
-    [com.oakmac.chessboard2.util.predicates :refer [arrow-item? circle-item? start-string? valid-color? valid-move-string? valid-square? valid-piece? valid-position?]]
+    [com.oakmac.chessboard2.util.predicates :refer [arrow-item? circle-item? valid-color? valid-move-string? valid-square? valid-piece?]]
     [com.oakmac.chessboard2.util.squares :as square-util]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]
     [goog.array :as garray]
@@ -164,13 +160,13 @@
     ;; return null
     nil))
 
-;; FIXME: this function should support onMouseDown instead of onTouchSquare
+;; TODO: we should only fire their onMousedownSquare event when they mousedown on a square element
 (defn on-mouse-down
   "This function fires on every 'mousedown' event inside the root DOM element"
   [board-state js-evt]
   (dom-util/safe-prevent-default js-evt)
-  (let [{:keys [draggable mouseDraggable onTouchSquare orientation position root-el square->piece-id square->square-ids touchMove]} @board-state
-        target-el (gobj/get js-evt "target")
+  (let [{:keys [draggable mouseDraggable onMousedownSquare orientation position _square->piece-id square->square-ids touchMove]} @board-state
+        ; target-el (gobj/get js-evt "target")
         clientX (gobj/get js-evt "clientX")
         clientY (gobj/get js-evt "clientY")
 
@@ -183,11 +179,13 @@
         ;; NOTE: piece may be nil if there is no piece on the square they touched
         piece (get position square)
 
-        ;; call their onTouchSquare function if provided
-        on-touchsquare-result (when (fn? onTouchSquare)
-                                (let [js-board-info (js-obj "orientation" orientation
-                                                            "position" (clj->js position))]
-                                  (onTouchSquare square piece js-board-info)))]
+        ;; call their onMousedownSquare function if provided
+        on-mousedown-result (when (fn? onMousedownSquare)
+                              (let [js-board-info (js-obj "orientation" orientation
+                                                          "piece" piece
+                                                          "position" (clj->js position)
+                                                          "square" square)]
+                                (onMousedownSquare js-board-info js-evt)))]
 
     ;; begin dragging if configured
     (when (and piece
@@ -196,7 +194,7 @@
 
     ;; highlight the square and queue a move if touchmove is enabled
     (when (and (true? touchMove)
-               (not (false? on-touchsquare-result))
+               (not (false? on-mousedown-result))
                piece))
       ;; FIXME:
       ;; - highlight the square here?
@@ -214,7 +212,7 @@
       (dom-util/set-style-prop! dragging-el "left" (str x "px"))
       (dom-util/set-style-prop! dragging-el "top" (str y "px")))))
 
-(defn on-mousemove
+(defn on-mousemove-window
   [board-state js-evt]
   (let [{:keys [dragging? dragging-el]} @board-state]
     ;; do nothing if we are not actively dragging
@@ -222,6 +220,30 @@
       (let [x (gobj/get js-evt "clientX")
             y (gobj/get js-evt "clientY")]
         (update-dragging-piece-position! dragging-el x y)))))
+
+;; NOTE: this has the potential to be a major perf bottleneck
+;; need to benchmark and optimize this function
+(defn on-mousemove-root-el
+  [board-state js-evt]
+  (let [target-el (gobj/get js-evt "target")
+        clientX (gobj/get js-evt "clientX")
+        clientY (gobj/get js-evt "clientY")
+        {:keys [orientation onMouseenterSquare position square->square-ids square-mouse-is-currently-hovering-over]} @board-state
+        prev-square square-mouse-is-currently-hovering-over
+        square (xy->square clientX clientY square->square-ids)]
+    (when-not (= square square-mouse-is-currently-hovering-over)
+      ;; update mouse position
+      (swap! board-state assoc :square-mouse-is-currently-hovering-over square)
+      ;; call their onMouseenterSquare function if provided
+      (when (and square (fn? onMouseenterSquare))
+        (let [piece (get position square)
+              js-board-info (js-obj "orientation" orientation
+                                    "piece" piece
+                                    "position" (clj->js position)
+                                    "square" square
+                                    "fromSquare" (if prev-square prev-square "off-board"))]
+          (onMouseenterSquare js-board-info js-evt))))))
+      ;; FIXME: we have everything we need here in order to call onMouseleaveSquare too
 
 (defn on-touchmove
   [board-state js-evt]
@@ -243,20 +265,19 @@
         target (if dropped-square dropped-square "offboard")
         ;; call their onDrop function if provided
         on-drop-result (when (fn? onDrop)
-                         (let []
-                           ;; NOTE: they can calculate what element the piece was dropped
-                           ;; onto by using elementFromPoint
-                           ;; https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
-                           (try
-                             (onDrop (js-obj "orientation" orientation
-                                             "piece" dragging-starting-piece
-                                             "source" dragging-starting-square
-                                             "target" target
-                                             "x" x
-                                             "y" y))
-                             (catch js/Error err
-                               (error-log "Runtime error with provided onDrop function:" err)
-                               nil))))]
+                         ;; NOTE: they can calculate what element the piece was dropped
+                         ;; onto by using elementFromPoint
+                         ;; https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
+                         (try
+                           (onDrop (js-obj "orientation" orientation
+                                           "piece" dragging-starting-piece
+                                           "source" dragging-starting-square
+                                           "target" target
+                                           "x" x
+                                           "y" y))
+                           (catch js/Error err
+                             (error-log "Runtime error with provided onDrop function:" err)
+                             nil)))]
     ;; TODO: refactor to reduce code here
     (cond
       (= on-drop-result "snapback")
@@ -346,7 +367,7 @@
   "Attach DOM events."
   [root-el board-state]
   ;; global window events
-  (.addEventListener js/window "mousemove" (fn [js-evt] (on-mousemove board-state js-evt)))
+  (.addEventListener js/window "mousemove" (fn [js-evt] (on-mousemove-window board-state js-evt)))
   (.addEventListener js/window "mouseup" (fn [js-evt] (on-mouseup board-state js-evt)))
   (.addEventListener js/window "touchend" (fn [js-evt] (on-touchend board-state js-evt)))
   (.addEventListener js/window "touchmove" (fn [js-evt] (on-touchmove board-state js-evt)))
@@ -355,6 +376,7 @@
                                           10)) ;; TODO: make this debounce value configurable
 
   ;; events on the root element
+  (.addEventListener root-el "mousemove" (fn [js-evt] (on-mousemove-root-el board-state js-evt)))
   (.addEventListener root-el "mousedown" (partial on-mouse-down board-state))
   (.addEventListener root-el "touchstart" (partial on-touch-start board-state))
   (.addEventListener root-el "transitionend" (partial on-transition-end board-state)))
