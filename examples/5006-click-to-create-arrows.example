@@ -1,0 +1,60 @@
+===== id
+5006-click-to-create-arrows
+
+===== Name
+Click to Create Arrows
+
+===== DescriptionMD
+Click on squares to create analysis arrows.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+<button id="clearArrowsBtn">Clear Arrows</button>
+<button id="logArrowsBtn">console.log Arrows</button>
+
+===== JS
+let pendingArrow = null
+
+const board = window.Chessboard2('myBoard', {
+  onMousedownSquare: onMousedownSquare
+})
+
+function onMousedownSquare (evt, domEvt) {
+  // clear any circles that may be on the board
+  board.clearCircles()
+
+  // do we have a pending arrow?
+  if (pendingArrow) {
+    // add an arrow to the board
+    board.addArrow({
+      start: pendingArrow,
+      end: evt.square
+    })
+    // clear the pendingArrow
+    pendingArrow = null
+  } else {
+    // store the pending arrow info
+    pendingArrow = evt.square
+
+    // put a circle on the square
+    board.addCircle(evt.square)
+  }
+}
+
+attachEvent('clearArrowsBtn', 'click', () => {
+  board.clearArrows()
+})
+
+attachEvent('logArrowsBtn', 'click', () => {
+  console.log('Arrows Array:')
+  console.log(board.getArrows())
+
+  console.log('Arrows Object:')
+  console.log(board.getArrows('object'))
+
+  console.log('Arrows Map:')
+  console.log(board.getArrows('map'))
+
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+})

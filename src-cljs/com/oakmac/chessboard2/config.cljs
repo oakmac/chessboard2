@@ -54,6 +54,9 @@
    :onDrop
    {:valid-fn fn?}
 
+   :onMousedownSquare
+   {:valid-fn fn?}
+
    :onSnapEnd
    {:valid-fn fn?}
 

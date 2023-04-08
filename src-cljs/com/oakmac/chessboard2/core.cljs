@@ -164,13 +164,12 @@
     ;; return null
     nil))
 
-;; FIXME: this function should support onMouseDown instead of onTouchSquare
 (defn on-mouse-down
   "This function fires on every 'mousedown' event inside the root DOM element"
   [board-state js-evt]
   (dom-util/safe-prevent-default js-evt)
-  (let [{:keys [draggable mouseDraggable onTouchSquare orientation position root-el square->piece-id square->square-ids touchMove]} @board-state
-        target-el (gobj/get js-evt "target")
+  (let [{:keys [draggable mouseDraggable onMousedownSquare orientation position _square->piece-id square->square-ids touchMove]} @board-state
+        ; target-el (gobj/get js-evt "target")
         clientX (gobj/get js-evt "clientX")
         clientY (gobj/get js-evt "clientY")
 
@@ -183,11 +182,13 @@
         ;; NOTE: piece may be nil if there is no piece on the square they touched
         piece (get position square)
 
-        ;; call their onTouchSquare function if provided
-        on-touchsquare-result (when (fn? onTouchSquare)
-                                (let [js-board-info (js-obj "orientation" orientation
-                                                            "position" (clj->js position))]
-                                  (onTouchSquare square piece js-board-info)))]
+        ;; call their onMousedownSquare function if provided
+        on-mousedown-result (when (fn? onMousedownSquare)
+                              (let [js-board-info (js-obj "orientation" orientation
+                                                          "piece" piece
+                                                          "position" (clj->js position)
+                                                          "square" square)]
+                                (onMousedownSquare js-board-info js-evt)))]
 
     ;; begin dragging if configured
     (when (and piece
@@ -196,7 +197,7 @@
 
     ;; highlight the square and queue a move if touchmove is enabled
     (when (and (true? touchMove)
-               (not (false? on-touchsquare-result))
+               (not (false? on-mousedown-result))
                piece))
       ;; FIXME:
       ;; - highlight the square here?
