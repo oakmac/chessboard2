@@ -204,39 +204,6 @@
     ;; return null
     nil))
 
-(defn on-mouseenter-square
-  "This function fires on every 'mouseenter' event on a Square element"
-  [board-state square-id js-evt]
-
-  (js/console.log "mouse enter square:" square-id)
-
-  ;; FIXME: assert that square-id is in board-state (it definitely should be)
-  (dom-util/safe-prevent-default js-evt)
-  (let [{:keys [draggable mouseDraggable onMouseenterSquare orientation position _square->piece-id square->square-ids touchMove]} @board-state
-        ; target-el (gobj/get js-evt "target")
-        clientX (gobj/get js-evt "clientX")
-        clientY (gobj/get js-evt "clientY")
-
-        square (xy->square clientX clientY square->square-ids)
-
-        _ (when flags/runtime-checks?
-            (when-not (valid-square? square)
-              (error-log "Invalid square in on-mouseenter-square:" square)))
-
-        ;; NOTE: piece may be nil if there is no piece on the square they touched
-        piece (get position square)]
-
-    ;; call their onMouseenterSquare function if provided
-    (when (fn? onMouseenterSquare)
-      (let [js-board-info (js-obj "orientation" orientation
-                                  "piece" piece
-                                  "position" (clj->js position)
-                                  "square" square)]
-        (onMouseenterSquare js-board-info js-evt)))
-
-    ;; return null
-    nil))
-
 (defn update-dragging-piece-position!
   "Update the x, y coordinates of the dragging piece on the next animationFrame"
   [dragging-el x y]
