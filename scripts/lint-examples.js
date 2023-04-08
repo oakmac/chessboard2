@@ -30,7 +30,7 @@ examplesArr.forEach((example) => {
 // run linter on temporary folder
 // standard throws errors on non-fixable issues, so log the error
 try {
-  const output = childProcess.execSync('npx standard --global attachEvent --global Chess --global Chessboard --global Chessboard2 --fix tmp-linting/', {
+  const output = childProcess.execSync('npx standard --global board --global attachEvent --global Chess --global Chessboard --global Chessboard2 --fix tmp-linting/', {
     cwd: path.join(__dirname, '..'),
     encoding: 'utf8'
   })

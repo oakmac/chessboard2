@@ -2,10 +2,10 @@
 5007-click-to-create-arrows-preview
 
 ===== Name
-Click to Create Arrows Preview on Square
+Click to Create Arrows with Preview
 
 ===== DescriptionMD
-Click on squares to create analysis arrows. Show a preview of the arrow using the onMouseenterSquare event.
+Click on squares to create analysis arrows. Show a preview of the arrow using the `onMouseenterSquare` event.
 
 ===== HTML
 <div id="myBoard" style="width: 400px"></div>
@@ -14,12 +14,12 @@ Click on squares to create analysis arrows. Show a preview of the arrow using th
 <button id="logArrowsBtn">console.log Arrows</button>
 
 ===== JS
-let pendingArrow = null
+let startingSquare = null
 let tmpArrowId = null
 
 const board = window.Chessboard2('myBoard', {
-  onMousedownSquare: onMousedownSquare,
-  onMouseenterSquare: onMouseenterSquare
+  onMousedownSquare,
+  onMouseenterSquare
 })
 
 function onMousedownSquare (evt, domEvt) {
@@ -27,20 +27,20 @@ function onMousedownSquare (evt, domEvt) {
   board.clearCircles()
 
   // do we have a pending arrow?
-  if (pendingArrow) {
+  if (startingSquare) {
     // add an arrow to the board
     board.addArrow({
-      start: pendingArrow,
+      start: startingSquare,
       end: evt.square
     })
 
     // clear the pending and tmp arrows
-    pendingArrow = null
+    startingSquare = null
     board.removeArrow(tmpArrowId)
     tmpArrowId = null
   } else {
     // store the pending arrow info
-    pendingArrow = evt.square
+    startingSquare = evt.square
 
     // put a circle on the starting square
     board.addCircle(evt.square)
@@ -49,14 +49,16 @@ function onMousedownSquare (evt, domEvt) {
 
 function onMouseenterSquare (evt, domEvt) {
   // do nothing if we are not pending an Arrow
-  if (!pendingArrow) return
+  if (!startingSquare) return
 
+  // remove the existing tmp arrow if necessary
   if (tmpArrowId) {
     board.removeArrow(tmpArrowId)
   }
 
+  // add a tmp arrow to the board
   tmpArrowId = board.addArrow({
-    start: pendingArrow,
+    start: startingSquare,
     end: evt.square
   })
 }
@@ -66,14 +68,5 @@ attachEvent('clearArrowsBtn', 'click', () => {
 })
 
 attachEvent('logArrowsBtn', 'click', () => {
-  console.log('Arrows Array:')
-  console.log(board.getArrows())
-
-  console.log('Arrows Object:')
-  console.log(board.getArrows('object'))
-
-  console.log('Arrows Map:')
-  console.log(board.getArrows('map'))
-
-  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+  console.log('Arrows:', board.getArrows())
 })

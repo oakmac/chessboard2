@@ -154,7 +154,9 @@ const examplesGroups = [
       '5002-random-vs-random',
       '5003',
       '5004',
-      '5005'
+      '5005',
+      '5006-click-to-create-arrows',
+      '5007-click-to-create-arrows-preview'
     ]
   }
 ]
