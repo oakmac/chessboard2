@@ -1,18 +1,7 @@
 (ns com.oakmac.chessboard2.config
   (:require
-    [com.oakmac.chessboard2.constants :refer [animate-speed-strings animate-speed-strings->times start-position]]
-    [com.oakmac.chessboard2.util.data-transforms :refer [clj->js-map js-map->clj]]
-    [com.oakmac.chessboard2.util.fen :refer [fen->position position->fen valid-fen?]]
-    [com.oakmac.chessboard2.util.logging :refer [warn-log]]
-    [com.oakmac.chessboard2.util.predicates :refer [fen-string?
-                                                    map-string?
-                                                    start-string?
-                                                    valid-js-position-map?
-                                                    valid-js-position-object?
-                                                    valid-move-string?
-                                                    valid-position?
-                                                    valid-square?]]
-    [com.oakmac.chessboard2.util.string :refer [lower-case-if-string safe-lower-case]]))
+    [com.oakmac.chessboard2.util.predicates :refer [valid-position?]]
+    [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]))
 
 (defn valid-drop-off-board?
   [s]

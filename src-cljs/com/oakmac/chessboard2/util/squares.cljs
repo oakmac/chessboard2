@@ -1,7 +1,7 @@
 (ns com.oakmac.chessboard2.util.squares
   (:require
     [com.oakmac.chessboard2.util.base58 :refer [random-base58]]
-    [com.oakmac.chessboard2.util.board :refer [file->idx rank->idx]]
+    [com.oakmac.chessboard2.util.board :refer [rank->idx]]
     [com.oakmac.chessboard2.util.math :refer [half]]))
 
 ;; TODO: create this dynamically

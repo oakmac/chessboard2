@@ -120,10 +120,9 @@
   [board-state js-evt]
   ;; prevent "double-tap to zoom"
   (dom-util/safe-prevent-default js-evt)
-  (let [{:keys [draggable onTouchSquare orientation position root-el square->piece-id
+  (let [{:keys [draggable onTouchSquare orientation position
                 square->square-ids touchDraggable touchMove]}
         @board-state
-        target-el (gobj/get js-evt "target")
         js-first-touch (aget (gobj/get js-evt "touches") 0)
         clientX (gobj/get js-first-touch "clientX")
         clientY (gobj/get js-first-touch "clientY")
@@ -205,7 +204,7 @@
 (defn on-mouseup-root-el
   "This function fires on every 'mouseup' event inside the root DOM element"
   [board-state js-evt]
-  (let [{:keys [draggable mouseDraggable onMouseupSquare orientation position square->square-ids touchMove]} @board-state
+  (let [{:keys [onMouseupSquare orientation position square->square-ids]} @board-state
         clientX (gobj/get js-evt "clientX")
         clientY (gobj/get js-evt "clientY")
         square (xy->square clientX clientY square->square-ids)
@@ -246,8 +245,7 @@
 ;;       need to benchmark and optimize this function
 (defn on-mousemove-root-el
   [board-state js-evt]
-  (let [target-el (gobj/get js-evt "target")
-        clientX (gobj/get js-evt "clientX")
+  (let [clientX (gobj/get js-evt "clientX")
         clientY (gobj/get js-evt "clientY")
         {:keys [orientation onMouseenterSquare onMouseleaveSquare position
                 square->square-ids square-mouse-is-currently-hovering-over]}
@@ -711,17 +709,17 @@
       ;; TODO: error code here?
       (warn-log "Invalid argument passed to removeArrow():" item-id-or-squares))))
 
-(defn move-arrow
-  "Move an Analysis Arrow on the board"
-  [board-state item-id new-move])
-  ;; TODO: apply-dom-ops
+; (defn move-arrow
+;   "Move an Analysis Arrow on the board"
+;   [board-state item-id new-move])
+;   ;; TODO: apply-dom-ops
 
-(defn js-move-arrow
-  [board-state item-id new-move]
-  ;; TODO: validation here, warn if item-id is not valid
-  (valid-move-string? new-move)
-  ;; TODO: (move->map new-move) ??
-  (move-arrow board-state item-id new-move))
+; (defn js-move-arrow
+;   [board-state item-id new-move]
+;   ;; TODO: validation here, warn if item-id is not valid
+;   (valid-move-string? new-move)
+;   ;; TODO: (move->map new-move) ??
+;   (move-arrow board-state item-id new-move))
 
 (defn js-add-arrow
   [board-state arg1 arg2 arg3]
@@ -835,10 +833,10 @@
 ;           new-pos (assoc current-pos square piece)]
 ;       (position board-state new-pos animate?))))
 
-(defn- looks-like-a-js-add-piece-config? [js-cfg]
-  (and (object? js-cfg)
-       (valid-piece? (gobj/get js-cfg "piece"))
-       (valid-square? (gobj/get js-cfg "square"))))
+; (defn- looks-like-a-js-add-piece-config? [js-cfg]
+;   (and (object? js-cfg)
+;        (valid-piece? (gobj/get js-cfg "piece"))
+;        (valid-square? (gobj/get js-cfg "square"))))
 
 (def default-add-piece-config
   {:animate? true})
@@ -879,7 +877,7 @@
 
 (defn init-dom!
   [board-state]
-  (let [{:keys [container-id items-container-id root-el squares-container-id] :as board-cfg} @board-state]
+  (let [{:keys [root-el] :as board-cfg} @board-state]
     ;; write the container <div>s to the DOM
     (dom-util/set-inner-html! root-el (html/BoardContainer board-cfg))
     ;; calculate width / height

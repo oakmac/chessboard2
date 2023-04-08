@@ -1,6 +1,6 @@
 (ns com.oakmac.chessboard2.util.arrows
   (:require
-    [com.oakmac.chessboard2.util.math :refer [half hypotenuse]]
+    [com.oakmac.chessboard2.util.math :refer [hypotenuse]]
     [com.oakmac.chessboard2.util.squares :refer [square->dimensions]]))
 
 (defn position

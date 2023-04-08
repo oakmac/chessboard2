@@ -5,9 +5,8 @@
     [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
     [com.oakmac.chessboard2.util.arrows :as arrow-util]
-    [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.math :refer [half]]
-    [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions squares->rect-dimensions]]
+    [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions]]
     [com.oakmac.chessboard2.util.template :refer [template]]
     [goog.crypt.base64 :as base64]))
 
@@ -80,7 +79,7 @@
        :width circle-width-pct})))
 
 (defn CustomItem
-  [board-state {:keys [className html-str id square] :as cfg}]
+  [board-state {:keys [className html-str id square] :as _config}]
   (let [{:keys [board-width orientation piece-square-pct]} @board-state
         square-dims (square->dimensions square board-width orientation)
         square-height (/ board-width 8) ;; FIXME: need to support variable number of squares here
@@ -164,7 +163,7 @@
               (some nil? (vals piece-config)))
       (js/console.warn "Not enough args passed to html/Piece:")
       (js/console.warn (pr-str (keys piece-config)))))
-  (let [{:keys [left top left-pct top-pct]} (square->dimensions square board-width board-orientation)
+  (let [{:keys [left-pct top-pct]} (square->dimensions square board-width board-orientation)
         square-width (/ board-width 8)
         piece-pct (* 100 piece-square-pct)
         square-width-pct (* (/ square-width board-width) 100)]

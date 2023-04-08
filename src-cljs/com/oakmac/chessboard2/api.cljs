@@ -4,17 +4,15 @@
     [clojure.string :as str]
     [com.oakmac.chessboard2.animations :refer [animation->dom-op calculate-animations]]
     [com.oakmac.chessboard2.config :as config]
-    [com.oakmac.chessboard2.constants :refer [animate-speed-strings->times start-position]]
+    [com.oakmac.chessboard2.constants :refer [animate-speed-strings->times]]
     [com.oakmac.chessboard2.dom-ops :as dom-ops]
     [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.html :as html]
-    [com.oakmac.chessboard2.util.arrows :as arrow-util]
-    [com.oakmac.chessboard2.util.dom :as dom-util :refer [get-element set-inner-html! set-style-prop!]]
-    [com.oakmac.chessboard2.util.fen :refer [fen->position valid-fen?]]
+    [com.oakmac.chessboard2.util.dom :as dom-util :refer [set-inner-html! set-style-prop!]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
     [com.oakmac.chessboard2.util.logging :refer [warn-log]]
     [com.oakmac.chessboard2.util.moves :refer [apply-move-to-position]]
-    [com.oakmac.chessboard2.util.predicates :refer [arrow-item? fen-string? start-string? valid-square? valid-position?]]
+    [com.oakmac.chessboard2.util.predicates :refer [arrow-item? valid-square? valid-position?]]
     [com.oakmac.chessboard2.util.squares :refer [square->dimensions]]
     [goog.object :as gobj]))
 
@@ -110,7 +108,7 @@
                         (fn [promises {:keys [source] :as _anim}]
                           (conj promises
                                 (js/Promise.
-                                  (fn [resolve-fn reject-fn]
+                                  (fn [resolve-fn _reject-fn]
                                     ;; store the resolve-fn on our object
                                     (gobj/set js-resolve-fns source resolve-fn)))))
                                     ;; TODO: do we need to store the reject-fn here?
@@ -183,7 +181,7 @@
 
             ;; add duration times to the animations
             animations2 (map
-                          (fn [{:keys [source] :as animation}]
+                          (fn [animation]
                             (cond-> animation
                               true (assoc :duration-ms animate-speed-ms2)
                               (false? (:animate opts)) (assoc :instant? true)))
@@ -192,7 +190,7 @@
             ;; create an Object that will store our Promise callback function
             js-resolve-fns (js-obj)
             return-promise (js/Promise.
-                             (fn [resolve-fn reject-fn]
+                             (fn [resolve-fn _reject-fn]
                                (gobj/set js-resolve-fns "$" resolve-fn)))
 
             js-before-position (clj->js current-pos)
@@ -236,7 +234,7 @@
 (defn add-item!
   "Adds a Custom Item to the board. Returns the id of the new Item."
   [board-state item-cfg]
-  (let [{:keys [className data isMovable html square type]} item-cfg
+  (let [{:keys [className data html square type]} item-cfg
         new-id (random-id type)
         new-item {:id new-id
                   :type type
@@ -272,7 +270,7 @@
   (let [current-board-state @board-state
         board-width (:board-width current-board-state)
         orientation (:orientation current-board-state)
-        default-speed-ms (:animate-speed-ms current-board-state)
+        ; default-speed-ms (:animate-speed-ms current-board-state)
         animate-speed2 800
 
         ;; add move duration times to the animations
@@ -352,7 +350,7 @@
 (defn resize!
   "Takes measurements from the DOM and updates height / width values if necessary"
   [board-state]
-  (let [{:keys [container-id items-container-id orientation position squares-container-id items]} @board-state
+  (let [{:keys [container-id items-container-id squares-container-id]} @board-state
         container-el (dom-util/get-element container-id)
         items-container-el (dom-util/get-element items-container-id)]
     ;; do nothing if the DOM elements do not exist
