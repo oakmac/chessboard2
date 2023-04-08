@@ -1,0 +1,28 @@
+===== id
+4016-mouse-down-up-squares
+
+===== Name
+Mousedown / Mouseup Squares
+
+===== DescriptionMD
+Use the `onMousedownSquare` and `onMouseupSquare` events to track
+mouse events on squares on the board.
+
+===== HTML
+<div id="myBoard" style="width: 400px"></div>
+
+===== JS
+const config = {
+  onMousedownSquare: logMousedownSquare,
+  onMouseupSquare: logMouseupSquare,
+  position: 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R'
+}
+const board = Chessboard2('myBoard', config)
+
+function logMousedownSquare (evt, domEvt) {
+  console.log('onMousedownSquare:', evt)
+}
+
+function logMouseupSquare (evt, domEvt) {
+  console.log('onMouseupSquare:', evt)
+}

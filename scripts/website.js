@@ -142,7 +142,8 @@ const examplesGroups = [
       '4006',
       '4011',
       '4012',
-      '4015-mouse-enter-leave-squares'
+      '4015-mouse-enter-leave-squares',
+      '4016-mouse-down-up-squares'
     ]
   },
   {

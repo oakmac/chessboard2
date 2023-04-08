@@ -164,8 +164,7 @@
   "This function fires on every 'mousedown' event inside the root DOM element"
   [board-state js-evt]
   (dom-util/safe-prevent-default js-evt)
-  (let [{:keys [draggable mouseDraggable onMousedownSquare orientation position _square->piece-id square->square-ids touchMove]} @board-state
-        ; target-el (gobj/get js-evt "target")
+  (let [{:keys [draggable mouseDraggable onMousedownSquare orientation position square->square-ids touchMove]} @board-state
         clientX (gobj/get js-evt "clientX")
         clientY (gobj/get js-evt "clientY")
 
@@ -202,6 +201,29 @@
       ; (swap! board-state assoc :touch-move-queue1 {:piece piece, :square square}))
     ;; return null
     nil))
+
+(defn on-mouseup-root-el
+  "This function fires on every 'mouseup' event inside the root DOM element"
+  [board-state js-evt]
+  (let [{:keys [draggable mouseDraggable onMouseupSquare orientation position square->square-ids touchMove]} @board-state
+        clientX (gobj/get js-evt "clientX")
+        clientY (gobj/get js-evt "clientY")
+        square (xy->square clientX clientY square->square-ids)
+
+        _ (when flags/runtime-checks?
+            (when-not (valid-square? square)
+              (error-log "Invalid square in on-mouse-up:" square)))
+
+        ;; NOTE: piece may be nil if there is no piece on the square
+        piece (get position square)]
+
+    ;; call their onMouseupSquare function if provided
+    (when (fn? onMouseupSquare)
+      (let [js-board-info (js-obj "orientation" orientation
+                                  "piece" piece
+                                  "position" (clj->js position)
+                                  "square" square)]
+        (onMouseupSquare js-board-info js-evt)))))
 
 (defn update-dragging-piece-position!
   "Update the x, y coordinates of the dragging piece on the next animationFrame"
@@ -258,7 +280,7 @@
 
 (defn on-mouseleave-root-el
   "Clear the current mouse position when the cursor leaves the board."
-  [board-state]
+  [board-state _js-evt]
   (swap! board-state assoc :square-mouse-is-currently-hovering-over nil))
 
 (defn on-touchmove
@@ -370,7 +392,7 @@
             y (gobj/get js-touch "clientY")]
         (drop-piece! board-state x y)))))
 
-(defn on-mouseup
+(defn on-mouseup-window
   [board-state js-evt]
   (let [{:keys [dragging?]} @board-state]
     ;; do nothing if we are not actively dragging
@@ -384,19 +406,20 @@
   [root-el board-state]
   ;; global window events
   (.addEventListener js/window "mousemove" (fn [js-evt] (on-mousemove-window board-state js-evt)))
-  (.addEventListener js/window "mouseup" (fn [js-evt] (on-mouseup board-state js-evt)))
-  (.addEventListener js/window "touchend" (fn [js-evt] (on-touchend board-state js-evt)))
+  (.addEventListener js/window "mouseup"   (fn [js-evt] (on-mouseup-window board-state js-evt)))
+  (.addEventListener js/window "touchend"  (fn [js-evt] (on-touchend board-state js-evt)))
   (.addEventListener js/window "touchmove" (fn [js-evt] (on-touchmove board-state js-evt)))
-  (.addEventListener js/window "resize" (gfunctions/debounce
-                                          (fn [] (api/resize! board-state))
-                                          10)) ;; TODO: make this debounce value configurable
+  (.addEventListener js/window "resize"    (gfunctions/debounce
+                                             (fn [] (api/resize! board-state))
+                                             10)) ;; TODO: make this debounce value configurable
 
   ;; events on the root element
-  (.addEventListener root-el "mouseleave" (fn [_js-evt] (on-mouseleave-root-el board-state)))
-  (.addEventListener root-el "mousemove" (fn [js-evt] (on-mousemove-root-el board-state js-evt)))
-  (.addEventListener root-el "mousedown" (partial on-mousedown-root-el board-state))
-  (.addEventListener root-el "touchstart" (partial on-touch-start board-state))
-  (.addEventListener root-el "transitionend" (partial on-transition-end board-state)))
+  (.addEventListener root-el "mouseleave" (fn [js-evt] (on-mouseleave-root-el board-state js-evt)))
+  (.addEventListener root-el "mousemove"  (fn [js-evt] (on-mousemove-root-el board-state js-evt)))
+  (.addEventListener root-el "mousedown"  (fn [js-evt] (on-mousedown-root-el board-state js-evt)))
+  (.addEventListener root-el "mouseup"    (fn [js-evt] (on-mouseup-root-el board-state js-evt)))
+  (.addEventListener root-el "touchstart" (fn [js-evt] (on-touch-start board-state js-evt)))
+  (.addEventListener root-el "transitionend" (fn [js-evt] (on-transition-end board-state js-evt))))
 
 ;; TODO: move this to util ns
 (defn toggle-orientation [o]
