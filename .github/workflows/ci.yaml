@@ -22,10 +22,18 @@ jobs:
           node-version: 18.x
       - name: Install dependencies
         run: yarn install
+
       - name: Run unit tests
         run: npm run test
+
       - name: Run cypress
         uses: cypress-io/github-action@v5
         with:
           build: npm run build-ci
           start: npm run local-dev
+
+      - uses: DeLaGuardo/setup-clj-kondo@master
+        with:
+          version: '2020.04.05'
+      - name: Run clj-kondo
+        run: clj-kondo --lint src-cljs
