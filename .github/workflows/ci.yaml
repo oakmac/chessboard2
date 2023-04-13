@@ -27,5 +27,5 @@ jobs:
       - name: Run cypress
         uses: cypress-io/github-action@v5
         with:
-          build: npm run build-esm
+          build: npm run build-ci
           start: npm run local-dev
