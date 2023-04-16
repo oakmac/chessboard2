@@ -155,7 +155,7 @@ const examplesGroups = [
   {
     name: 'Integration',
     examples: [
-      '5000',
+      '5000-allow-legal-moves',
       '5001-play-random-computer',
       '5002-random-vs-random',
       '5003',
