@@ -857,43 +857,78 @@
 
 (defn hide-coordinates!
   [board-state]
-  (swap! board-state assoc :show-coords? false))
-  ; (let [container-id (:container-id @board-state)]
-  ;   (add-class! (dom-util/get-element container-id) "hide-notation-cbe71")
-  ;   (swap! board-state assoc :show-notation? false)))
+  (swap! board-state update :coords
+    (fn [coords-map]
+      (reduce
+        (fn [new-coords [position cfg]]
+          (assoc new-coords position (assoc cfg :show? false)))
+        {}
+        coords-map))))
 
 (defn show-coordinates!
   [board-state]
-  (swap! board-state assoc :show-coords? true))
-  ; (let [container-id (:container-id @board-state)]
-  ;   (remove-class! (dom-util/get-element container-id) "hide-notation-cbe71")
-  ;   (swap! board-state assoc :show-notation? true)))
+  (swap! board-state update :coords
+    (fn [coords-map]
+      (reduce
+        (fn [new-coords [position cfg]]
+          (assoc new-coords position (assoc cfg :show? true)))
+        {}
+        coords-map))))
 
 (defn toggle-coordinates!
   [board-state]
-  (swap! board-state update :show-coords? not))
-  ; (if (:show-notation? @board-state)
-  ;   (hide-coordinates! board-state)
-  ;   (show-coordinates! board-state)))
+  (swap! board-state update :coords
+    (fn [coords-map]
+      (reduce
+        (fn [new-coords [position cfg]]
+          (assoc new-coords position (update cfg :show? not)))
+        {}
+        coords-map))))
 
 ;; -----------------------------------------------------------------------------
 ;; Constructor
 
-(defn init-dom!
-  [board-state]
-  (let [{:keys [root-el] :as board-cfg} @board-state]
-    ;; write the container <div>s to the DOM
-    (dom-util/set-inner-html! root-el (html/BoardContainer board-cfg))
-    ;; calculate width / height
-    (api/resize! board-state)))
-
 ;; recommend they style the coordinate text using CSS
 ;; the chessboard API can support the "on/off" and position stuff
+
+;; FIXME: I think this needs to change
+;; * "inside" or "outside" can be controlled using CSS
+;; * "letters" or "numbers" is determined by ranks / files
 (def default-coords
   {:bottom {:position "outside", :show? false, :type "letters"}
    :left   {:position "outside", :show? false, :type "numbers"}
    :right  {:position "outside", :show? false, :type "numbers"}
    :top    {:position "outside", :show? false, :type "letters"}})
+
+;; TODO: move this to DOM ops?
+(defn update-coords!
+  "Update the DOM to match the coordinate config."
+  [board-state coords-config]
+  ; (js/console.log "updating coords:" (pr-str coords-config))
+  (let [{:keys [container-id] :as _board-state} @board-state
+        board-container-sel (str "#" container-id " .board-container-41a68")
+        board-container-el (dom-util/get-element board-container-sel)
+        _ (when flags/runtime-checks?
+            (when-not board-container-el
+              (error-log "Unable to find board-container-el in update-coords!")))]
+    (doseq [[position-trbl css-class] css/coords->css]
+      (let [sel (str "#" container-id " ." css-class)
+            el (dom-util/get-element sel)
+            cfg (get coords-config position-trbl)
+            show? (true? (:show? cfg))]
+        (dom-util/remove-element! el)
+        (when show?
+          ;; FIXME: Pass their custom formatting fn here
+          (dom-util/append-html! board-container-el (html/CoordinateRow position-trbl)))))))
+
+(defn init-dom!
+  [board-state]
+  (let [{:keys [coords root-el] :as board-cfg} @board-state]
+    ;; write the container <div>s to the DOM
+    (dom-util/set-inner-html! root-el (html/BoardContainer board-cfg))
+    ;; calculate width / height
+    (api/resize! board-state)
+    (update-coords! board-state coords)))
 
 (def default-animate-speed-ms 80)
 ; (def default-animate-speed-ms 2500)
@@ -906,12 +941,9 @@
       (if (= "white" (:orientation new-state))
         (set-white-orientation! board-atom)
         (set-black-orientation! board-atom)))
-    ;; FIXME: coordinate config change
-    ;; show / hide coordinates
-    (when-not (= (:show-coords? old-state) (:show-coords? new-state))
-      (if (:show-coords? new-state)
-         (remove-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71")
-         (add-class! (dom-util/get-element (:container-id new-state)) "hide-notation-cbe71")))
+    ;; coordinate config change
+    (when-not (= (:coords old-state) (:coords new-state))
+      (update-coords! board-atom (:coords new-state)))
     ;; fire their onChange event
     (let [on-change-fn (:onChange new-state)
           old-position (:position old-state)
