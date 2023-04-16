@@ -302,7 +302,8 @@ function writeDownloadPage () {
     head: headHTML,
     header: headerHTML,
     jsCDNIntegrity,
-    jsCDNScript
+    jsCDNScript,
+    jsCDNUrl
   })
   const filename = 'website/download.html'
   fs.writeFileSync(filename, html, encoding)
