@@ -12,7 +12,7 @@
 
 (declare piece->imgsrc)
 
-(defn NotationFiles
+(defn FileCoordinates
   [_cfg]
   (let [num-files 8
         files (range 0 num-files)]
@@ -22,10 +22,10 @@
           (str "<div class='file-44ae4'>" (idx->alpha f) "</div>")))
       (apply str))))
 
-(defn NotationRanks
+(defn RankCoordinates
   [_cfg]
   (let [num-ranks 8
-        ranks (range 0 num-ranks)]
+        ranks (reverse (range 1 (inc num-ranks)))]
     (->> ranks
       (map
         (fn [r]
@@ -204,11 +204,11 @@
     @html))
 
 (defn BoardContainer
-  [{:keys [container-id orientation show-notation? items-container-id squares-container-id] :as opts}]
+  [{:keys [container-id orientation items-container-id squares-container-id] :as opts}]
   (template
     (str
-      "<div class='chessboard-21da3{show-notation}' id='{container-id}'>"
-      "<div class=board-container-41a68>"
+      "<div class='chessboard-21da3' id='{container-id}'>"
+      "<div class='board-container-41a68'>"
       "<div id='{items-container-id}' class='items-container-c9182'></div>"
       "<div id='{squares-container-id}' class='" css/squares " "
         (if (= orientation "white")
@@ -217,14 +217,15 @@
            ;; NOTE: Squares container starts off with zero height and then is adjusted
         "' style='height:0'>{Squares}"
       "</div>"   ;; end .squares-2dea6
-      "<div class='notation-files-c3c0a'>{NotationFiles}</div>"
-      "<div class='notation-ranks-d3f97'>{NotationRanks}</div>"
+      "<div class='coordinates-top-f30c9'>{FileCoordinates}</div>"
+      "<div class='coordinates-right-7fc08'>{RankCoordinates}</div>"
+      "<div class='coordinates-bottom-ac241'>{FileCoordinates}</div>"
+      "<div class='coordinates-left-183e9'>{RankCoordinates}</div>"
       "</div>"   ;; end .board-container-41a68
       "</div>") ;; end .chessboard-21da3
     {:container-id container-id
+     :FileCoordinates (FileCoordinates opts)
      :items-container-id items-container-id
-     :NotationFiles (NotationFiles opts)
-     :NotationRanks (NotationRanks opts)
-     :show-notation (if show-notation? "" " hide-notation-cbe71")
+     :RankCoordinates (RankCoordinates opts)
      :Squares (Squares opts)
      :squares-container-id squares-container-id}))

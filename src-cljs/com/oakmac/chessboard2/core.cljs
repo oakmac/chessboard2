@@ -80,6 +80,7 @@
                                                         ;; FIXME: need "source" here
                                                         ;; "source" "FIXME"
                                                         "square" square))
+                                                        ;; FIXME: add "file" and "rank" values here?
                                    (catch js/Error err
                                      (error-log "Runtime error with provided onDragStart function:" err)
                                      nil))))]
@@ -161,7 +162,7 @@
     ;; return null
     nil))
 
-(defn on-mousedown-root-el
+(defn on-mousedown-items-el
   "This function fires on every 'mousedown' event inside the root DOM element"
   [board-state js-evt]
   (dom-util/safe-prevent-default js-evt)
@@ -203,7 +204,7 @@
     ;; return null
     nil))
 
-(defn on-mouseup-root-el
+(defn on-mouseup-items-el
   "This function fires on every 'mouseup' event inside the root DOM element"
   [board-state js-evt]
   (let [{:keys [onMouseupSquare orientation position square->square-ids]} @board-state
@@ -245,7 +246,7 @@
 
 ;; NOTE: this function has the potential to be a perf bottleneck
 ;;       need to benchmark and optimize this function
-(defn on-mousemove-root-el
+(defn on-mousemove-items-el
   [board-state js-evt]
   (let [clientX (gobj/get js-evt "clientX")
         clientY (gobj/get js-evt "clientY")
@@ -278,7 +279,7 @@
                                     "fromSquare" (if prev-square prev-square "off-board"))]
           (onMouseenterSquare js-board-info js-evt))))))
 
-(defn on-mouseleave-root-el
+(defn on-mouseleave-items-el
   "Clear the current mouse position when the cursor leaves the board."
   [board-state _js-evt]
   (swap! board-state assoc :square-mouse-is-currently-hovering-over nil))
@@ -413,13 +414,14 @@
                                              (fn [] (api/resize! board-state))
                                              10)) ;; TODO: make this debounce value configurable
 
-  ;; events on the root element
-  (.addEventListener root-el "mouseleave" (fn [js-evt] (on-mouseleave-root-el board-state js-evt)))
-  (.addEventListener root-el "mousemove"  (fn [js-evt] (on-mousemove-root-el board-state js-evt)))
-  (.addEventListener root-el "mousedown"  (fn [js-evt] (on-mousedown-root-el board-state js-evt)))
-  (.addEventListener root-el "mouseup"    (fn [js-evt] (on-mouseup-root-el board-state js-evt)))
-  (.addEventListener root-el "touchstart" (fn [js-evt] (on-touch-start board-state js-evt)))
-  (.addEventListener root-el "transitionend" (fn [js-evt] (on-transition-end board-state js-evt))))
+  ;; events on the Items Container element
+  (let [items-el (dom-util/get-element (:items-container-id @board-state))]
+    (.addEventListener items-el "mouseleave" (fn [js-evt] (on-mouseleave-items-el board-state js-evt)))
+    (.addEventListener items-el "mousemove"  (fn [js-evt] (on-mousemove-items-el board-state js-evt)))
+    (.addEventListener items-el "mousedown"  (fn [js-evt] (on-mousedown-items-el board-state js-evt)))
+    (.addEventListener items-el "mouseup"    (fn [js-evt] (on-mouseup-items-el board-state js-evt)))
+    (.addEventListener items-el "touchstart" (fn [js-evt] (on-touch-start board-state js-evt)))
+    (.addEventListener items-el "transitionend" (fn [js-evt] (on-transition-end board-state js-evt)))))
 
 ;; TODO: move this to util ns
 (defn toggle-orientation [o]
@@ -1019,7 +1021,7 @@
       ;; FIXME: implement these
       ;; https://github.com/oakmac/chessboard2/issues/25
       "coordinates" #() ;; FIXME: returns the current state with 0 arg, allows changing with other args
-      "getCoordinates" #() ;; FIXME: returns the config object
+      "getCoordinates" (partial js-api/get-coordinates board-state)
       "hideCoordinates" (partial hide-coordinates! board-state)
       "setCoordinates" #() ;; FIXME: sets the config object (do we need this? just use .setConfig() ?)
       "showCoordinates" (partial show-coordinates! board-state)

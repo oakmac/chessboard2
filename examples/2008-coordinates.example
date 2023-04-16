@@ -1,0 +1,36 @@
+===== id
+2008-coordinates
+
+===== Name
+Coordinates
+
+===== DescriptionMD
+Use the `coordinates` property to control how coordinates display on the board.
+
+===== HTML
+<div id="myBoard" style="padding: 40px; width: 400px"></div>
+
+<button id="showCoordinatesBtn">Show Coordiantes</button>
+<button id="hideCoordinatesBtn">Hide Coordinates</button>
+<button id="toggleCoordinatesBtn">Toggle Coordinates</button>
+
+===== JS
+const boardConfig = {
+  coordinates: 'default',
+  // coordinates: 'bottom left'
+  // coordinates: ["left", "top", "right"]
+  position: 'start'
+}
+const board = Chessboard2('myBoard', boardConfig)
+
+attachEvent('showCoordinatesBtn', 'click', () => {
+  board.showCoordinates()
+})
+
+attachEvent('hideCoordinatesBtn', 'click', () => {
+  board.hideCoordinates()
+})
+
+attachEvent('toggleCoordinatesBtn', 'click', () => {
+  board.toggleCoordinates()
+})
