@@ -112,21 +112,6 @@ npm run cypress
 - animate an arrow
 - `removeArrow(<arrowId>, <arrowId>, etc)`
 
-## HTML / DOM Design
-
-> TODO: **27 Oct 2022** this is currently inaccurate. Need to fix and create accurate write-up of how it works
-
-- the board-container has CSS `position: relative` and known `width` and `height` values
-- the board contains DOM elements (called "items"), all of which have `position: absolute`
-  - squares (usually 64)
-  - pieces
-  - arrows
-  - dots
-  - X's
-  - your custom element!
-- chessboard keeps an internal register of the location of these elements on the board
-  and will update their position in response to a change
-
 ## License
 
 [ISC License](LICENSE.md)
