@@ -88,7 +88,7 @@
       (let [piece-id (get square->piece-id square)
             _ (when flags/runtime-checks?
                 (when-not piece-id
-                  (error-log "Unable to find piece-id in begin-dragging!")))
+                  (error-log "Unable to find piece-id in begin-dragging")))
             piece-el (dom-util/get-element piece-id)
             ;; NOTE: these two calls could be combined for a quick perf improvement
             piece-height (dom-util/get-height piece-el)
@@ -140,6 +140,8 @@
         on-touchsquare-result (when (fn? onTouchSquare)
                                 (let [js-board-info (js-obj "orientation" orientation
                                                             "position" (clj->js position))]
+                                                            ;; FIXME: add square, piece here
+                                                            ;; what else?
                                   (onTouchSquare square piece js-board-info)))]
 
     ;; begin dragging if configured

@@ -1,5 +1,5 @@
 ===== id
-5001
+5001-play-random-computer
 
 ===== Name
 Play Random Computer
@@ -30,7 +30,7 @@ You can integrate chessboard2 with the [chess.js library](https://github.com/jhl
 const game = new Chess()
 
 // the board object is "dumb":
-// - reflects the current position
+// - shows the current position from the game
 // - handles input events from users
 const boardConfig = {
   draggable: true,
@@ -151,6 +151,20 @@ function onDragStart (dragStartEvt) {
 
   // only pick up pieces for White
   if (!isWhitePiece(dragStartEvt.piece)) return false
+
+  // what moves are available to White from this square?
+  const legalMoves = game.moves({
+    square: dragStartEvt.square,
+    verbose: true
+  })
+
+  // do nothing if there are no legal moves
+  if (legalMoves.length === 0) return false
+
+  // place Circles on the possible target squares
+  legalMoves.forEach((move) => {
+    board.addCircle(move.to)
+  })
 }
 
 function isWhitePiece (piece) { return /^w/.test(piece) }
@@ -177,10 +191,11 @@ function onDrop (dropEvt) {
     promotion: 'q' // NOTE: always promote to a queen for example simplicity
   })
 
+  // remove all Circles from the board
+  board.clearCircles()
+
   // the move was legal
   if (move) {
-    board.clearCircles()
-
     // reset the pending move
     pendingMove = null
 
@@ -193,8 +208,6 @@ function onDrop (dropEvt) {
       window.setTimeout(makeRandomMove, 250)
     })
   } else {
-    board.clearCircles()
-
     // reset the pending move
     pendingMove = null
 
