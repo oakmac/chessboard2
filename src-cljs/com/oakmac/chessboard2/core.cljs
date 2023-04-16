@@ -11,7 +11,7 @@
     [com.oakmac.chessboard2.util.data-transforms :refer [map->js-return-format]]
     [com.oakmac.chessboard2.util.dom :as dom-util :refer [add-class! append-html! remove-class! remove-element!]]
     [com.oakmac.chessboard2.util.ids :refer [random-id]]
-    [com.oakmac.chessboard2.util.logging :refer [error-log warn-log]]
+    [com.oakmac.chessboard2.util.logging :refer [error-log info-log warn-log]]
     [com.oakmac.chessboard2.util.moves :refer [move->map]]
     [com.oakmac.chessboard2.util.pieces :refer [random-piece-id]]
     [com.oakmac.chessboard2.util.predicates :refer [arrow-item? circle-item? valid-color? valid-move-string? valid-square? valid-piece?]]
@@ -1050,6 +1050,9 @@
      (if-not root-el
        (error-log "Unable to find DOM element:" el)
        (constructor2 root-el js-opts)))))
+
+(when flags/runtime-checks?
+  (info-log "runtime-checks? are enabled ✅"))
 
 ;; Export / Module
 (goog-define ES_MODULE false)
