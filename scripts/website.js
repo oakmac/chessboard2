@@ -19,7 +19,7 @@ const cmReader = new commonmark.Parser()
 const cmWriter = new commonmark.HtmlRenderer()
 
 // toggle development version
-const useLocalDevFiles = false
+const useLocalDevFiles = true
 const jsCDNUrl = 'https://unpkg.com/@chrisoakman/chessboard2@0.4.0/dist/chessboard2.min.js'
 const jsCDNIntegrity = 'sha384-zl6zz0W4cEX3M2j9+bQ2hv9af6SF5pTFrnm/blYYjBmqSS3tdJChVrY9nenhLyNg'
 const jsCDNScript = '<script src="' + jsCDNUrl + '" integrity="' + jsCDNIntegrity + '" crossorigin="anonymous"></script>'
