@@ -888,17 +888,17 @@
 ;; -----------------------------------------------------------------------------
 ;; Constructor
 
-;; recommend they style the coordinate text using CSS
-;; the chessboard API can support the "on/off" and position stuff
-
-;; FIXME: I think this needs to change
-;; * "inside" or "outside" can be controlled using CSS
-;; * "letters" or "numbers" is determined by ranks / files
+;; Notes on Coordinates:
+;; * recommend they style the coordinate text using CSS
+;; * chessboard2 API can support show / hide
+;; * TRBL positioning options
+;; * "style" can be String, Map, or Function
+;; * "renderHTML" can be String or Function
 (def default-coords
-  {:bottom {:position "outside", :show? false, :type "letters"}
-   :left   {:position "outside", :show? false, :type "numbers"}
-   :right  {:position "outside", :show? false, :type "numbers"}
-   :top    {:position "outside", :show? false, :type "letters"}})
+  {:top    {:show? false, :type "files", :style ""}
+   :right  {:show? false, :type "ranks", :style ""}
+   :bottom {:show? false, :type "files", :style ""}
+   :left   {:show? false, :type "ranks", :style ""}})
 
 ;; TODO: move this to DOM ops?
 (defn update-coords!

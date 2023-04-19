@@ -2,7 +2,10 @@
   (:require
    [cljs.test :refer [deftest is]]
    [com.oakmac.chessboard2.constants :refer [animate-speed-strings->times start-position]]
-   [com.oakmac.chessboard2.js-api :refer [parse-constructor-second-arg parse-move-args parse-set-position-args]]
+   [com.oakmac.chessboard2.js-api :refer [parse-constructor-second-arg
+                                          parse-move-args
+                                          parse-set-coordinates-args
+                                          parse-set-position-args]]
    [com.oakmac.chessboard2.util.fen :refer [fen->position]]))
 
 (def ruy-lopez-fen "r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R")
@@ -111,3 +114,41 @@
   (let [callback-fn1 (fn [] 1)]
     (is (= (parse-set-position-args [212 (js-obj "onComplete" callback-fn1)])
            {:animateSpeed 212, :onComplete callback-fn1}))))
+
+;; TODO: make this work
+; (deftest parse-set-coordinates-args-test
+;   (is (= (parse-set-coordinates-args nil)
+;          {}))
+;   (is (= (parse-set-coordinates-args "")
+;          {}))
+;   (is (= (parse-set-coordinates-args "tl")
+;          {:top  {:type "ranks"}
+;           :left {:type "files"}}))
+;   (is (= (parse-set-coordinates-args "trbl")
+;          {:top    {:type "ranks"}
+;           :right  {:type "files"}
+;           :bottom {:type "ranks"}
+;           :left   {:type "files"}}))
+;   (is (= (parse-set-coordinates-args "tlaz")
+;          {:top  {:type "ranks"}
+;           :left {:type "files"}})
+;       "invalid TRBL values are ignored")
+;   (is (= (parse-set-coordinates-args (array))
+;          {}))
+;   (is (= (parse-set-coordinates-args (array "left" "bottom"))
+;          {:left   {:type "files"}
+;           :bottom {:type "ranks"}}))
+;   (is (= (parse-set-coordinates-args (array "bottom" "left"))
+;          {:left   {:type "files"}
+;           :bottom {:type "ranks"}})
+;       "order does not matter")
+;   (is (= (parse-set-coordinates-args (array "left" "bottom" "foo"))
+;          {:left   {:type "files"}
+;           :bottom {:type "ranks"}})
+;       "invalid TRBL values are ignored")
+;   (is (= (parse-set-coordinates-args (js-obj "left"   (js-obj "style" "font-size: 13px; color: blue;")
+;                                              "bottom" (js-obj "style" "text-transform: uppercase;")))
+;          {:left   {:type "files"
+;                    :style "font-size: 13px; color: blue;"}
+;           :bottom {:type "ranks"
+;                    :style "text-transform: uppercase;"}})))

@@ -146,6 +146,11 @@
       (apply merge))
     {}))
 
+; (defn parse-set-coordinates-arg
+;   "TODO: write me :-)"
+;   [arg]
+;   nil)
+
 ;; FIXME: handle 0-0 and 0-0-0, user will have to specify white or black
 ;; FIXME: the .move() method should support pieces or item-ids
 ;; .movePiece() --> only Pieces
@@ -341,5 +346,3 @@
   ;       :else (warn-log "Invalid args passed to config():" arg1 arg2)))))
 
 ;; TODO: actually add or remove coordinate elements from the DOM
-
-;; 583bb76a-10aa-4079-8d19-83a62ab0bf45
