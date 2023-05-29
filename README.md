@@ -24,13 +24,13 @@ Or use via [CDN](https://en.wikipedia.org/wiki/Content_delivery_network):
 ```html
 <!-- add stylesheet via CDN: -->
 <link rel="stylesheet"
-      href="https://unpkg.com/@chrisoakman/chessboard2@0.4.0/dist/chessboard2.min.css"
-      integrity="sha384-MZONbGYADvdl4hLalNF4d+E/6BVdYIty2eSgtkCbjG7iQJAe35a7ujTk1roZIdJ+"
+      href="https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.css"
+      integrity="sha384-47VeTDpmy4yT21gKPXQcLQYQZwlmz27gEH5NTrOmTk3G/SGvMyltclOW/Q8uE+sL"
       crossorigin="anonymous">
 
 <!-- add JS via CDN: -->
-<script src="https://unpkg.com/@chrisoakman/chessboard2@0.4.0/dist/chessboard2.min.js"
-        integrity="sha384-zl6zz0W4cEX3M2j9+bQ2hv9af6SF5pTFrnm/blYYjBmqSS3tdJChVrY9nenhLyNg"
+<script src="https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.js"
+        integrity="sha384-/KwQCjA1GWovZNV3QDVtvSMDzO4reGgarF/RqHipr7hIUElH3r5zNl9WEPPOBRIF"
         crossorigin="anonymous"></script>
 ```
 

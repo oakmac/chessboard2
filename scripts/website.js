@@ -20,14 +20,14 @@ const cmWriter = new commonmark.HtmlRenderer()
 
 // toggle development version
 const useLocalDevFiles = true
-const jsCDNUrl = 'https://unpkg.com/@chrisoakman/chessboard2@0.4.0/dist/chessboard2.min.js'
-const jsCDNIntegrity = 'sha384-zl6zz0W4cEX3M2j9+bQ2hv9af6SF5pTFrnm/blYYjBmqSS3tdJChVrY9nenhLyNg'
+const jsCDNUrl = 'https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.js'
+const jsCDNIntegrity = 'sha384-/KwQCjA1GWovZNV3QDVtvSMDzO4reGgarF/RqHipr7hIUElH3r5zNl9WEPPOBRIF'
 const jsCDNScript = '<script src="' + jsCDNUrl + '" integrity="' + jsCDNIntegrity + '" crossorigin="anonymous"></script>'
 
 // const esmCDNScript = '<script src="https://unpkg.com/@chrisoakman/chessboard2@0.3.0/dist/chessboard2.min.mjs" integrity="sha384-1yHocjOlRFtt1hT94ytsOQ/8eylPRk9Gj/DLNca1faolxec6F7k4c+f3S3FS60Rf" crossorigin="anonymous"></script>'
 
-const cssCDNUrl = 'https://unpkg.com/@chrisoakman/chessboard2@0.4.0/dist/chessboard2.min.css'
-const cssCDNIntegrity = 'sha384-MZONbGYADvdl4hLalNF4d+E/6BVdYIty2eSgtkCbjG7iQJAe35a7ujTk1roZIdJ+'
+const cssCDNUrl = 'https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.css'
+const cssCDNIntegrity = 'sha384-47VeTDpmy4yT21gKPXQcLQYQZwlmz27gEH5NTrOmTk3G/SGvMyltclOW/Q8uE+sL'
 const cssCDNLink = '<link rel="stylesheet" href="' + cssCDNUrl + '" integrity="' + cssCDNIntegrity + '" crossorigin="anonymous">'
 
 let jsScript = jsCDNScript
