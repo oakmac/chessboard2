@@ -1,4 +1,5 @@
 .clj-kondo/
+.github/
 .lsp/
 .shadow-cljs/
 00_scrap/
