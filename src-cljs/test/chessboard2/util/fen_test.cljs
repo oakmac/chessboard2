@@ -1,8 +1,8 @@
 (ns test.chessboard2.util.fen-test
   (:require
-   [cljs.test :refer [deftest is testing]]
-   [com.oakmac.chessboard2.constants :refer [start-fen start-position]]
-   [com.oakmac.chessboard2.util.fen :refer [fen->piece-code fen->position piece-code->fen position->fen valid-fen?]]))
+    [cljs.test :refer [deftest is testing]]
+    [com.oakmac.chessboard2.constants :refer [start-fen start-position]]
+    [com.oakmac.chessboard2.util.fen :refer [fen->piece-code fen->position piece-code->fen position->fen valid-fen?]]))
 
 (deftest piece-code-fen-test
   (testing "fen->piece-code"
@@ -19,7 +19,7 @@
 (deftest fen->position-test
   (is (= {} (fen->position "8/8/8/8/8/8/8/8")))
   (is (= {"a2" "wP", "b2" "bP"} (fen->position "8/8/8/8/8/8/Pp6/8"))))
-  ;; FIXME: need more tests here
+;; FIXME: need more tests here
 
 (deftest valid-fen-test
   (is (true? (valid-fen? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")))
@@ -39,7 +39,14 @@
    "d4" "wP"
    "e4" "wK"})
 
+(def e4-and-d4-played
+  (-> start-position
+    (dissoc "e2" "d2")
+    (assoc "e4" "wP")
+    (assoc "d4" "wP")))
+
 (deftest position->fen-test
   (is (= (position->fen {}) "8/8/8/8/8/8/8/8"))
   (is (= (position->fen start-position) start-fen))
-  (is (= (position->fen endgame1) "8/8/3k4/8/3PK3/8/8/8")))
+  (is (= (position->fen endgame1) "8/8/3k4/8/3PK3/8/8/8"))
+  (is (= (position->fen e4-and-d4-played) "rnbqkbnr/pppppppp/8/8/3PP3/8/PPP2PPP/RNBQKBNR")))

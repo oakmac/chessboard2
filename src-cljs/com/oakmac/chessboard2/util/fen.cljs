@@ -45,7 +45,7 @@
     (str/replace "11111" "5")
     (str/replace "1111" "4")
     (str/replace "111" "3")
-    (str/replace "11" "3")))
+    (str/replace "11" "2")))
 
 (defn simplify-fen-string
   "1) cut off any move, casting, etc info from the end of a FEN string (we are only interested in board position)
