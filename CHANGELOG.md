@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.0] - 2023-05-29
+
+### Fixed
+- Fixed bug with `position->fen` function ([Issue #47](https://github.com/oakmac/chessboard2/issues/47) - thank you [@gdm3](https://github.com/gdm3)!)
+
 ## [0.4.0] - 2023-04-08
 
 ### Added
