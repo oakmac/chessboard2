@@ -18,8 +18,18 @@
     "black"
     "white"))
 
+(defn valid-js-coords? [c]
+  (cond
+    (= c "default") true
+    ;; FIXME: validate the config here
+    :else false))
+
 (def config-props
-  {:draggable
+  {:coordinates
+   {:default-val nil
+    :valid-fn valid-js-coords?}
+
+   :draggable
    {:default-val false
     :valid-fn boolean?}
 

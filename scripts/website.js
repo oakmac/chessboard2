@@ -129,6 +129,7 @@ const examplesGroups = [
       '3023-set-random-position',
       '3003-clear',
       '3004-move-pieces',
+      '3005-coordinates',
       '3008-analysis-arrows',
       '3009-circles',
       '3005-orientation',

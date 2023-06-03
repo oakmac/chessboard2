@@ -146,6 +146,11 @@
       (apply merge))
     {}))
 
+; (defn parse-set-coordinates-arg
+;   "TODO: write me :-)"
+;   [arg]
+;   nil)
+
 ;; FIXME: handle 0-0 and 0-0-0, user will have to specify white or black
 ;; FIXME: the .move() method should support pieces or item-ids
 ;; .movePiece() --> only Pieces
@@ -310,3 +315,34 @@
         (string? arg1) (set-config board-state arg1 arg2)
         (goog/isObject arg1) (set-config board-state arg1 nil)
         :else (warn-log "Invalid args passed to config():" arg1 arg2)))))
+
+(defn get-coordinates
+  "Returns a JS Object of the current coordinates config."
+  [board-state]
+  (clj->js (:coords @board-state)))
+
+(defn set-coordinates
+  "Set the coordinate config."
+  [board-state js-coords-cfg])
+  ;; FIXME: validate js-coords-cfg here
+
+(defn toggle-coordinates
+  [board-state])
+  ;; FIXME: write me
+
+(defn coordinates
+  "Get or Set the coordinates."
+  [board-state])
+  ;; FIXME: write me
+  ; (let [js-args (array)]
+  ;   (copy-arguments js-args)
+  ;   (.shift js-args)
+  ;   (let [arg1 (aget js-args 0)]
+  ;         ; arg2 (aget js-args 1)]
+  ;     (cond
+  ;       (not arg1) (get-config board-state)
+  ;       (string? arg1) (set-config board-state arg1 arg2)
+  ;       (goog/isObject arg1) (set-config board-state arg1 nil)
+  ;       :else (warn-log "Invalid args passed to config():" arg1 arg2)))))
+
+;; TODO: actually add or remove coordinate elements from the DOM
