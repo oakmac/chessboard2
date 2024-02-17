@@ -1,5 +1,6 @@
 (ns com.oakmac.chessboard2.config
   (:require
+    [clojure.string :as str]
     [com.oakmac.chessboard2.util.predicates :refer [valid-position?]]
     [com.oakmac.chessboard2.util.string :refer [safe-lower-case]]))
 
@@ -18,10 +19,19 @@
     "black"
     "white"))
 
+(defn valid-piece-theme?
+  [o]
+  (or (str/blank? o)
+      (str/includes? o "{piece}")))
+
 (def config-props
   {:draggable
    {:default-val false
     :valid-fn boolean?}
+
+   :pieceTheme
+   {:default-val ""
+    :valid-fn valid-piece-theme?}
 
    :dropOffBoard
    {:default-val "snapback"

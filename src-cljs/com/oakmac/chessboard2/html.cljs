@@ -1,14 +1,14 @@
 (ns com.oakmac.chessboard2.html
   "functions that return raw HTML"
   (:require
+    [clojure.string :as str]
     [com.oakmac.chessboard2.css :as css]
     [com.oakmac.chessboard2.feature-flags :as flags]
     [com.oakmac.chessboard2.pieces :refer [wikipedia-theme]]
     [com.oakmac.chessboard2.util.arrows :as arrow-util]
     [com.oakmac.chessboard2.util.math :refer [half]]
     [com.oakmac.chessboard2.util.squares :refer [idx->alpha square->dimensions]]
-    [com.oakmac.chessboard2.util.template :refer [template]]
-    [goog.crypt.base64 :as base64]))
+    [com.oakmac.chessboard2.util.template :refer [template]]))
 
 (declare piece->imgsrc)
 
@@ -33,7 +33,7 @@
       (apply str))))
 
 (defn DraggingPiece
-  [{:keys [height id piece piece-square-pct width x y]}]
+  [{:keys [height pieceTheme id piece piece-square-pct width x y]}]
   (let [piece-pct (* 100 piece-square-pct)]
     (template
       (str
@@ -41,7 +41,7 @@
          ;; FIXME: this needs to be customizable for the user
          ;; https://github.com/oakmac/chessboard2/issues/26
          ;; FIXME: need alt text here for the image
-         "<img src='data:image/svg+xml;base64," (piece->imgsrc piece) "' alt='' style='height:" piece-pct "%;width:" piece-pct "%;' />"
+         "<img src='" (piece->imgsrc pieceTheme piece)  "' alt='' style='height:" piece-pct "%;width:" piece-pct "%;' />"
         "</div>")
       {:height height
        :id id
@@ -139,11 +139,12 @@
          :id id
          :opacity opacity}))))
 
-;; TODO: they need the ability to override this
-;; should be able to put random things on the board, like a toaster SVG
 (defn piece->imgsrc
-  [piece]
-  (base64/encodeString (get wikipedia-theme (name piece))))
+  [pieceTheme piece]
+  (if (str/blank? pieceTheme)
+    (str/join "" ["data:image/svg+xml;base64," (get wikipedia-theme (name piece))])
+    (str/replace pieceTheme #"\{piece\}" piece)))
+
 
 (def piece-required-keys
   #{:board-width
@@ -157,7 +158,7 @@
 
 ;; FIXME: need alt text here for the image
 (defn Piece
-  [{:keys [board-orientation board-width _color id hidden? piece piece-square-pct square] :as piece-config}]
+  [{:keys [board-orientation pieceTheme board-width _color id hidden? piece piece-square-pct square] :as piece-config}]
   (when flags/runtime-checks?
     (when (or (not= piece-required-keys (set (keys piece-config)))
               (some nil? (vals piece-config)))
@@ -177,7 +178,7 @@
        "'>"
      ;; FIXME: this needs to be customizable for the user
      ;; https://github.com/oakmac/chessboard2/issues/26
-     "<img src='data:image/svg+xml;base64," (piece->imgsrc piece) "' alt='' style='height:" piece-pct "%;width:" piece-pct "%;' />"
+     "<img src='" (piece->imgsrc pieceTheme piece) "' alt='' style='height:" piece-pct "%;width:" piece-pct "%;' />"
      "</div>")))
 
 (defn Square
