@@ -9,11 +9,12 @@
 
 (defn animation->dom-op-add
   [{:keys [duration-ms instant? on-finish piece square] :as _animation} board-state]
-  (let [{:keys [animate-speed-ms board-width orientation piece-square-pct]} @board-state
+  (let [{:keys [animate-speed-ms board-width orientation pieceTheme piece-square-pct]} @board-state
         new-piece-id (random-piece-id)
         new-piece-html (html/Piece {:board-width board-width
                                     :board-orientation orientation
                                     :id new-piece-id
+                                    :pieceTheme pieceTheme
                                     :hidden? true
                                     :piece piece
                                     :piece-square-pct piece-square-pct
@@ -38,13 +39,14 @@
 ;; - The answer is "yes"
 (defn animation->dom-op-move
   [{:keys [capture? destination duration-ms instant? on-finish piece source] :as _animation} board-state]
-  (let [{:keys [animate-speed-ms board-width orientation piece-square-pct square->piece-id]} @board-state
+  (let [{:keys [animate-speed-ms board-width orientation pieceTheme piece-square-pct square->piece-id]} @board-state
         current-piece-id (get square->piece-id source)
         new-piece-id (random-piece-id)
         new-piece-html (html/Piece {:board-width board-width
                                     :board-orientation orientation
                                     :id new-piece-id
                                     :hidden? false
+                                    :pieceTheme pieceTheme
                                     :piece piece
                                     :piece-square-pct piece-square-pct
                                     :square source

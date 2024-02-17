@@ -1,18 +1,19 @@
 (ns com.oakmac.chessboard2.pieces
   (:require
+    [goog.crypt.base64 :as base64]
     [shadow.resource :as rc]))
 
 (def wikipedia-theme
-  {"bB" (rc/inline "pieces/wikipedia/bB.svg")
-   "bK" (rc/inline "pieces/wikipedia/bK.svg")
-   "bN" (rc/inline "pieces/wikipedia/bN.svg")
-   "bP" (rc/inline "pieces/wikipedia/bP.svg")
-   "bQ" (rc/inline "pieces/wikipedia/bQ.svg")
-   "bR" (rc/inline "pieces/wikipedia/bR.svg")
+  {"bB" (base64/encodeString (rc/inline "pieces/wikipedia/bB.svg"))
+   "bK" (base64/encodeString (rc/inline "pieces/wikipedia/bK.svg"))
+   "bN" (base64/encodeString (rc/inline "pieces/wikipedia/bN.svg"))
+   "bP" (base64/encodeString (rc/inline "pieces/wikipedia/bP.svg"))
+   "bQ" (base64/encodeString (rc/inline "pieces/wikipedia/bQ.svg"))
+   "bR" (base64/encodeString (rc/inline "pieces/wikipedia/bR.svg"))
 
-   "wB" (rc/inline "pieces/wikipedia/wB.svg")
-   "wK" (rc/inline "pieces/wikipedia/wK.svg")
-   "wN" (rc/inline "pieces/wikipedia/wN.svg")
-   "wP" (rc/inline "pieces/wikipedia/wP.svg")
-   "wQ" (rc/inline "pieces/wikipedia/wQ.svg")
-   "wR" (rc/inline "pieces/wikipedia/wR.svg")})
+   "wB" (base64/encodeString (rc/inline "pieces/wikipedia/wB.svg"))
+   "wK" (base64/encodeString (rc/inline "pieces/wikipedia/wK.svg"))
+   "wN" (base64/encodeString (rc/inline "pieces/wikipedia/wN.svg"))
+   "wP" (base64/encodeString (rc/inline "pieces/wikipedia/wP.svg"))
+   "wQ" (base64/encodeString (rc/inline "pieces/wikipedia/wQ.svg"))
+   "wR" (base64/encodeString (rc/inline "pieces/wikipedia/wR.svg"))})

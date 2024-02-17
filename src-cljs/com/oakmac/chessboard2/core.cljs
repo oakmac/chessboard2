@@ -67,7 +67,7 @@
 (defn begin-dragging!
   "initialize dragging a piece"
   [board-state square piece x y]
-  (let [{:keys [dragging-piece-id onDragStart orientation piece-square-pct position square->piece-id]} @board-state
+  (let [{:keys [dragging-piece-id pieceTheme onDragStart orientation piece-square-pct position square->piece-id]} @board-state
         ;; call their onDragStart function if provided
         on-drag-start-result (when (fn? onDragStart)
                                (let [js-board-position (clj->js position)]
@@ -103,6 +103,7 @@
                                  :piece-square-pct piece-square-pct
                                  :width piece-width
                                  :x x
+                                 :pieceTheme pieceTheme
                                  :y y})))
         ;; flag that we are actively dragging
         (swap! board-state assoc :dragging? true
@@ -448,7 +449,7 @@
 (defn- draw-items-instant!
   "Update all Items in the DOM instantly (ie: no animation)"
   [board-state]
-  (let [{:keys [board-width items items-container-id orientation piece-square-pct position square->piece-id]} @board-state
+  (let [{:keys [board-width items items-container-id orientation pieceTheme piece-square-pct position square->piece-id]} @board-state
         html (atom "")]
     ;; remove existing Items from the DOM
     (doseq [item-id (keys items)]
@@ -464,6 +465,7 @@
         (swap! html str (html/Piece {:board-orientation orientation
                                      :board-width board-width
                                      :id piece-id
+                                     :pieceTheme pieceTheme
                                      :hidden? false
                                      :piece piece
                                      :piece-square-pct piece-square-pct
